@@ -1,0 +1,48 @@
+[gd_scene format=3 uid="uid://c0qcyshtnuf6v"]
+
+[ext_resource type="PackedScene" uid="uid://cqi7fxayfxs8i" path="res://scenes/player.tscn" id="1_4xfga"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4xfga"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_paxxb"]
+sky_material = SubResource("ProceduralSkyMaterial_4xfga")
+
+[sub_resource type="Environment" id="Environment_gldc4"]
+background_mode = 2
+sky = SubResource("Sky_paxxb")
+
+[sub_resource type="BoxMesh" id="BoxMesh_g4v7s"]
+size = Vector3(5000, 20, 5000)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_paxxb"]
+data = PackedVector3Array(-2500, 10, 2500, 2500, 10, 2500, -2500, -10, 2500, 2500, 10, 2500, 2500, -10, 2500, -2500, -10, 2500, 2500, 10, -2500, -2500, 10, -2500, 2500, -10, -2500, -2500, 10, -2500, -2500, -10, -2500, 2500, -10, -2500, 2500, 10, 2500, 2500, 10, -2500, 2500, -10, 2500, 2500, 10, -2500, 2500, -10, -2500, 2500, -10, 2500, -2500, 10, -2500, -2500, 10, 2500, -2500, -10, -2500, -2500, 10, 2500, -2500, -10, 2500, -2500, -10, -2500, 2500, 10, 2500, -2500, 10, 2500, 2500, 10, -2500, -2500, 10, 2500, -2500, 10, -2500, 2500, 10, -2500, -2500, -10, 2500, 2500, -10, 2500, -2500, -10, -2500, 2500, -10, 2500, 2500, -10, -2500, -2500, -10, -2500)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_g4v7s"]
+
+[node name="map" type="Node3D" unique_id=1095926456]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2097212809]
+environment = SubResource("Environment_gldc4")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1431394537]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=1575232424]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D" unique_id=526046216]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+mesh = SubResource("BoxMesh_g4v7s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=336797803]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
+shape = SubResource("ConcavePolygonShape3D_paxxb")
+
+[node name="player" parent="." unique_id=1029011470 instance=ExtResource("1_4xfga")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1356407303]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, 0)
+mesh = SubResource("CapsuleMesh_g4v7s")

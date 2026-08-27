@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://cqi7fxayfxs8i"]
+
+[ext_resource type="Script" uid="uid://cud45m48x82jv" path="res://scripts/player.gd" id="1_3vyb7"]
+[ext_resource type="Script" uid="uid://b4unfxy572sqc" path="res://scenes/camera_3d.gd" id="2_g2els"]
+[ext_resource type="Script" uid="uid://b5rqxnoug1b4t" path="res://Isagi_moves/isagi_moves.gd" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://Isagi_moves/move_1.gd" id="4_dqkch"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_g4v7s"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yf5fn"]
+
+[node name="player" type="CharacterBody3D" unique_id=1029011470]
+script = ExtResource("1_3vyb7")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=510798569]
+mesh = SubResource("CapsuleMesh_g4v7s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=17540328]
+shape = SubResource("CapsuleShape3D_yf5fn")
+
+[node name="shoulder" type="Node3D" parent="." unique_id=874170208]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6922631, 0.98996544, 0.44566786)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="shoulder" unique_id=1034410229]
+spring_length = 7.0
+
+[node name="Camera3D" type="Camera3D" parent="shoulder/SpringArm3D" unique_id=486711523 node_paths=PackedStringArray("spring_arm_3d", "shoulder", "player")]
+script = ExtResource("2_g2els")
+spring_arm_3d = NodePath("..")
+shoulder = NodePath("../..")
+player = NodePath("../../..")
+
+[node name="Isagi_moves" type="Node" parent="." unique_id=572313367 node_paths=PackedStringArray("player")]
+script = ExtResource("3_qhqgy")
+player = NodePath("..")
+
+[node name="MOVE_1" type="Node" parent="Isagi_moves" unique_id=1396261519]
+script = ExtResource("4_dqkch")
+
+[node name="MOVE_2" type="Node" parent="Isagi_moves" unique_id=415132408]
+
+[node name="MOVE_3" type="Node" parent="Isagi_moves" unique_id=922369526]
+
+[node name="MOVE_4" type="Node" parent="Isagi_moves" unique_id=578883164]
+
+[node name="MOVE_5" type="Node" parent="Isagi_moves" unique_id=117785351]
