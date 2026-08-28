@@ -6,6 +6,8 @@
 [ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://Isagi_moves/move_1.gd" id="4_dqkch"]
 [ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/grab_ball_area.gd" id="4_tuyoq"]
 [ext_resource type="Script" uid="uid://bx2u43mcri4vt" path="res://scripts/volley_area.gd" id="5_qlg0r"]
+[ext_resource type="Texture2D" uid="uid://sets8jnbw51q" path="res://assets/uma-musume-mambo.png" id="7_fjrip"]
+[ext_resource type="Texture2D" uid="uid://u5a0wpx5ek68" path="res://assets/white-stucco-wall_1194-6992.jpg" id="8_smehm"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m5xwp"]
 
@@ -78,6 +80,43 @@ script = ExtResource("4_dqkch")
 
 [node name="ball_holder" type="Node3D" parent="." unique_id=1219057852]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6254583, -1.0560316)
+
+[node name="screen_effects" type="CanvasLayer" parent="." unique_id=943087902]
+
+[node name="mambo_flash" type="TextureRect" parent="screen_effects" unique_id=1057693532]
+visible = false
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -333.0
+offset_top = -361.95648
+offset_right = 333.0
+offset_bottom = 361.95648
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("7_fjrip")
+
+[node name="color_flash" type="TextureRect" parent="screen_effects" unique_id=1427153262]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -583.0
+offset_top = -370.0
+offset_right = 583.0
+offset_bottom = 370.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("8_smehm")
 
 [connection signal="area_entered" from="volley_area" to="volley_area" method="_on_area_entered"]
 [connection signal="area_exited" from="volley_area" to="volley_area" method="_on_area_exited"]

@@ -1,6 +1,5 @@
 extends Camera3D
 
-@export var initial_fov := 90.0
 @export var sens := 0.001
 @export var initial_spring_distance := 10.0
 @export var spring_arm_3d: SpringArm3D
@@ -10,7 +9,6 @@ extends Camera3D
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	spring_arm_3d.spring_length = initial_spring_distance
-	fov = initial_fov
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:

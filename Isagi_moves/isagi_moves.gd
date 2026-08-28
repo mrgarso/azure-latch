@@ -9,4 +9,4 @@ func _unhandled_input(event: InputEvent) -> void:
 			trigger("MOVE_1")
 
 func trigger(move:String, speed:float=1.0, godmode:bool=false, vulnerable:bool=false):
-	get_node(move).use(player, godmode, speed, vulnerable)
+	get_node(move).use(player, speed, godmode, vulnerable)

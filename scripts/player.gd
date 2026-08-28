@@ -19,7 +19,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	forw = transform.basis.z
 	sides = transform.basis.x
-	movement = (direction.x * sides) * speed + (direction.y * forw) * speed
+	movement = ((direction.x * sides) + (direction.y * forw)) * speed
 	if direction:
 		velocity = lerp(velocity,Vector3(movement.x,velocity.y,movement.z),delta * accel)
 	else:

@@ -7,13 +7,25 @@ func use(target:Player=null, speed:=1.0, godmode:=false, vulnerable:=false):
 	if vulnerable:
 		target.iframes = false
 	velocity(target, Vector2(-5,-3), .35, 0.15)
+	screen_flash(target, Color(0.0,0.3,1,0.2), 0.2)
 	afterimage(target, 1, 0.1, )
+	fov_change(target, 70, 90, 0.1)
+	await wait(5, speed)
+	fov_change(target, 90, 75, 0.5)
 	await wait(20, speed)
 	velocity(target, Vector2(7,-3), .35, 0.15)
 	afterimage(target, 1, 0.1, )
+	fov_change(target, 70, 90, 0.1)
+	screen_flash(target, Color(0.0,0.3,1,0.2), 0.2)
+	await wait(5, speed)
+	fov_change(target, 90, 80, 0.5)
 	await wait(30, speed)
+	screen_flash(target, Color(0.7,0.3,0.3,0.3), 0.5)
 	velocity(target, Vector2(0,-20), .75, 0.75)
 	afterimage(target, 6, 0.04, 1.0, Color(0,0,1,0.25))
+	fov_change(target, 70, 120, 0)
+	await wait(2, speed)
+	fov_change(target, 120, 75, 0.6)
 	target.using_move = false
 
 func velocity(target:Player=null, direction:=Vector2(0,0), duration := 1.0, decay := 0.99):
@@ -53,3 +65,18 @@ func afterimage(target :Player= null, quantity := 5, in_between := 0.1, duration
 		tween.tween_property(clone, "transparency", 1.0, duration)
 		tween.tween_callback(clone.queue_free)
 		await get_tree().create_timer(in_between).timeout
+
+func fov_change(target :Player= null, from := 70, to := 70, duration := 1.0):
+	var camera :Camera3D= target.get_node("shoulder").get_node("SpringArm3D").get_node("Camera3D")
+	camera.fov = from
+	var tween = create_tween()
+	tween.tween_property(camera,"fov",to,duration)
+
+func screen_flash(target :Player= null, color :=Color(1,1,1,1), duration := 1.0):
+	var screen :CanvasLayer= target.get_node("screen_effects")
+	for i in screen.get_child_count():
+		var subject :Control= screen.get_child(i)
+		if subject is TextureRect:
+			subject.self_modulate = color
+			var tween = create_tween()
+			tween.tween_property(subject,"self_modulate",Color(color.r,color.g,color.b,0),duration)
