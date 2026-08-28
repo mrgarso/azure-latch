@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://b4unfxy572sqc" path="res://scenes/camera_3d.gd" id="2_g2els"]
 [ext_resource type="Script" uid="uid://b5rqxnoug1b4t" path="res://Isagi_moves/isagi_moves.gd" id="3_qhqgy"]
 [ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://Isagi_moves/move_1.gd" id="4_dqkch"]
+[ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/grab_ball_area.gd" id="4_tuyoq"]
 [ext_resource type="Script" uid="uid://bx2u43mcri4vt" path="res://scripts/volley_area.gd" id="5_qlg0r"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m5xwp"]
@@ -14,14 +15,15 @@ material = SubResource("StandardMaterial3D_m5xwp")
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yf5fn"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
-radius = 1.401334
+radius = 2.546
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tuyoq"]
-radius = 2.5496523
+radius = 1.4
 
-[node name="player" type="CharacterBody3D" unique_id=1029011470]
+[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder")]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
+ball_holder = NodePath("ball_holder")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=510798569]
 mesh = SubResource("CapsuleMesh_g4v7s")
@@ -49,9 +51,12 @@ script = ExtResource("5_qlg0r")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="volley_area" unique_id=2075386139]
 shape = SubResource("SphereShape3D_g4v7s")
 
-[node name="grab_ball_area" type="Area3D" parent="." unique_id=275785431]
+[node name="grab_ball_area" type="Area3D" parent="." unique_id=275785431 node_paths=PackedStringArray("ball_holder", "player")]
 collision_layer = 0
 collision_mask = 4
+script = ExtResource("4_tuyoq")
+ball_holder = NodePath("../ball_holder")
+player = NodePath("..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="grab_ball_area" unique_id=1180036576]
 shape = SubResource("SphereShape3D_tuyoq")
@@ -71,4 +76,10 @@ script = ExtResource("4_dqkch")
 
 [node name="MOVE_5" type="Node" parent="Isagi_moves" unique_id=117785351]
 
-[connection signal="body_entered" from="volley_area" to="volley_area" method="_on_body_entered"]
+[node name="ball_holder" type="Node3D" parent="." unique_id=1219057852]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6254583, -1.0560316)
+
+[connection signal="area_entered" from="volley_area" to="volley_area" method="_on_area_entered"]
+[connection signal="area_exited" from="volley_area" to="volley_area" method="_on_area_exited"]
+[connection signal="area_entered" from="grab_ball_area" to="grab_ball_area" method="_on_area_entered"]
+[connection signal="area_exited" from="grab_ball_area" to="grab_ball_area" method="_on_area_exited"]

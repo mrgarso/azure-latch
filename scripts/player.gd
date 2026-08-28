@@ -4,6 +4,7 @@ class_name Player
 @export var speed := 20.0
 @export var accel := 10.0
 @export var frict := 10.0
+@export var ball_holder: Node3D
 var using_move := false
 var iframes := false
 var current_speed := 0.0
@@ -27,3 +28,6 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	if !using_move:
 		direction = Input.get_vector("a","d","w","s")
+
+func _unhandled_input(event: InputEvent) -> void:
+	pass

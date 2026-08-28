@@ -3,15 +3,22 @@
 [ext_resource type="Script" uid="uid://cg0peowv1xwu4" path="res://scripts/ball.gd" id="1_7s4qf"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
+radius = 0.25
+height = 0.5
 
-[sub_resource type="SphereShape3D" id="SphereShape3D_yf5fn"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
 
-[node name="ball" type="RigidBody3D" unique_id=1393979680]
-collision_layer = 4
+[node name="ball" type="Node3D" unique_id=251572601 node_paths=PackedStringArray("mesh", "detection")]
 script = ExtResource("1_7s4qf")
+mesh = NodePath("MeshInstance3D")
+detection = NodePath("detection")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1648895654]
 mesh = SubResource("SphereMesh_g4v7s")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=132516452]
-shape = SubResource("SphereShape3D_yf5fn")
+[node name="detection" type="Area3D" parent="." unique_id=1760445140]
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="detection" unique_id=441375173]
+shape = SubResource("SphereShape3D_g4v7s")
