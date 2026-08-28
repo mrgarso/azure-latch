@@ -4,6 +4,7 @@ class_name Player
 @export var speed := 20.0
 @export var accel := 10.0
 @export var frict := 10.0
+var using_move := false
 var iframes := false
 var current_speed := 0.0
 var direction := Vector2.ZERO
@@ -24,4 +25,5 @@ func _physics_process(delta: float) -> void:
 		velocity = lerp(velocity,Vector3(0,velocity.y,0),delta * frict)
 	
 	move_and_slide()
-	direction = Input.get_vector("a","d","w","s")
+	if !using_move:
+		direction = Input.get_vector("a","d","w","s")

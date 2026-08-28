@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://c0qcyshtnuf6v"]
 
 [ext_resource type="PackedScene" uid="uid://cqi7fxayfxs8i" path="res://scenes/player.tscn" id="1_4xfga"]
+[ext_resource type="PackedScene" uid="uid://digb62ssmrr0e" path="res://scenes/ball.tscn" id="2_paxxb"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4xfga"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -46,3 +47,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1356407303]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, 0)
 mesh = SubResource("CapsuleMesh_g4v7s")
+
+[node name="ball" parent="." unique_id=1393979680 instance=ExtResource("2_paxxb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5898635, 1.8970218, 5.237695)
