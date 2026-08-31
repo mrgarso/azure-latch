@@ -2,12 +2,15 @@ extends Node3D
 class_name Ball
 
 @export var velocity := Vector3.ZERO
-@export var gravity_force := Vector3(0, -9.8, 0)
+@export var gravity_force := Vector3(0, -30, 0)
 ##if radius is equals to 0.0, it will use its mesh radius instead
 @export var radius := 0.0
-@export var restitution = 0.7
+@export var restitution = 0.5
+@export var air_friction := 0.975
 @export var mesh: MeshInstance3D
 @export var detection: Area3D
+var current_owner : Player = null
+var last_owner : Player = null
 
 func _ready() -> void:
 	var area : CollisionShape3D = detection.get_child(0)
@@ -16,7 +19,11 @@ func _ready() -> void:
 		radius = mesh.mesh.radius
 
 func _physics_process(delta: float) -> void:
-	velocity += gravity_force * delta
+	var decay = pow(air_friction, delta)
+	velocity.x *= decay
+	velocity.z *= decay
+	if current_owner == null:
+		velocity += gravity_force * delta
 	
 	var steps := 4
 	var step_delta = delta / steps
@@ -39,3 +46,6 @@ func _physics_process(delta: float) -> void:
 			velocity = velocity.bounce(result.normal) * restitution
 		else:
 			global_position += motion
+
+func apply_impulse(direction := Vector3.ZERO):
+	velocity += direction

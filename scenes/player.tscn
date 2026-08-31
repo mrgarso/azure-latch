@@ -1,13 +1,14 @@
 [gd_scene format=3 uid="uid://cqi7fxayfxs8i"]
 
 [ext_resource type="Script" uid="uid://cud45m48x82jv" path="res://scripts/player.gd" id="1_3vyb7"]
-[ext_resource type="Script" uid="uid://b4unfxy572sqc" path="res://scenes/camera_3d.gd" id="2_g2els"]
-[ext_resource type="Script" uid="uid://b5rqxnoug1b4t" path="res://Isagi_moves/isagi_moves.gd" id="3_qhqgy"]
-[ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://Isagi_moves/move_1.gd" id="4_dqkch"]
+[ext_resource type="Script" uid="uid://b4unfxy572sqc" path="res://scripts/camera_3d.gd" id="2_g2els"]
+[ext_resource type="Script" uid="uid://b5rqxnoug1b4t" path="res://scripts/skills/Isagi_moves/isagi_moves.gd" id="3_qhqgy"]
+[ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://scripts/skills/Isagi_moves/move_1.gd" id="4_dqkch"]
 [ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/grab_ball_area.gd" id="4_tuyoq"]
 [ext_resource type="Script" uid="uid://bx2u43mcri4vt" path="res://scripts/volley_area.gd" id="5_qlg0r"]
-[ext_resource type="Texture2D" uid="uid://sets8jnbw51q" path="res://assets/uma-musume-mambo.png" id="7_fjrip"]
+[ext_resource type="Texture2D" uid="uid://b824ncaeuxk6r" path="res://assets/WhatsApp Image 2026-07-30 at 9.23.18 PM.jpeg" id="7_smehm"]
 [ext_resource type="Texture2D" uid="uid://u5a0wpx5ek68" path="res://assets/white-stucco-wall_1194-6992.jpg" id="8_smehm"]
+[ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console.gd" id="9_ur7pv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m5xwp"]
 
@@ -22,10 +23,13 @@ radius = 2.546
 [sub_resource type="SphereShape3D" id="SphereShape3D_tuyoq"]
 radius = 1.4
 
-[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder")]
+[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "spring_arm_3d", "grab_ball_area", "volley_area")]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
 ball_holder = NodePath("ball_holder")
+spring_arm_3d = NodePath("shoulder/SpringArm3D")
+grab_ball_area = NodePath("grab_ball_area")
+volley_area = NodePath("volley_area")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=510798569]
 mesh = SubResource("CapsuleMesh_g4v7s")
@@ -79,27 +83,27 @@ script = ExtResource("4_dqkch")
 [node name="MOVE_5" type="Node" parent="Isagi_moves" unique_id=117785351]
 
 [node name="ball_holder" type="Node3D" parent="." unique_id=1219057852]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.6254583, -1.0560316)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.712466, 1.7820387, -1.0560316)
 
 [node name="screen_effects" type="CanvasLayer" parent="." unique_id=943087902]
 
 [node name="mambo_flash" type="TextureRect" parent="screen_effects" unique_id=1057693532]
-visible = false
 self_modulate = Color(1, 1, 1, 0)
 anchors_preset = 8
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -333.0
-offset_top = -361.95648
-offset_right = 333.0
-offset_bottom = 361.95648
+offset_left = -549.0
+offset_top = -296.2
+offset_right = 2966.6548
+offset_bottom = 1656.5156
 grow_horizontal = 2
 grow_vertical = 2
+scale = Vector2(0.313, 0.313)
 size_flags_horizontal = 4
 size_flags_vertical = 4
-texture = ExtResource("7_fjrip")
+texture = ExtResource("7_smehm")
 
 [node name="color_flash" type="TextureRect" parent="screen_effects" unique_id=1427153262]
 self_modulate = Color(1, 1, 1, 0)
@@ -117,6 +121,25 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("8_smehm")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=790983987]
+
+[node name="console" type="VBoxContainer" parent="CanvasLayer" unique_id=965280903 node_paths=PackedStringArray("console_logger", "console_typer", "player")]
+visible = false
+offset_right = 1152.0
+offset_bottom = 499.0
+script = ExtResource("9_ur7pv")
+console_logger = NodePath("console_logger")
+console_typer = NodePath("console_typer")
+player = NodePath("../..")
+
+[node name="console_logger" type="PanelContainer" parent="CanvasLayer/console" unique_id=96638205]
+custom_minimum_size = Vector2(0, 400)
+layout_mode = 2
+
+[node name="console_typer" type="LineEdit" parent="CanvasLayer/console" unique_id=2022136702]
+layout_mode = 2
+keep_editing_on_text_submit = true
 
 [connection signal="area_entered" from="volley_area" to="volley_area" method="_on_area_entered"]
 [connection signal="area_exited" from="volley_area" to="volley_area" method="_on_area_exited"]
