@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://bx2u43mcri4vt" path="res://scripts/volley_area.gd" id="5_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://b824ncaeuxk6r" path="res://assets/WhatsApp Image 2026-07-30 at 9.23.18 PM.jpeg" id="7_smehm"]
 [ext_resource type="Texture2D" uid="uid://u5a0wpx5ek68" path="res://assets/white-stucco-wall_1194-6992.jpg" id="8_smehm"]
-[ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console.gd" id="9_ur7pv"]
+[ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console/console.gd" id="9_ur7pv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m5xwp"]
 
@@ -23,13 +23,25 @@ radius = 2.546
 [sub_resource type="SphereShape3D" id="SphereShape3D_tuyoq"]
 radius = 1.4
 
-[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "spring_arm_3d", "grab_ball_area", "volley_area")]
+[sub_resource type="Theme" id="Theme_y4r1p"]
+default_font_size = 24
+
+[sub_resource type="LabelSettings" id="LabelSettings_g4v7s"]
+font_size = 34
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yf5fn"]
+albedo_color = Color(1, 0, 1, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
+
+[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "spring_arm_3d", "grab_ball_area", "volley_area", "ball_aim")]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
 ball_holder = NodePath("ball_holder")
 spring_arm_3d = NodePath("shoulder/SpringArm3D")
 grab_ball_area = NodePath("grab_ball_area")
 volley_area = NodePath("volley_area")
+ball_aim = NodePath("ball_aim")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=510798569]
 mesh = SubResource("CapsuleMesh_g4v7s")
@@ -57,12 +69,13 @@ script = ExtResource("5_qlg0r")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="volley_area" unique_id=2075386139]
 shape = SubResource("SphereShape3D_g4v7s")
 
-[node name="grab_ball_area" type="Area3D" parent="." unique_id=275785431 node_paths=PackedStringArray("ball_holder", "player")]
+[node name="grab_ball_area" type="Area3D" parent="." unique_id=275785431 node_paths=PackedStringArray("ball_holder", "player", "ball_aim")]
 collision_layer = 0
 collision_mask = 4
 script = ExtResource("4_tuyoq")
 ball_holder = NodePath("../ball_holder")
 player = NodePath("..")
+ball_aim = NodePath("../ball_aim")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="grab_ball_area" unique_id=1180036576]
 shape = SubResource("SphereShape3D_tuyoq")
@@ -124,7 +137,7 @@ texture = ExtResource("8_smehm")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=790983987]
 
-[node name="console" type="VBoxContainer" parent="CanvasLayer" unique_id=965280903 node_paths=PackedStringArray("console_logger", "console_typer", "player")]
+[node name="console" type="VBoxContainer" parent="CanvasLayer" unique_id=965280903 node_paths=PackedStringArray("console_logger", "console_typer", "player", "suggestion_box", "suggestion_text", "text_handler")]
 visible = false
 offset_right = 1152.0
 offset_bottom = 499.0
@@ -132,16 +145,46 @@ script = ExtResource("9_ur7pv")
 console_logger = NodePath("console_logger")
 console_typer = NodePath("console_typer")
 player = NodePath("../..")
+suggestion_box = NodePath("../suggestion_box")
+suggestion_text = NodePath("../suggestion_box/suggestion_text")
+text_handler = NodePath("console_logger/text_handler")
 
 [node name="console_logger" type="PanelContainer" parent="CanvasLayer/console" unique_id=96638205]
 custom_minimum_size = Vector2(0, 400)
 layout_mode = 2
 
+[node name="text_handler" type="VBoxContainer" parent="CanvasLayer/console/console_logger" unique_id=1031018983]
+layout_mode = 2
+alignment = 2
+
 [node name="console_typer" type="LineEdit" parent="CanvasLayer/console" unique_id=2022136702]
 layout_mode = 2
+theme = SubResource("Theme_y4r1p")
+text = "asdasdw"
 keep_editing_on_text_submit = true
+
+[node name="suggestion_box" type="PanelContainer" parent="CanvasLayer" unique_id=819269360]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+offset_transform_enabled = true
+offset_transform_position_ratio = Vector2(-0.5, -0.5)
+
+[node name="suggestion_text" type="Label" parent="CanvasLayer/suggestion_box" unique_id=914959559]
+layout_mode = 2
+offset_transform_enabled = true
+text = "this is a test"
+label_settings = SubResource("LabelSettings_g4v7s")
+
+[node name="ball_aim" type="MeshInstance3D" parent="." unique_id=929626886]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.43686712, 0)
+top_level = true
+material_override = SubResource("StandardMaterial3D_yf5fn")
+mesh = SubResource("SphereMesh_g4v7s")
 
 [connection signal="area_entered" from="volley_area" to="volley_area" method="_on_area_entered"]
 [connection signal="area_exited" from="volley_area" to="volley_area" method="_on_area_exited"]
 [connection signal="area_entered" from="grab_ball_area" to="grab_ball_area" method="_on_area_entered"]
 [connection signal="area_exited" from="grab_ball_area" to="grab_ball_area" method="_on_area_exited"]
+[connection signal="text_changed" from="CanvasLayer/console/console_typer" to="CanvasLayer/console" method="_on_console_typer_text_changed"]
+[connection signal="text_submitted" from="CanvasLayer/console/console_typer" to="CanvasLayer/console" method="_on_console_typer_text_submitted"]

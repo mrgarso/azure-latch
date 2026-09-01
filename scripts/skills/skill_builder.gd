@@ -1,5 +1,6 @@
 extends Node
 
+
 func velocity(target: Player, direction := Vector2(0,0), duration := 1.0, decay := 0.99) -> void:
 	var imp := Impulse.new()
 	imp.vec = direction
@@ -57,6 +58,10 @@ func screen_flash(target: Player, color := Color(1,1,1,1), duration := 1.0) -> v
 func counter() -> void:
 	pass
 
-func kick(target, direction := Vector3()) -> void:
+func kick(target :Player=null, direction := Vector3(), force := 70.0) -> void:
 	var subject :Ball= target.grab_ball_area.ball
-	subject.apply_impulse(direction)
+	var final_direction := -(target.transform.basis * direction) * force
+	final_direction.y /= force /2
+	target.ball_aim.global_position = final_direction + target.global_position + subject.global_position
+	#final_direction.z *= -1
+	subject.apply_impulse(final_direction)

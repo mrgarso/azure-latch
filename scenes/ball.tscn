@@ -8,12 +8,15 @@ height = 0.5
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
 
-[node name="ball" type="Node3D" unique_id=251572601 node_paths=PackedStringArray("mesh", "detection")]
-script = ExtResource("1_7s4qf")
-mesh = NodePath("MeshInstance3D")
-detection = NodePath("detection")
+[sub_resource type="ArrayMesh" id="ArrayMesh_g4v7s"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1648895654]
+[node name="ball" type="Node3D" unique_id=251572601 node_paths=PackedStringArray("mesh", "detection", "trajectory_mesh")]
+script = ExtResource("1_7s4qf")
+mesh = NodePath("mesh")
+detection = NodePath("detection")
+trajectory_mesh = NodePath("trajectory_mesh")
+
+[node name="mesh" type="MeshInstance3D" parent="." unique_id=1648895654]
 mesh = SubResource("SphereMesh_g4v7s")
 
 [node name="detection" type="Area3D" parent="." unique_id=1760445140]
@@ -22,3 +25,6 @@ collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="detection" unique_id=441375173]
 shape = SubResource("SphereShape3D_g4v7s")
+
+[node name="trajectory_mesh" type="MeshInstance3D" parent="." unique_id=592689705]
+mesh = SubResource("ArrayMesh_g4v7s")
