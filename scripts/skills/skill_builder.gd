@@ -58,10 +58,32 @@ func screen_flash(target: Player, color := Color(1,1,1,1), duration := 1.0) -> v
 func counter() -> void:
 	pass
 
-func kick(target :Player=null, direction := Vector3(), force := 70.0) -> void:
+func kick(target :Player=null, direction := Vector3(), force := 70.0, unattach := true, speed := 1.0) -> void:
 	var subject :Ball= target.grab_ball_area.ball
-	var final_direction := -(target.transform.basis * direction) * force
-	final_direction.y /= force /2
-	target.ball_aim.global_position = final_direction + target.global_position + subject.global_position
-	#final_direction.z *= -1
-	subject.apply_impulse(final_direction)
+	var aim_dir := (target.transform.basis * direction).normalized()
+	var final_direction := -aim_dir * force
+	var ball_traj := PackedVector3Array()
+	var ball_traj_range := 380.0
+	var ball_traj_inbetween := 5.0
+	
+	ball_traj = subject.predict_trajectory(subject.global_position, final_direction, ball_traj_range/60.0, 1/60.0, speed)
+	
+	for i in ball_traj.size() / ball_traj_inbetween:
+		var clone := target.ball_aim.duplicate()
+		get_tree().current_scene.add_child(clone)
+		clone.global_position = ball_traj[i * ball_traj_inbetween]
+		clone.scale *= 0.2
+		delete(clone, 0.025)
+	
+	target.ball_aim.global_position = ball_traj[ball_traj.size() - 1]
+	
+	if unattach:
+		subject.current_owner = null
+		subject.last_owner = target
+		subject.apply_impulse(final_direction)
+		subject = null
+		target.grab_ball_area.ball = null
+
+func delete(target:Node3D, seconds := 0.5):
+	await get_tree().create_timer(seconds).timeout
+	target.queue_free()

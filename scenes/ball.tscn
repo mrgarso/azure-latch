@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://digb62ssmrr0e"]
 
-[ext_resource type="Script" uid="uid://cg0peowv1xwu4" path="res://scripts/ball.gd" id="1_7s4qf"]
+[ext_resource type="Script" uid="uid://cg0peowv1xwu4" path="res://scripts/ball/ball.gd" id="1_7s4qf"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
 radius = 0.25
