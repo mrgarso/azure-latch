@@ -5,9 +5,13 @@ extends Camera3D
 @export var spring_arm_3d: SpringArm3D
 @export var shoulder: Node3D
 @export var player: Player
+var desired_fov := 75.0
+var fov_changers :Array[float] = []
 var mouse_mode = Input.mouse_mode
 
 func _physics_process(delta: float) -> void:
+	if fov_changers:
+		pass
 	if Input.is_action_just_pressed("shift"):
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

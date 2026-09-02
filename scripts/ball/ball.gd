@@ -7,7 +7,7 @@ class_name Ball
 @export var radius := 0.0
 @export var speed_scale := 1.0
 @export var restitution = 0.5
-@export var air_friction := 0.96
+@export var air_friction := 0.5
 @export var mesh: MeshInstance3D
 @export var detection: Area3D
 @export var trajectory_mesh: MeshInstance3D
@@ -30,24 +30,25 @@ func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, pred
 	
 	var steps := 4
 	var step_delta = delta / steps
-	
-	for i in steps:
-		var motion = vel * step_delta
-		var motion_length = motion.length()
-		if motion_length < 0.001:
-			continue
-		
-		var space_state = get_world_3d().direct_space_state
-		var query = PhysicsRayQueryParameters3D.create(
-			pos,
-			pos + motion.normalized() * (motion.length() + radius)
-		)
-		var result = space_state.intersect_ray(query)
-		if result:
-			pos = result.position - motion.normalized() * radius
-			vel = vel.bounce(result.normal) * restitution
-		else:
-			pos += motion
+	if current_owner == null or predicting:
+		for i in steps:
+			var motion = vel * step_delta
+			var motion_length = motion.length()
+			if motion_length < 0.001:
+				continue
+			
+			var space_state = get_world_3d().direct_space_state
+			var query = PhysicsRayQueryParameters3D.create(
+				pos,
+				pos + motion.normalized() * (motion.length() + radius)
+			)
+			var result = space_state.intersect_ray(query)
+			if result:
+				var rest_vector := Vector3(1,restitution,1)
+				pos = result.position - motion.normalized() * radius
+				vel = vel.bounce(result.normal) * rest_vector
+			else:
+				pos += motion
 		
 	return {"position": pos, "velocity": vel}
 

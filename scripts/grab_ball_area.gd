@@ -14,24 +14,30 @@ func _physics_process(delta: float) -> void:
 	match hold_time:
 		var x when x < kick_modes[0]:
 			kick_strength = kick_strengths[0]
-			print("min")
 		var x when x >= kick_modes[0] and x < kick_modes[1]:
 			kick_strength = kick_strengths[1]
-			print("mid")
 		var x when x >= kick_modes[1]:
 			kick_strength = kick_strengths[2]
-			print("max")
 	if ball:
 		ball.global_position = ball_holder.global_position
-		SB.kick(player, Vector3(0, max(player.spring_arm_3d.rotation.x * 1, 0), 1), kick_strength, false, 1.3)
 	if Input.is_action_pressed("m1"):
 		if hold_time < 1:
 			hold_time += delta
+		if ball:
+			SB.kick(player, Vector3(0, max(player.spring_arm_3d.rotation.x * 1, 0), 1), kick_strength, false, 1.6)
 			
 	elif Input.is_action_just_released("m1") and hold_time:
 		if ball:
-			SB.kick(player, Vector3(0, max(player.spring_arm_3d.rotation.x * 1, 0), 1), kick_strength, true, 1.3)
+			SB.kick(player, Vector3(0, max(player.spring_arm_3d.rotation.x * 1, 0), 1), kick_strength, true, 1.6)
 		hold_time = 0
+
+func _input(event: InputEvent) -> void:
+	if !ball:
+		if Input.is_action_pressed("m1") and Input.is_action_pressed("m2"):
+			SB.fov_change(player, 70, 50, 0.45)
+			await SB.wait(30, 1.0)
+			SB.fov_change(player, 90, 70, 0.5)
+
 func _on_area_entered(area: Node3D) -> void:
 	var target :Node3D= area.get_parent()
 	if target is Ball:

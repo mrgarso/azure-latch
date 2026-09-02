@@ -5,7 +5,6 @@
 [ext_resource type="Script" uid="uid://b5rqxnoug1b4t" path="res://scripts/skills/Isagi_moves/isagi_moves.gd" id="3_qhqgy"]
 [ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://scripts/skills/Isagi_moves/move_1.gd" id="4_dqkch"]
 [ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/grab_ball_area.gd" id="4_tuyoq"]
-[ext_resource type="Script" uid="uid://bx2u43mcri4vt" path="res://scripts/volley_area.gd" id="5_qlg0r"]
 [ext_resource type="Texture2D" uid="uid://b824ncaeuxk6r" path="res://assets/WhatsApp Image 2026-07-30 at 9.23.18 PM.jpeg" id="7_smehm"]
 [ext_resource type="Texture2D" uid="uid://u5a0wpx5ek68" path="res://assets/white-stucco-wall_1194-6992.jpg" id="8_smehm"]
 [ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console/console.gd" id="9_ur7pv"]
@@ -16,9 +15,6 @@
 material = SubResource("StandardMaterial3D_m5xwp")
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yf5fn"]
-
-[sub_resource type="SphereShape3D" id="SphereShape3D_g4v7s"]
-radius = 2.546
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tuyoq"]
 radius = 1.4
@@ -40,7 +36,7 @@ script = ExtResource("1_3vyb7")
 ball_holder = NodePath("ball_holder")
 spring_arm_3d = NodePath("shoulder/SpringArm3D")
 grab_ball_area = NodePath("grab_ball_area")
-volley_area = NodePath("volley_area")
+volley_area = NodePath("")
 ball_aim = NodePath("ball_aim")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=510798569]
@@ -60,14 +56,6 @@ script = ExtResource("2_g2els")
 spring_arm_3d = NodePath("..")
 shoulder = NodePath("../..")
 player = NodePath("../../..")
-
-[node name="volley_area" type="Area3D" parent="." unique_id=145828669]
-collision_layer = 0
-collision_mask = 4
-script = ExtResource("5_qlg0r")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="volley_area" unique_id=2075386139]
-shape = SubResource("SphereShape3D_g4v7s")
 
 [node name="grab_ball_area" type="Area3D" parent="." unique_id=275785431 node_paths=PackedStringArray("ball_holder", "player", "ball_aim")]
 collision_layer = 0
@@ -183,8 +171,6 @@ top_level = true
 material_override = SubResource("StandardMaterial3D_yf5fn")
 mesh = SubResource("SphereMesh_g4v7s")
 
-[connection signal="area_entered" from="volley_area" to="volley_area" method="_on_area_entered"]
-[connection signal="area_exited" from="volley_area" to="volley_area" method="_on_area_exited"]
 [connection signal="area_entered" from="grab_ball_area" to="grab_ball_area" method="_on_area_entered"]
 [connection signal="area_exited" from="grab_ball_area" to="grab_ball_area" method="_on_area_exited"]
 [connection signal="text_changed" from="CanvasLayer/console/console_typer" to="CanvasLayer/console" method="_on_console_typer_text_changed"]
