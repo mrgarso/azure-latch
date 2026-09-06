@@ -30,13 +30,14 @@ albedo_color = Color(1, 0, 1, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
 
-[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "spring_arm_3d", "grab_ball_area", "ball_aim")]
+[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "spring_arm_3d", "grab_ball_area", "ball_aim", "fps_label")]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
 ball_holder = NodePath("ball_holder")
 spring_arm_3d = NodePath("shoulder/SpringArm3D")
 grab_ball_area = NodePath("grab_ball_area")
 ball_aim = NodePath("ball_aim")
+fps_label = NodePath("screen_effects/fps_label")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=510798569]
 mesh = SubResource("CapsuleMesh_g4v7s")
@@ -61,7 +62,7 @@ collision_layer = 0
 collision_mask = 4
 script = ExtResource("4_tuyoq")
 kick_modes = Array[float]([0.1, 0.2])
-kick_strengths = Array[float]([10.0, 25.0, 60.0])
+kick_strengths = Array[float]([10.0, 25.0, 75.0])
 ball_holder = NodePath("../ball_holder")
 player = NodePath("..")
 ball_aim = NodePath("../ball_aim")
@@ -123,6 +124,11 @@ grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("8_smehm")
+
+[node name="fps_label" type="Label" parent="screen_effects" unique_id=1387897507]
+offset_right = 40.0
+offset_bottom = 23.0
+text = "fps ="
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=790983987]
 

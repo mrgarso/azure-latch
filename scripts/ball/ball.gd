@@ -19,6 +19,14 @@ func _ready() -> void:
 	area.shape.radius = mesh.mesh.radius
 	if radius == 0.0:
 		radius = mesh.mesh.radius
+	var mat := StandardMaterial3D.new()
+	mat.vertex_color_use_as_albedo = true
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	trajectory_mesh.material_override = mat
+	trajectory_mesh.visible = false
+	trajectory_mesh.top_level = true
+	trajectory_mesh.global_transform = Transform3D.IDENTITY
 
 func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, predicting := false) -> Dictionary:
 	delta *= speed_scale
@@ -72,6 +80,62 @@ func predict_trajectory(start_pos:= Vector3(0,0,0), start_vel:= Vector3(0,0,0), 
 		points.append(pos)
 		
 	return points
+
+func build_traj_mesh(points: PackedVector3Array, traj_radius := 0.9, sides := 4, color := Color(1,0,1)) -> ArrayMesh:
+	if points.size() < 2:
+		return ArrayMesh.new()
+	
+	var st := SurfaceTool.new()
+	st.begin(Mesh.PRIMITIVE_TRIANGLES)
+	
+	var last := points.size() - 1
+	var rings : Array[PackedVector3Array] = []
+	
+	for i in points.size():
+		var p := points[i]
+		var dir := Vector3()
+		if i == 0:
+			dir = (points[i + 1] - p).normalized()
+		elif  i == last:
+			dir = (p - points[i - 1]).normalized()
+		else:
+			dir = (points[i + 1] - points[i - 1]).normalized()
+		var up_ref := Vector3.RIGHT
+		if abs(dir.dot(Vector3.UP)) < 0.99:
+			up_ref = Vector3.UP
+		var right := dir.cross(up_ref).normalized()
+		var up := right.cross(dir).normalized()
+		
+		var ring := PackedVector3Array()
+		for s in sides:
+			var angle := (TAU * s)/sides
+			var offset :Vector3= (right * cos(angle) + up * sin(angle)) * traj_radius
+			ring.append(p + offset)
+		rings.append(ring)
+	
+	for i in rings.size() - 1:
+		var ring_a := rings[i]
+		var ring_b := rings[i + 1]
+		var alpha_a := 1.0 - float(i) / float(last)
+		var alpha_b := 1.0 - float(i + 1) / float(last)
+		
+		for s in sides:
+			var s_next := (s + 1) % sides
+			
+			var a0 := ring_a[s]
+			var a1 := ring_a[s_next]
+			var b0 := ring_b[s]
+			var b1 := ring_b[s_next]
+			
+			st.set_color(Color(color, alpha_a)); st.add_vertex(a0)
+			st.set_color(Color(color, alpha_b)); st.add_vertex(b0)
+			st.set_color(Color(color, alpha_a)); st.add_vertex(a1)
+			
+			st.set_color(Color(color, alpha_a)); st.add_vertex(a1)
+			st.set_color(Color(color, alpha_b)); st.add_vertex(b0)
+			st.set_color(Color(color, alpha_b)); st.add_vertex(b1)
+	st.generate_normals()
+	return st.commit()
 
 func apply_impulse(direction := Vector3.ZERO):
 	velocity += direction

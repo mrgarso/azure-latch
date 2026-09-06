@@ -60,35 +60,63 @@ func counter() -> void:
 
 func kick(target :Player=null, direction := Vector3(), force := 70.0, unattach := true, speed := 1.0) -> void:
 	var subject :Ball= target.grab_ball_area.ball
+	show(subject.trajectory_mesh)
 	var aim_dir := (target.transform.basis * direction).normalized()
 	var final_direction := -aim_dir * force
 	var ball_traj := PackedVector3Array()
-	var ball_traj_range := 240.0
-	var ball_traj_inbetween := 5.0
+	var ball_traj_range := 120
+	#var ball_traj_inbetween := 5.0
+	var ball_traj_width := 0.01
 	
 	ball_traj = subject.predict_trajectory(subject.global_position, final_direction, ball_traj_range/60.0, 1/60.0, speed)
 	
-	for i in ball_traj.size() / ball_traj_inbetween:
-		var clone := target.ball_aim.duplicate()
-		get_tree().current_scene.add_child(clone)
-		clone.global_position = ball_traj[i * ball_traj_inbetween]
-		clone.scale *= 0.2
-		delete(clone, 0.025)
+	var traj_shortened := 4
+	var step_size := int(pow(2,traj_shortened)) 
+	
+	var traj_ball_traj := PackedVector3Array()
+	
+	for i in range(0, ball_traj.size(), step_size):
+		traj_ball_traj.append(ball_traj[i])
+	print(traj_ball_traj.size())
+
+	subject.trajectory_mesh.mesh = subject.build_traj_mesh(traj_ball_traj, ball_traj_width)
+	subject.trajectory_mesh.visible = true
+	
+	#for i in ball_traj.size() / ball_traj_inbetween:
+		#var clone := target.ball_aim.duplicate()
+		#get_tree().current_scene.add_child(clone)
+		#clone.global_position = ball_traj[i * ball_traj_inbetween]
+		#clone.scale *= 0.2
+		#delete(clone, 0.025)
 	
 	target.ball_aim.global_position = ball_traj[ball_traj.size() - 2]
 	
 	if unattach:
-		for i in ball_traj.size() / ball_traj_inbetween:
-			var clone := target.ball_aim.duplicate()
-			get_tree().current_scene.add_child(clone)
-			clone.global_position = ball_traj[i * ball_traj_inbetween]
-			clone.scale *= 0.2
-			delete(clone, ball_traj_range/60)
+		#for i in ball_traj.size() / ball_traj_inbetween:
+			#var clone := target.ball_aim.duplicate()
+			#get_tree().current_scene.add_child(clone)
+			#clone.global_position = ball_traj[i * ball_traj_inbetween]
+			#clone.scale *= 0.2
+			#delete(clone, ball_traj_range/60)
 		subject.current_owner = null
 		subject.last_owner = target
 		subject.apply_impulse(final_direction)
-		subject = null
 		target.grab_ball_area.ball = null
+		fade_and_hide(subject.trajectory_mesh)
+
+func fade_and_hide(mesh_inst: MeshInstance3D, duration := 0.5) -> void:
+	var mat := mesh_inst.material_override as StandardMaterial3D
+	mat.albedo_color.a = 1.0
+	var tween := create_tween()
+	tween.tween_property(mat, "albedo_color:a", 0.0, duration)
+	tween.tween_callback(func(): mesh_inst.visible = false)
+
+func show(mesh_inst: MeshInstance3D) -> void:
+	var mat := mesh_inst.material_override as StandardMaterial3D
+	mat.albedo_color.a = 1.0
+	var tween := create_tween()
+	tween.tween_property(mat, "albedo_color:a", 1.0, 0.0)
+	tween.tween_callback(func(): mesh_inst.visible = true)
 
 func delete(target:Node3D, seconds := 0.5):
 	await get_tree().create_timer(seconds).timeout

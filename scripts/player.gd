@@ -9,6 +9,7 @@ class_name Player
 @export var grab_ball_area: Area3D
 @export var volley_area: Area3D
 @export var ball_aim: MeshInstance3D
+@export var fps_label: Label
 var can_move := true:
 	set(value):
 		can_move = value
@@ -26,6 +27,7 @@ func _ready() -> void:
 	current_speed = speed
 
 func _physics_process(delta: float) -> void:
+	fps_label.text = "fps = " + str(Engine.get_frames_per_second())
 	forw = transform.basis.z
 	sides = transform.basis.x
 	if using_move:
