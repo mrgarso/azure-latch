@@ -25,12 +25,11 @@ func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, pred
 	var decay = pow(air_friction, delta)
 	vel.x *= decay
 	vel.z *= decay
-	if current_owner == null or predicting:
-		vel += gravity_force * delta
 	
 	var steps := 4
 	var step_delta = delta / steps
 	if current_owner == null or predicting:
+		vel += gravity_force * delta
 		for i in steps:
 			var motion = vel * step_delta
 			var motion_length = motion.length()
@@ -44,9 +43,11 @@ func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, pred
 			)
 			var result = space_state.intersect_ray(query)
 			if result:
-				var rest_vector := Vector3(1,restitution,1)
 				pos = result.position - motion.normalized() * radius
-				vel = vel.bounce(result.normal) * rest_vector
+				var bounced := vel.bounce(result.normal)
+				var normal_part :Vector3= bounced.dot(result.normal) * result.normal
+				var tangent_part := bounced - normal_part
+				vel = tangent_part + normal_part * restitution
 			else:
 				pos += motion
 		

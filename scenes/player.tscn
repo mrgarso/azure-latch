@@ -30,13 +30,12 @@ albedo_color = Color(1, 0, 1, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
 
-[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "spring_arm_3d", "grab_ball_area", "volley_area", "ball_aim")]
+[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "spring_arm_3d", "grab_ball_area", "ball_aim")]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
 ball_holder = NodePath("ball_holder")
 spring_arm_3d = NodePath("shoulder/SpringArm3D")
 grab_ball_area = NodePath("grab_ball_area")
-volley_area = NodePath("")
 ball_aim = NodePath("ball_aim")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=510798569]
@@ -62,6 +61,7 @@ collision_layer = 0
 collision_mask = 4
 script = ExtResource("4_tuyoq")
 kick_modes = Array[float]([0.1, 0.2])
+kick_strengths = Array[float]([10.0, 25.0, 60.0])
 ball_holder = NodePath("../ball_holder")
 player = NodePath("..")
 ball_aim = NodePath("../ball_aim")
