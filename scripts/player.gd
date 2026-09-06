@@ -7,8 +7,6 @@ class_name Player
 @export var ball_holder: Node3D
 @export var spring_arm_3d: SpringArm3D
 @export var grab_ball_area: Area3D
-@export var volley_area: Area3D
-@export var ball_aim: MeshInstance3D
 @export var fps_label: Label
 var can_move := true:
 	set(value):

@@ -23,6 +23,7 @@ func _ready() -> void:
 	mat.vertex_color_use_as_albedo = true
 	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.cull_mode = BaseMaterial3D.CULL_DISABLED
 	trajectory_mesh.material_override = mat
 	trajectory_mesh.visible = false
 	trajectory_mesh.top_level = true
@@ -81,7 +82,7 @@ func predict_trajectory(start_pos:= Vector3(0,0,0), start_vel:= Vector3(0,0,0), 
 		
 	return points
 
-func build_traj_mesh(points: PackedVector3Array, traj_radius := 0.9, sides := 4, color := Color(1,0,1)) -> ArrayMesh:
+func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 4, color := Color(1,0,1)) -> ArrayMesh:
 	if points.size() < 2:
 		return ArrayMesh.new()
 	
@@ -90,6 +91,7 @@ func build_traj_mesh(points: PackedVector3Array, traj_radius := 0.9, sides := 4,
 	
 	var last := points.size() - 1
 	var rings : Array[PackedVector3Array] = []
+	var ring_radii: Array[float] = []
 	
 	for i in points.size():
 		var p := points[i]
@@ -106,10 +108,16 @@ func build_traj_mesh(points: PackedVector3Array, traj_radius := 0.9, sides := 4,
 		var right := dir.cross(up_ref).normalized()
 		var up := right.cross(dir).normalized()
 		
+		var safe_radius := traj_radius
+		if i > 0 and i < last:
+			var curvature_r := local_curvature_radius(points[i - 1], p, points[i + 1])
+			safe_radius = min(traj_radius, curvature_r * 0.9)
+		ring_radii.append(safe_radius)
+		
 		var ring := PackedVector3Array()
 		for s in sides:
 			var angle := (TAU * s)/sides
-			var offset :Vector3= (right * cos(angle) + up * sin(angle)) * traj_radius
+			var offset :Vector3= (right * cos(angle) + up * sin(angle)) * safe_radius
 			ring.append(p + offset)
 		rings.append(ring)
 	
@@ -139,3 +147,14 @@ func build_traj_mesh(points: PackedVector3Array, traj_radius := 0.9, sides := 4,
 
 func apply_impulse(direction := Vector3.ZERO):
 	velocity += direction
+
+func local_curvature_radius(p0 := Vector3(), p1 := Vector3(), p2 := Vector3()) -> float:
+	var a := p0.distance_to(p1)
+	var b := p1.distance_to(p2)
+	var c := p2.distance_to(p0)
+	var s := (a + b + c) / 2.0
+	var area_sq := s * (s - a) * (s - b) * (s - c)
+	if area_sq <= 0.0001:
+		return INF
+	var area := sqrt(area_sq)
+	return (a * b * c) / (4.0 * area)
