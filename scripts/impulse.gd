@@ -1,4 +1,4 @@
 extends RefCounted
 class_name Impulse
 
-var vec := Vector2.ZERO
+var vec := Vector3.ZERO

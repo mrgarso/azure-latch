@@ -4,43 +4,54 @@ class_name Player
 @export var speed := 20.0
 @export var accel := 10.0
 @export var frict := 10.0
+@export var jump_speed := 25.0
+@export var gravity := 40.0
 @export var ball_holder: Node3D
 @export var spring_arm_3d: SpringArm3D
 @export var grab_ball_area: Area3D
 @export var fps_label: Label
+
 var can_move := true:
 	set(value):
 		can_move = value
 		direction = Vector2.ZERO
 var using_move := false
 var iframes := false
-var current_speed := 0.0
 var direction := Vector2.ZERO
 var forw := Vector3.ZERO
 var sides := Vector3.ZERO
 var movement := Vector3.ZERO
-var impulses : Array[Impulse] = []
-
-func _ready() -> void:
-	current_speed = speed
+var impulses: Array[Impulse] = []
 
 func _physics_process(delta: float) -> void:
 	fps_label.text = "fps = " + str(Engine.get_frames_per_second())
 	forw = transform.basis.z
 	sides = transform.basis.x
+
+	var impulse_sum := Vector3.ZERO
+	for imp in impulses:
+		impulse_sum += imp.vec
+
 	if using_move:
-		var summed := Vector2.ZERO
-		for imp in impulses:
-			summed += imp.vec
-		direction = summed
+		direction = Vector2(impulse_sum.x, impulse_sum.z)
 	elif can_move:
-		direction = Input.get_vector("a","d","w","s")
+		direction = Input.get_vector("a", "d", "w", "s")
+		if is_on_floor() and Input.is_action_just_pressed("space"):
+			velocity.y = jump_speed
+
 	movement = ((direction.x * sides) + (direction.y * forw)) * speed
 	if direction:
-		velocity = lerp(velocity,Vector3(movement.x,velocity.y,movement.z),delta * accel)
+		velocity.x = lerp(velocity.x, movement.x, delta * accel)
+		velocity.z = lerp(velocity.z, movement.z, delta * accel)
+		#velocity.y = lerp(velocity.y, impulse_sum.y, delta * accel)
 	else:
-		velocity = lerp(velocity,Vector3(0,velocity.y,0),delta * frict)
-	
+		velocity.x = lerp(velocity.x, 0.0, delta * frict)
+		velocity.z = lerp(velocity.z, 0.0, delta * frict)
+
+	velocity.y += impulse_sum.y * delta * 3
+	if not is_on_floor():
+		velocity.y -= gravity * delta * 3
+
 	move_and_slide()
 
 func _unhandled_input(event: InputEvent) -> void:

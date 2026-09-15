@@ -1,13 +1,14 @@
 extends Node
 
 
-func velocity(target: Player, direction := Vector2(0,0), duration := 1.0, decay := 0.99) -> void:
+func velocity(target: Player, direction := Vector3.ZERO, duration := 1.0, decay := 0.99) -> void:
 	var imp := Impulse.new()
 	imp.vec = direction
 	target.impulses.append(imp)
 	for i in (Engine.physics_ticks_per_second * duration):
 		imp.vec *= decay
 		await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second).timeout
+	target.impulses.erase(imp)
 
 func wait(frames := 60, speed := 1.0) -> void:
 	for i in frames:
@@ -17,18 +18,17 @@ func afterimage(target: Player, quantity := 5, in_between := 0.1, duration := 1.
 	var source: MeshInstance3D = target.get_node("MeshInstance3D")
 	for i in quantity:
 		var clone := source.duplicate() as MeshInstance3D
-		target.get_parent().add_child(clone)   # <- see note below
+		target.get_parent().add_child(clone)
 		var mat: StandardMaterial3D = clone.get_active_material(0)
 		if mat == null:
 			mat = StandardMaterial3D.new()
-			mat.albedo_color = Color.WHITE
 		elif mat is BaseMaterial3D:
 			mat = mat.duplicate()
 		else:
-			mat = null
-		if mat is BaseMaterial3D:
-			mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_HASH
-			clone.set_surface_override_material(0, mat)
+			clone.queue_free()
+			continue
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_HASH
+		clone.set_surface_override_material(0, mat)
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		mat.albedo_color = custom_color
 		clone.global_transform = target.global_transform
@@ -58,30 +58,27 @@ func screen_flash(target: Player, color := Color(1,1,1,1), duration := 1.0) -> v
 func counter() -> void:
 	pass
 
-func kick(target :Player=null, direction := Vector3(), force := 70.0, unattach := true, speed := 1.0) -> void:
-	var subject :Ball= target.grab_ball_area.ball
+func kick(target: Player = null, direction := Vector3(), force := 70.0, unattach := true, speed := 1.0) -> void:
+	var subject: Ball = target.grab_ball_area.ball
 	show(subject.trajectory_mesh)
 	var aim_dir := (target.transform.basis * direction).normalized()
 	var final_direction := -aim_dir * force
-	var ball_traj := PackedVector3Array()
 	var ball_traj_range := 240
+	var ball_traj_delta := 1.0 / Engine.physics_ticks_per_second
 	var ball_traj_width := 0.05
-	
-	ball_traj = subject.predict_trajectory(subject.global_position, final_direction, ball_traj_range/60.0, 1/60.0, speed)
-	
+
+	@warning_ignore("integer_division")
+	var ball_traj := subject.predict_trajectory(subject.global_position, final_direction, ball_traj_range / Engine.physics_ticks_per_second, ball_traj_delta, speed)
+
 	var traj_shortened := 2.5
-	
-	var step_size := int(pow(2,traj_shortened)) 
-	
+	var step_size := int(pow(2, traj_shortened))
+
 	var traj_ball_traj := PackedVector3Array()
-	
 	for i in range(0, ball_traj.size(), step_size):
 		traj_ball_traj.append(ball_traj[i])
 	subject.trajectory_mesh.mesh = subject.build_traj_mesh(traj_ball_traj, ball_traj_width)
 	subject.trajectory_mesh.visible = true
-	
-	
-	
+
 	if unattach:
 		subject.current_owner = null
 		subject.last_owner = target
@@ -91,6 +88,8 @@ func kick(target :Player=null, direction := Vector3(), force := 70.0, unattach :
 
 func fade_and_hide(mesh_inst: MeshInstance3D, duration := 0.5) -> void:
 	var mat := mesh_inst.material_override as StandardMaterial3D
+	if mat == null:
+		return
 	mat.albedo_color.a = 1.0
 	var tween := create_tween()
 	tween.tween_property(mat, "albedo_color:a", 0.0, duration)
@@ -98,11 +97,13 @@ func fade_and_hide(mesh_inst: MeshInstance3D, duration := 0.5) -> void:
 
 func show(mesh_inst: MeshInstance3D) -> void:
 	var mat := mesh_inst.material_override as StandardMaterial3D
+	if mat == null:
+		return
 	mat.albedo_color.a = 1.0
 	var tween := create_tween()
 	tween.tween_property(mat, "albedo_color:a", 1.0, 0.0)
 	tween.tween_callback(func(): mesh_inst.visible = true)
 
-func delete(target:Node3D, seconds := 0.5):
+func delete(target: Node3D, seconds := 0.5) -> void:
 	await get_tree().create_timer(seconds).timeout
 	target.queue_free()
