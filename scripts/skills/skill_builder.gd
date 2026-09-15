@@ -3,6 +3,8 @@ extends Node
 
 func velocity(target: Player, direction := Vector3.ZERO, duration := 1.0, decay := 0.99) -> void:
 	var imp := Impulse.new()
+	if direction.y != 0:
+		target.velocity.y = 0.0
 	imp.vec = direction
 	target.impulses.append(imp)
 	for i in (Engine.physics_ticks_per_second * duration):
