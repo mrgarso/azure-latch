@@ -20,6 +20,12 @@ size = Vector3(5000, 20, 5000)
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_paxxb"]
 data = PackedVector3Array(-2500, 10, 2500, 2500, 10, 2500, -2500, -10, 2500, 2500, 10, 2500, 2500, -10, 2500, -2500, -10, 2500, 2500, 10, -2500, -2500, 10, -2500, 2500, -10, -2500, -2500, 10, -2500, -2500, -10, -2500, 2500, -10, -2500, 2500, 10, 2500, 2500, 10, -2500, 2500, -10, 2500, 2500, 10, -2500, 2500, -10, -2500, 2500, -10, 2500, -2500, 10, -2500, -2500, 10, 2500, -2500, -10, -2500, -2500, 10, 2500, -2500, -10, 2500, -2500, -10, -2500, 2500, 10, 2500, -2500, 10, 2500, 2500, 10, -2500, -2500, 10, 2500, -2500, 10, -2500, 2500, 10, -2500, -2500, -10, 2500, 2500, -10, 2500, -2500, -10, -2500, 2500, -10, 2500, 2500, -10, -2500, -2500, -10, -2500)
 
+[sub_resource type="BoxMesh" id="BoxMesh_yf5fn"]
+size = Vector3(1, 13.311829, 33.120728)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_paxxb"]
+size = Vector3(1, 13.311829, 33.120728)
+
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g4v7s"]
 
 [node name="map" type="Node3D" unique_id=1095926456]
@@ -40,6 +46,46 @@ mesh = SubResource("BoxMesh_g4v7s")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D" unique_id=336797803]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -10, 0)
 shape = SubResource("ConcavePolygonShape3D_paxxb")
+
+[node name="wall" type="MeshInstance3D" parent="StaticBody3D" unique_id=1239376497]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.912159, 6.1559143, -1.7536011)
+mesh = SubResource("BoxMesh_yf5fn")
+
+[node name="wall_hitbox" type="CollisionShape3D" parent="StaticBody3D" unique_id=1556571912]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.912159, 6.1559143, -1.7536011)
+shape = SubResource("BoxShape3D_paxxb")
+
+[node name="wall2" type="MeshInstance3D" parent="StaticBody3D" unique_id=1828214141]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.759018, 6.1559143, -36.343285)
+mesh = SubResource("BoxMesh_yf5fn")
+
+[node name="wall_hitbox2" type="CollisionShape3D" parent="StaticBody3D" unique_id=50899445]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.759018, 6.1559143, -36.343285)
+shape = SubResource("BoxShape3D_paxxb")
+
+[node name="wall3" type="MeshInstance3D" parent="StaticBody3D" unique_id=2103335890]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.218008, 6.1559143, -36.343285)
+mesh = SubResource("BoxMesh_yf5fn")
+
+[node name="wall_hitbox3" type="CollisionShape3D" parent="StaticBody3D" unique_id=766285589]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.218008, 6.1559143, -36.343285)
+shape = SubResource("BoxShape3D_paxxb")
+
+[node name="wall4" type="MeshInstance3D" parent="StaticBody3D" unique_id=59465039]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -4.3122673, 11.955978, -3.470909)
+mesh = SubResource("BoxMesh_yf5fn")
+
+[node name="wall_hitbox4" type="CollisionShape3D" parent="StaticBody3D" unique_id=568848011]
+transform = Transform3D(-4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0, 1, -4.3122673, 11.955978, -3.470909)
+shape = SubResource("BoxShape3D_paxxb")
+
+[node name="wall5" type="MeshInstance3D" parent="StaticBody3D" unique_id=1546540575]
+transform = Transform3D(-4.371139e-08, 1, 0, -0.93336844, -4.079883e-08, 0.35891968, 0.35891968, 1.5688878e-08, 0.93336844, -6.9419518, 5.072592, 26.205755)
+mesh = SubResource("BoxMesh_yf5fn")
+
+[node name="wall_hitbox5" type="CollisionShape3D" parent="StaticBody3D" unique_id=1359112490]
+transform = Transform3D(-4.371139e-08, 1, 0, -0.93336844, -4.079883e-08, 0.35891968, 0.35891968, 1.5688878e-08, 0.93336844, -6.9419518, 5.072592, 26.205755)
+shape = SubResource("BoxShape3D_paxxb")
 
 [node name="player" parent="." unique_id=1029011470 instance=ExtResource("1_4xfga")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)

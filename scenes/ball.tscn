@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://digb62ssmrr0e"]
 
 [ext_resource type="Script" uid="uid://cg0peowv1xwu4" path="res://scripts/ball/ball.gd" id="1_7s4qf"]
+[ext_resource type="Texture2D" uid="uid://k12whry0hwmn" path="res://assets/[CITYPNG.COM]Reticle Crosshair Red Icon FREE PNG - 700x700.png" id="2_cxlvu"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_g4v7s"]
 radius = 0.25
@@ -28,3 +29,9 @@ shape = SubResource("SphereShape3D_g4v7s")
 
 [node name="trajectory_mesh" type="MeshInstance3D" parent="." unique_id=592689705]
 mesh = SubResource("ArrayMesh_g4v7s")
+
+[node name="Sprite3D" type="Sprite3D" parent="." unique_id=905457605]
+transform = Transform3D(0.24, 0, 0, 0, 0.24, 0, 0, 0, 0.24, 0, 0, 0)
+modulate = Color(2.8684251, 0, 0, 1)
+billboard = 1
+texture = ExtResource("2_cxlvu")

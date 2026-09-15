@@ -82,7 +82,7 @@ func predict_trajectory(start_pos:= Vector3(0,0,0), start_vel:= Vector3(0,0,0), 
 		
 	return points
 
-func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 4, color := Color(1,0,1)) -> ArrayMesh:
+func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 3, color := Color(1,0,1)) -> ArrayMesh:
 	if points.size() < 2:
 		return ArrayMesh.new()
 	
@@ -147,6 +147,7 @@ func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 4,
 
 func apply_impulse(direction := Vector3.ZERO):
 	velocity += direction
+	print(direction)
 
 func local_curvature_radius(p0 := Vector3(), p1 := Vector3(), p2 := Vector3()) -> float:
 	var a := p0.distance_to(p1)
