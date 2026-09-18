@@ -15,6 +15,8 @@ var can_move := true:
 	set(value):
 		can_move = value
 		direction = Vector2.ZERO
+var current_gravity := 0.0
+var current_speed := 0.0
 var using_move := false
 var iframes := false
 var direction := Vector2.ZERO
@@ -22,6 +24,10 @@ var forw := Vector3.ZERO
 var sides := Vector3.ZERO
 var movement := Vector3.ZERO
 var impulses: Array[Impulse] = []
+
+func _ready() -> void:
+	current_gravity = gravity
+	current_speed = speed
 
 func _physics_process(delta: float) -> void:
 	fps_label.text = "fps = " + str(Engine.get_frames_per_second())
@@ -39,7 +45,7 @@ func _physics_process(delta: float) -> void:
 		if is_on_floor() and Input.is_action_pressed("space"):
 			velocity.y = jump_speed
 
-	movement = ((direction.x * sides) + (direction.y * forw)) * speed
+	movement = ((direction.x * sides) + (direction.y * forw)) * current_speed
 	if direction:
 		velocity.x = lerp(velocity.x, movement.x, delta * accel)
 		velocity.z = lerp(velocity.z, movement.z, delta * accel)
@@ -49,12 +55,13 @@ func _physics_process(delta: float) -> void:
 
 	#velocity.y = impulse_sum.y * delta * 3
 	#velocity.y = lerp(velocity.y, impulse_sum.y, delta * 3)
-	if impulse_sum.y:
-		velocity.y = lerp(velocity.y, impulse_sum.y * speed, delta * accel)
+	if impulse_sum.y or using_move:
+		velocity.y = lerp(velocity.y, impulse_sum.y * current_speed, delta * accel)
 	if not is_on_floor():
-		velocity.y -= gravity * delta * 4
-
+		velocity.y -= current_gravity * delta * 4
+	#print("vel = ",velocity,"   direction = ",direction,"   movement = ",movement, "   impulse",impulse_sum)
+	#print(velocity.y, "   ,", impulse_sum.y)
 	move_and_slide()
 
-func _unhandled_input(event: InputEvent) -> void:
+func _unhandled_input(_event: InputEvent) -> void:
 	pass
