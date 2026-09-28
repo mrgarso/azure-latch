@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c0qcyshtnuf6v"]
 
-[ext_resource type="PackedScene" uid="uid://cqi7fxayfxs8i" path="res://scenes/player.tscn" id="1_4xfga"]
+[ext_resource type="Script" uid="uid://ccpf84d3amc5" path="res://scripts/map.gd" id="1_paxxb"]
 [ext_resource type="PackedScene" uid="uid://digb62ssmrr0e" path="res://scenes/ball.tscn" id="2_paxxb"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4xfga"]
@@ -29,6 +29,7 @@ size = Vector3(1, 13.311829, 33.120728)
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_g4v7s"]
 
 [node name="map" type="Node3D" unique_id=1095926456]
+script = ExtResource("1_paxxb")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2097212809]
 environment = SubResource("Environment_gldc4")
@@ -86,9 +87,6 @@ mesh = SubResource("BoxMesh_yf5fn")
 [node name="wall_hitbox5" type="CollisionShape3D" parent="StaticBody3D" unique_id=1359112490]
 transform = Transform3D(-4.371139e-08, 1, 0, -0.93336844, -4.079883e-08, 0.35891968, 0.35891968, 1.5688878e-08, 0.93336844, -6.9419518, 5.072592, 26.205755)
 shape = SubResource("BoxShape3D_paxxb")
-
-[node name="player" parent="." unique_id=1029011470 instance=ExtResource("1_4xfga")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1356407303]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 1, 0)

@@ -3,11 +3,12 @@
 [ext_resource type="Script" uid="uid://cud45m48x82jv" path="res://scripts/player.gd" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://b4unfxy572sqc" path="res://scripts/camera_3d.gd" id="2_g2els"]
 [ext_resource type="Script" uid="uid://b5rqxnoug1b4t" path="res://scripts/skills/Isagi_moves/isagi_moves.gd" id="3_qhqgy"]
-[ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://scripts/skills/Isagi_moves/move_1.gd" id="4_dqkch"]
+[ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://scripts/skills/Isagi_moves/nagi_control.gd" id="4_dqkch"]
 [ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/grab_ball_area.gd" id="4_tuyoq"]
 [ext_resource type="Texture2D" uid="uid://b824ncaeuxk6r" path="res://assets/WhatsApp Image 2026-07-30 at 9.23.18 PM.jpeg" id="7_smehm"]
 [ext_resource type="Texture2D" uid="uid://u5a0wpx5ek68" path="res://assets/white-stucco-wall_1194-6992.jpg" id="8_smehm"]
 [ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console/console.gd" id="9_ur7pv"]
+[ext_resource type="Script" uid="uid://lhld7nck63jh" path="res://scripts/skills/movement.gd" id="9_y4r1p"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m5xwp"]
 
@@ -163,6 +164,9 @@ layout_mode = 2
 offset_transform_enabled = true
 text = "this is a test"
 label_settings = SubResource("LabelSettings_g4v7s")
+
+[node name="movement" type="Node" parent="." unique_id=1782003577]
+script = ExtResource("9_y4r1p")
 
 [connection signal="area_entered" from="grab_ball_area" to="grab_ball_area" method="_on_area_entered"]
 [connection signal="area_exited" from="grab_ball_area" to="grab_ball_area" method="_on_area_exited"]

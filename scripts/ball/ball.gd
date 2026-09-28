@@ -11,6 +11,8 @@ class_name Ball
 @export var mesh: MeshInstance3D
 @export var detection: Area3D
 @export var trajectory_mesh: MeshInstance3D
+@export var curve_friction := 0.25
+var curve_velocity := Vector3.ZERO
 var current_owner : Player = null
 var last_owner : Player = null
 
@@ -29,27 +31,43 @@ func _ready() -> void:
 	trajectory_mesh.top_level = true
 	trajectory_mesh.global_transform = Transform3D.IDENTITY
 
-func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, predicting := false) -> Dictionary:
+@warning_ignore("shadowed_variable")
+func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, \
+predicting := false, curvature := Vector3.ZERO, time_for_curvature := 1.0, \
+curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO, \
+curve_residual_friction := 0.9) -> Dictionary:
 	delta *= speed_scale
 	var decay = pow(air_friction, delta)
-	vel.x *= decay
-	vel.z *= decay
+	vel.x *= decay 
+	vel.z *= decay 
 	
 	var steps := 4
 	var step_delta = delta / steps
 	if current_owner == null or predicting:
 		vel += gravity_force * delta
 		for i in steps:
+			if curvature != Vector3.ZERO and curve_ref_dir != Vector3.ZERO:
+				var magnus_dir = curvature.cross(curve_ref_dir).normalized()
+				var t = clamp(curve_time / time_for_curvature, 0.0, 1.0)
+				var curve_strength = sin(t * PI)
+				vel += magnus_dir * curvature.length() * curvature_force * curve_strength * step_delta
+				curve_time += step_delta
+				
+				var lateral_component = vel.dot(magnus_dir)
+				var lateral_decay = pow(curve_friction, delta)
+				vel -= magnus_dir * lateral_component * (1.0 - lateral_decay)
+			
 			var motion = vel * step_delta
 			var motion_length = motion.length()
 			if motion_length < 0.001:
 				continue
 			
 			var space_state = get_world_3d().direct_space_state
-			var query = PhysicsRayQueryParameters3D.create(
+			var query := PhysicsRayQueryParameters3D.create(
 				pos,
 				pos + motion.normalized() * (motion.length() + radius)
 			)
+			query.set_collision_mask(1)
 			var result = space_state.intersect_ray(query)
 			if result:
 				pos = result.position - motion.normalized() * radius
@@ -57,29 +75,44 @@ func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, pred
 				var normal_part :Vector3= bounced.dot(result.normal) * result.normal
 				var tangent_part := bounced - normal_part
 				vel = tangent_part + normal_part * restitution
+				curvature = Vector3.ZERO
 			else:
 				pos += motion
 		
-	return {"position": pos, "velocity": vel}
+	return {"position": pos, "velocity": vel, "curve_time": curve_time, "curve_velocity": curve_velocity, "curvature": curvature}
 
 func _physics_process(delta: float) -> void:
-	var result = simulate_step(global_position, velocity, delta)
-	global_position = result.position
-	velocity = result.velocity
+	if !current_owner:
+		var result = simulate_step(global_position, velocity, delta, false, \
+			curvature, time_for_curvature, curvature_force, curve_elapsed, curve_ref_dir)
+		global_position = result.position
+		velocity = result.velocity
+		curve_elapsed = result.curve_time
+		curvature = result.curvature
 
-func predict_trajectory(start_pos:= Vector3(0,0,0), start_vel:= Vector3(0,0,0), seconds:= 1.0, dt:= (1.0/60.0), speed := 1.0) -> PackedVector3Array:
+@warning_ignore("shadowed_variable")
+func predict_trajectory(start_pos:= Vector3(0,0,0), start_vel:= Vector3(0,0,0), \
+seconds:= 1.0, dt:= (1.0/60.0), speed := 1.0, \
+curvature := Vector3.ZERO, time_for_curvature := 1.0, curvature_force := 1.0) -> PackedVector3Array:
 	speed_scale = speed
 	var points := PackedVector3Array()
 	var pos := start_pos
 	var vel := start_vel
+	var curve_time := 0.0
+	var current_curvature := curvature
+	@warning_ignore("shadowed_variable")
+	var curve_ref_dir := start_vel.normalized()   # frozen for the whole preview, just like the real kick
 	points.append(pos)
 	var iterations = int(seconds / dt)
 	for i in iterations:
-		var result = simulate_step(pos, vel, dt * speed, true)
+		var result = simulate_step(pos, vel, dt * speed, true, \
+			current_curvature, time_for_curvature, curvature_force, curve_time, curve_ref_dir)
 		pos = result.position
 		vel = result.velocity
+		curve_time = result.curve_time
+		current_curvature = result.curvature
 		points.append(pos)
-		
+	
 	return points
 
 func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 3, color := Color(1,0,1)) -> ArrayMesh:
@@ -145,8 +178,19 @@ func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 3,
 	st.generate_normals()
 	return st.commit()
 
-func apply_impulse(direction := Vector3.ZERO):
+var curvature := Vector3.ZERO
+var time_for_curvature := 1.0
+var curvature_force := 1.0
+var curve_elapsed := 0.0
+var curve_ref_dir := Vector3.ZERO 
+
+func apply_impulse(direction := Vector3.ZERO, curve := Vector3.ZERO, curve_time := 1.0, curve_force := 1.0):
+	curve_elapsed = 0.0
+	curvature = curve
+	time_for_curvature = curve_time
+	curvature_force = curve_force
 	velocity += direction
+	curve_ref_dir = velocity.normalized()
 
 func local_curvature_radius(p0 := Vector3(), p1 := Vector3(), p2 := Vector3()) -> float:
 	var a := p0.distance_to(p1)

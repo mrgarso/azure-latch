@@ -11,6 +11,16 @@ class_name Player
 @export var grab_ball_area: Area3D
 @export var fps_label: Label
 
+var ball :Ball= null:
+	set(value):
+		grab_ball_area.ball = value
+		ball = value
+		if value != null:
+			ball.current_owner = self
+var can_grab_ball := true:
+	set(value):
+		grab_ball_area.can_grab = value
+		can_grab_ball = value
 var can_move := true:
 	set(value):
 		can_move = value
@@ -22,6 +32,7 @@ var iframes := false
 var direction := Vector2.ZERO
 var forw := Vector3.ZERO
 var sides := Vector3.ZERO
+var up := Vector3.ZERO
 var movement := Vector3.ZERO
 var impulses: Array[Impulse] = []
 
@@ -33,7 +44,8 @@ func _physics_process(delta: float) -> void:
 	fps_label.text = "fps = " + str(Engine.get_frames_per_second())
 	forw = transform.basis.z
 	sides = transform.basis.x
-
+	up = transform.basis.y
+	
 	var impulse_sum := Vector3.ZERO
 	for imp in impulses:
 		impulse_sum += imp.vec
@@ -59,6 +71,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = lerp(velocity.y, impulse_sum.y * current_speed, delta * accel)
 	if not is_on_floor():
 		velocity.y -= current_gravity * delta * 4
+		print(current_gravity * delta * 4)
 	#print("vel = ",velocity,"   direction = ",direction,"   movement = ",movement, "   impulse",impulse_sum)
 	#print(velocity.y, "   ,", impulse_sum.y)
 	move_and_slide()
