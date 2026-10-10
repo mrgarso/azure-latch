@@ -11,13 +11,13 @@ duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override 
 	print("before: ", target.velocity)
 	imp.vec = direction
 	imp.override = override
-	imp.vec.y -= (target.velocity.y / target.current_speed) * (int(!override) * 4)
 	#print(int(!override))
 	target.impulses.append(imp)
 	if fade_out:
 		for i in (Engine.physics_ticks_per_second * duration):
 			print("during: ", target.velocity)
 			imp.vec *= decay
+			imp.vec.y -= custom_gravity * (Engine.time_scale/Engine.physics_ticks_per_second) * 0.5
 			if imp.cleared:
 				break
 			await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second).timeout
