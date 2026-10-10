@@ -8,14 +8,11 @@ duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override 
 		target.current_gravity = custom_gravity
 	if reset_y:
 		target.velocity.y = 0.0
-	print("before: ", target.velocity)
 	imp.vec = direction
 	imp.override = override
-	#print(int(!override))
 	target.impulses.append(imp)
 	if fade_out:
 		for i in (Engine.physics_ticks_per_second * duration):
-			print("during: ", target.velocity)
 			imp.vec *= decay
 			imp.vec.y -= custom_gravity * (Engine.time_scale/Engine.physics_ticks_per_second) * 0.5
 			if imp.cleared:
@@ -163,7 +160,34 @@ enum HitboxTargets {
 	BALL = 3
 }
 
-func hitbox(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, duration := 1.0, target := HitboxTargets.BALL) -> Player:
+func hitbox(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, duration := 1.0, target := HitboxTargets.BALL) -> void:
+	var area := Area3D.new()
+	var collision := CollisionShape3D.new()
+	@warning_ignore("unused_variable")
+	var collided := false
+	var target_hit :Node3D= null
+	collision.shape = BoxShape3D.new() as BoxShape3D
+	collision.position = offset
+	collision.debug_color = Color(0.5,0,1)
+	collision.shape.size = size
+	collision.disabled = !parent.can_grab_ball
+	area.set_collision_mask_value(1, false)
+	area.set_collision_mask_value(target, true)
+	area.add_child(collision)
+	parent.add_child(area)
+	for i in Engine.physics_ticks_per_second * duration:
+		area.global_position = parent.global_position
+		collision.disabled = !parent.can_grab_ball
+		if area.get_overlapping_areas() and area.get_overlapping_areas()[0].get_parent() != parent:
+			collided = true
+			target_hit = area.get_overlapping_areas()[0].get_parent()
+			break
+		await wait(1)
+	delete(area, 0.0)
+	if target_hit is Ball:
+		parent.ball = target_hit
+
+func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, duration := 1.0, target := HitboxTargets.BALL) -> Player:
 	var area := Area3D.new()
 	var collision := CollisionShape3D.new()
 	@warning_ignore("unused_variable")

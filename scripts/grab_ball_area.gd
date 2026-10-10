@@ -7,7 +7,7 @@ var hold_time := 0.0
 var kick_strength := 5.0
 @export var kick_modes :Array[float] = [0.1, 0.5]
 @export var strength := 1.0
-@export var kick_strengths :Array[float] = [10.0, 30.0, 75.0]
+@export var kick_strengths :Array[float] = [50.0, 35.0, 60.0]
 @export var ball_holder: Node3D
 @export var player: Player
 @export var ball_aim: MeshInstance3D
@@ -24,6 +24,7 @@ func _physics_process(delta: float) -> void:
 			kick_strength = kick_strengths[1] * strength
 		var x when x >= kick_modes[1]:
 			kick_strength = kick_strengths[2] * strength
+	print(kick_strengths)
 	if ball:
 		ball.global_position = ball_holder.global_position
 	curvature_force *= strength
