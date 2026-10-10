@@ -24,7 +24,6 @@ func _physics_process(delta: float) -> void:
 			kick_strength = kick_strengths[1] * strength
 		var x when x >= kick_modes[1]:
 			kick_strength = kick_strengths[2] * strength
-	print(kick_strengths)
 	if ball:
 		ball.global_position = ball_holder.global_position
 	curvature_force *= strength

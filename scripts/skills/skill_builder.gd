@@ -209,13 +209,26 @@ func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := 
 	area.set_collision_mask_value(target, true)
 	area.add_child(collision)
 	parent.add_child(area)
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = collision.shape
+	query.collide_with_areas = true
+	query.collide_with_bodies = false
+	query.collision_mask = area.collision_mask
 	for i in Engine.physics_ticks_per_second * duration:
 		area.global_position = parent.global_position
 		collision.disabled = !parent.can_grab_ball
-		if area.get_overlapping_areas() and area.get_overlapping_areas()[0].get_parent() != parent:
-			collided = true
-			target_hit = area.get_overlapping_areas()[0].get_parent()
-			break
+		query.transform = area.global_transform
+		var space_state: PhysicsDirectSpaceState3D = parent.get_world_3d().direct_space_state
+		var intersections := space_state.intersect_shape(query)
+		if not intersections.is_empty():
+			print(intersections)
+			for t in intersections:
+				var detected_area = t.collider as Area3D
+				if detected_area and detected_area.get_parent() != parent:
+					collided = true
+					target_hit = detected_area.get_parent()
+					break
+		if collided:break
 		await wait(1)
 	delete(area, 0.0)
 	if target_hit is Ball:
