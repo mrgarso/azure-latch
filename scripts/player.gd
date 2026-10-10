@@ -1,6 +1,7 @@
 extends CharacterBody3D
 class_name Player
 
+@export_enum("player", "dummy") var mode := "player"
 @export var speed := 20.0
 @export var accel := 10.0
 @export var frict := 10.0
@@ -56,9 +57,9 @@ func _physics_process(delta: float) -> void:
 	if using_move:
 		direction = Vector2(impulse_sum.x, impulse_sum.z)
 	elif can_move:
-		direction = Input.get_vector("a", "d", "w", "s") + (Vector2(override_impulse_sum.x, override_impulse_sum.z))
+		direction = (Input.get_vector("a", "d", "w", "s") * int(mode == "player")) + (Vector2(override_impulse_sum.x, override_impulse_sum.z))
 		if is_on_floor() and Input.is_action_pressed("space"):
-			velocity.y = jump_speed
+			velocity.y = (jump_speed) * int(mode == "player")
 	
 	movement = ((direction.x * sides) + (direction.y * forw)) * current_speed
 	if direction:

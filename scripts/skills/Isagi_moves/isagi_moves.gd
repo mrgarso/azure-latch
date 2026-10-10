@@ -4,7 +4,7 @@ extends Node
 @export var player: Player
 
 func _unhandled_input(event: InputEvent) -> void:
-	if !player.using_move:
+	if !player.using_move and player.mode == "player":
 		if Input.is_action_just_pressed("1"):
 			trigger("MOVE_1")
 

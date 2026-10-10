@@ -13,15 +13,18 @@ func _physics_process(delta: float) -> void:
 	if fov_changers:
 		pass
 	if Input.is_action_just_pressed("shift"):
+		if player.mode != "player": return
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
 func _ready() -> void:
+	current = (player.mode == "player")
 	spring_arm_3d.spring_length = initial_spring_distance
 
 func invert_shift_lock():
+	if player.mode != "player": return
 	if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
@@ -30,5 +33,5 @@ func invert_shift_lock():
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
-		spring_arm_3d.rotation.x -= event.relative.y * sens
-		player.rotation.y -= event.relative.x * sens
+		spring_arm_3d.rotation.x -= (event.relative.y * sens) * (int(player.mode == "player"))
+		player.rotation.y -= (event.relative.x * sens) * (int(player.mode == "player"))
