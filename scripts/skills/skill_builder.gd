@@ -187,7 +187,14 @@ func hitbox(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.Z
 	if target_hit is Ball:
 		parent.ball = target_hit
 
-func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, duration := 1.0, target := HitboxTargets.BALL) -> Player:
+var hitbox_detailed_list := {
+		"collided":null,
+		"velocity":Vector3.ZERO,
+		"position":Vector3.ZERO,
+		"class": &""
+		}
+
+func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, duration := 1.0, target := HitboxTargets.BALL) -> Dictionary:
 	var area := Area3D.new()
 	var collision := CollisionShape3D.new()
 	@warning_ignore("unused_variable")
@@ -213,7 +220,14 @@ func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := 
 	delete(area, 0.0)
 	if target_hit is Ball:
 		parent.ball = target_hit
-	return null
+	if target_hit == null:
+		return hitbox_detailed_list
+	return {
+		"collided":target_hit,
+		"velocity":target_hit.velocity,
+		"position":target_hit.global_position,
+		"class":target_hit.get_script().get_global_name()
+		}
 
 func player_state(target : Player = null, grab_ball := true, iframes := false, duration := 1.0) -> void:
 	var before := {

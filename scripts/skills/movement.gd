@@ -8,12 +8,15 @@ func _unhandled_key_input(event: InputEvent) -> void:
 			var dir := Input.get_axis("a","d")
 			if dir == 0:
 				player.using_move = true
-				var tackle_duration := 0.9
+				var tackle_duration := 0.05
 				SB.velocity(get_parent(), true, Vector3(0,1,-5), tackle_duration, 0.95)
+				var enemy_tackled := SB.hitbox_detailed_list
 				for i in int(Engine.physics_ticks_per_second * tackle_duration):
 					if player.ball != null:
 						break
-					await SB.hitbox(player, Vector3.ONE * 5, Vector3.ZERO, Engine.time_scale / Engine.physics_ticks_per_second, SB.HitboxTargets.PLAYERS)
+					enemy_tackled = await SB.hitbox_detailed(player, Vector3.ONE * 5, Vector3.ZERO, Engine.time_scale / Engine.physics_ticks_per_second, SB.HitboxTargets.PLAYERS)
+					print(enemy_tackled)
+				
 				SB.clear_velocities(player)
 				player.using_move = false
 				return
