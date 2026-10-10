@@ -2,19 +2,22 @@ extends Node
 class_name SkillBuilder
 
 func velocity(target: Player,fade_out := false, direction := Vector3.ZERO, \
-duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override := false) -> void:
+duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override := false, reset_y := false) -> void:
 	var imp := Impulse.new()
 	if custom_gravity != target.gravity:
 		target.current_gravity = custom_gravity
-	if direction.y != 0:
+	if reset_y:
 		target.velocity.y = 0.0
+	print("before: ", target.velocity)
 	imp.vec = direction
 	imp.override = override
+	imp.vec.y -= (target.velocity.y / target.current_speed) * (int(!override) * 4)
+	#print(int(!override))
 	target.impulses.append(imp)
 	if fade_out:
 		for i in (Engine.physics_ticks_per_second * duration):
+			print("during: ", target.velocity)
 			imp.vec *= decay
-			imp.vec.y -= custom_gravity * (Engine.time_scale/Engine.physics_ticks_per_second) * 4
 			if imp.cleared:
 				break
 			await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second).timeout

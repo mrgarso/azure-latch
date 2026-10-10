@@ -23,7 +23,7 @@ func use(target:Player=null, speed:=1.0, godmode:=false, vulnerable:=false):
 			return
 		
 		SB.afterimage(target, 5, 0.15, 0.3, Color(0,0.3,0.7,0.4))
-		SB.velocity(target, true, Vector3(0, 20.4, -1.2), 0.6, .97, 0.0)
+		SB.velocity(target, true, Vector3(0, 20.4, -1.2), 0.6, .97, 0.0, false, true)
 		await SB.hitbox(target, Vector3.ONE * 5, Vector3.ZERO, 0.6, SB.HitboxTargets.BALL)
 		if target.ball:
 			SB.fov_change(target, 70, 50, 0.05)
