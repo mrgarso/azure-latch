@@ -34,12 +34,12 @@ func _physics_process(delta: float) -> void:
 		if hold_time < 1:
 			hold_time += delta
 		if ball:
-			SB.kick(player, Vector3(0 + lateral_dir_offset, max(player.spring_arm_3d.rotation.x * 2, 0), 1), \
+			SB.kick(player, Vector3(0 + lateral_dir_offset, min(-player.spring_arm_3d.rotation.x * 1.2, 0), 1), \
 			kick_strength, false, 1.3, true, curvature_dir, time_for_curve, curvature_force)
 	
 	elif Input.is_action_just_released("m1") and hold_time:
 		if ball:
-			SB.kick(player, Vector3(0 + lateral_dir_offset, max(player.spring_arm_3d.rotation.x * 2, 0), 1), \
+			SB.kick(player, Vector3(0 + lateral_dir_offset, min(-player.spring_arm_3d.rotation.x * 1.2, 0), 1), \
 			kick_strength, true, 1.3, true, curvature_dir, time_for_curve, curvature_force)
 		hold_time = 0
 
