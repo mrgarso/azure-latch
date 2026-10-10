@@ -52,7 +52,7 @@ func _physics_process(delta: float) -> void:
 		impulse_sum += imp.vec
 	for imp in impulses.filter(func(i): return i.override):
 		overried_impulse_sum += imp.vec
-
+	
 	if using_move:
 		direction = Vector2(impulse_sum.x, impulse_sum.z)
 	elif can_move:
@@ -67,17 +67,8 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = lerp(velocity.x, 0.0, delta * frict)
 		velocity.z = lerp(velocity.z, 0.0, delta * frict)
-
-	#velocity.y = impulse_sum.y * delta * 3
-	#velocity.y = lerp(velocity.y, impulse_sum.y, delta * 3)
 	if impulse_sum.y or using_move:
 		velocity.y = lerp(velocity.y, impulse_sum.y * current_speed, delta * accel)
 	if not is_on_floor():
 		velocity.y -= current_gravity * delta * 4
-		print(current_gravity * delta * 4)
-	#print("vel = ",velocity,"   direction = ",direction,"   movement = ",movement, "   impulse",impulse_sum)
-	#print(velocity.y, "   ,", impulse_sum.y)
 	move_and_slide()
-
-func _unhandled_input(_event: InputEvent) -> void:
-	pass
