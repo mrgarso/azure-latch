@@ -11,7 +11,7 @@ class_name Ball
 @export var mesh: MeshInstance3D
 @export var detection: Area3D
 @export var trajectory_mesh: MeshInstance3D
-@export var curve_friction := 0.25
+@export var curve_friction := 1.0
 var curve_velocity := Vector3.ZERO
 var current_owner : Player = null
 var last_owner : Player = null
@@ -34,8 +34,7 @@ func _ready() -> void:
 @warning_ignore("shadowed_variable")
 func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, \
 predicting := false, curvature := Vector3.ZERO, time_for_curvature := 1.0, \
-curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO, \
-curve_residual_friction := 0.9) -> Dictionary:
+curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO) -> Dictionary:
 	delta *= speed_scale
 	var decay = pow(air_friction, delta)
 	vel.x *= decay 
@@ -75,7 +74,6 @@ curve_residual_friction := 0.9) -> Dictionary:
 				var normal_part :Vector3= bounced.dot(result.normal) * result.normal
 				var tangent_part := bounced - normal_part
 				vel = tangent_part + normal_part * restitution
-				curvature = Vector3.ZERO
 			else:
 				pos += motion
 		

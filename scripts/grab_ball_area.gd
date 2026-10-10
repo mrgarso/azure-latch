@@ -7,14 +7,14 @@ var hold_time := 0.0
 var kick_strength := 5.0
 @export var kick_modes :Array[float] = [0.1, 0.5]
 @export var strength := 1.0
-@export var kick_strengths :Array[float] = [50.0, 35.0, 60.0]
+@export var kick_strengths :Array[float] = [10.0, 25.0, 75.0]
 @export var ball_holder: Node3D
 @export var player: Player
 @export var ball_aim: MeshInstance3D
 @export var sidespin_amount := 0.5
 @export var topspin_amount := 0.0
-@export var time_for_curve := 1.5
-@export var curvature_force := 3.0
+@export var time_for_curve := 2.5
+@export var curvature_force := 1.0
 
 func _physics_process(delta: float) -> void:
 	match hold_time:
@@ -54,7 +54,7 @@ func _input(event: InputEvent) -> void:
 
 func _on_area_entered(area: Node3D) -> void:
 	var target :Node3D= area.get_parent()
-	if target is Ball and can_grab and ball == null:
+	if target is Ball and can_grab and ball == null and target.current_owner == null:
 		player.ball = target
 		target.current_owner = player
 
