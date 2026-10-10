@@ -178,7 +178,7 @@ func hitbox(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.Z
 	for i in Engine.physics_ticks_per_second * duration:
 		area.global_position = parent.global_position
 		collision.disabled = !parent.can_grab_ball
-		if area.get_overlapping_areas():
+		if area.get_overlapping_areas() and area.get_overlapping_areas()[0].get_parent() != parent:
 			collided = true
 			target_hit = area.get_overlapping_areas()[0].get_parent()
 			break
