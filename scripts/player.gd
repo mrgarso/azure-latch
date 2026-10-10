@@ -47,16 +47,19 @@ func _physics_process(delta: float) -> void:
 	up = transform.basis.y
 	
 	var impulse_sum := Vector3.ZERO
-	for imp in impulses:
+	var overried_impulse_sum := Vector3.ZERO
+	for imp in impulses.filter(func(i): return !i.override):
 		impulse_sum += imp.vec
+	for imp in impulses.filter(func(i): return i.override):
+		overried_impulse_sum += imp.vec
 
 	if using_move:
 		direction = Vector2(impulse_sum.x, impulse_sum.z)
 	elif can_move:
-		direction = Input.get_vector("a", "d", "w", "s")
+		direction = Input.get_vector("a", "d", "w", "s") + (Vector2(overried_impulse_sum.x, overried_impulse_sum.z))
 		if is_on_floor() and Input.is_action_pressed("space"):
 			velocity.y = jump_speed
-
+	
 	movement = ((direction.x * sides) + (direction.y * forw)) * current_speed
 	if direction:
 		velocity.x = lerp(velocity.x, movement.x, delta * accel)
