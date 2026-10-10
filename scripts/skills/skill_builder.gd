@@ -1,28 +1,30 @@
 extends Node
-
+class_name skill_buielder
 
 func velocity(target: Player,fade_out := false, direction := Vector3.ZERO, duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override := false) -> void:
 	var imp := Impulse.new()
 	if custom_gravity != target.gravity:
 		target.current_gravity = custom_gravity
-	if direction.y != 0:
-		target.velocity.y = 0.0
-	imp.vec = direction
+	#if direction.y != 0:
+		#target.velocity.y = 0.0
+	var target_velocity := Vector3(target.velocity.x, target.velocity.y, target.velocity.z) / target.accel
+	imp.vec = (direction + target_velocity)
 	target.impulses.append(imp)
 	if fade_out:
 		for i in (Engine.physics_ticks_per_second * duration):
 			imp.vec *= decay
 			imp.vec.y -= custom_gravity * (Engine.time_scale/Engine.physics_ticks_per_second) * 4
 			if override:
-				target.velocity = imp.vec.x * target.sides + imp.vec.z * target.forw + ((max(imp.vec.y, target.velocity.y) - custom_gravity) * target.up) 
-				print((imp.vec.y - custom_gravity) * target.up)
+				target.velocity = imp.vec.x * target.sides + imp.vec.z * target.forw + ((max(imp.vec.y, target.velocity.y) \
+				- (custom_gravity * (Engine.time_scale/Engine.physics_ticks_per_second) * 4)) * target.up) 
 			if imp.cleared:
 				break
 			await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second).timeout
 	else:
 		for i in (Engine.physics_ticks_per_second * duration):
 			if override:
-				target.velocity = imp.vec.x * target.sides + imp.vec.z * target.forw + ((imp.vec.y - custom_gravity) * target.up) 
+				target.velocity = imp.vec.x * target.sides + imp.vec.z * target.forw + ((imp.vec.y - \
+				(custom_gravity * (Engine.time_scale/Engine.physics_ticks_per_second) * 4)) * target.up) 
 			if imp.cleared:
 				break
 			await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second).timeout
