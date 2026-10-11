@@ -75,3 +75,9 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= current_gravity * delta * 4
 	move_and_slide()
+
+func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
+	if perpetrator: perpetrator.ball = ball
+	ball = null
+	if perpetrator: SB.velocity(self, true, global_position.direction_to(perpetrator.global_position) * ragdoll) 
+	else:SB.velocity(self, true, Vector3(0,0,ragdoll))

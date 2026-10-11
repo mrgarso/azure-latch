@@ -7,14 +7,16 @@ var hold_time := 0.0
 var kick_strength := 5.0
 @export var kick_modes :Array[float] = [0.1, 0.5]
 @export var strength := 1.0
+@export var shot_speed := 1.0
 @export var kick_strengths :Array[float] = [10.0, 25.0, 75.0]
 @export var ball_holder: Node3D
 @export var player: Player
 @export var ball_aim: MeshInstance3D
-@export var sidespin_amount := 0.5
+@export var camera_3d: Camera3D
+@export var sidespin_amount := 2.5
 @export var topspin_amount := 0.0
 @export var time_for_curve := 2.5
-@export var curvature_force := 1.0
+@export var curvature_force := 0.2
 
 func _physics_process(delta: float) -> void:
 	match hold_time:
@@ -28,19 +30,19 @@ func _physics_process(delta: float) -> void:
 		ball.global_position = ball_holder.global_position
 	curvature_force *= strength
 	var lateral_speed := -player.velocity.dot(player.sides)
-	var curvature_dir := player.up * (sidespin_amount * -(lateral_speed * 2)) + player.sides * topspin_amount
+	var curvature_dir :Vector3= (player.up * (sidespin_amount * -(lateral_speed * 2)) + player.sides * topspin_amount)
 	var lateral_dir_offset := (((lateral_speed/50) * Ball.new().curve_friction) * sidespin_amount) * (time_for_curve * curvature_force)
 	if Input.is_action_pressed("m1"):
 		if hold_time < 1:
 			hold_time += delta
 		if ball:
 			SB.kick(player, Vector3(0 + lateral_dir_offset, min(-player.spring_arm_3d.rotation.x * 1.2, 0), 1), \
-			kick_strength, false, 1.3, true, curvature_dir, time_for_curve, curvature_force)
+			kick_strength, false, shot_speed, true, curvature_dir, time_for_curve, curvature_force)
 	
 	elif Input.is_action_just_released("m1") and hold_time:
 		if ball:
 			SB.kick(player, Vector3(0 + lateral_dir_offset, min(-player.spring_arm_3d.rotation.x * 1.2, 0), 1), \
-			kick_strength, true, 1.3, true, curvature_dir, time_for_curve, curvature_force)
+			kick_strength, true, shot_speed, true, curvature_dir, time_for_curve, curvature_force)
 		hold_time = 0
 
 

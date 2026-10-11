@@ -7,7 +7,8 @@ extends Camera3D
 @export var player: Player
 var desired_fov := 75.0
 var fov_changers :Array[float] = []
-var mouse_mode = Input.mouse_mode
+var mouse_mode := Input.mouse_mode
+var mouse_motion := Vector2()
 
 func _physics_process(delta: float) -> void:
 	if fov_changers:
@@ -33,5 +34,6 @@ func invert_shift_lock():
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		mouse_motion = event.relative
 		spring_arm_3d.rotation.x -= (event.relative.y * sens) * (int(player.mode == "player"))
 		player.rotation.y -= (event.relative.x * sens) * (int(player.mode == "player"))

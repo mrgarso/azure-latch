@@ -221,7 +221,6 @@ func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := 
 		var space_state: PhysicsDirectSpaceState3D = parent.get_world_3d().direct_space_state
 		var intersections := space_state.intersect_shape(query)
 		if not intersections.is_empty():
-			print(intersections)
 			for t in intersections:
 				var detected_area = t.collider as Area3D
 				if detected_area and detected_area.get_parent() != parent:
