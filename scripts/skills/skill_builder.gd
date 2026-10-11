@@ -226,7 +226,7 @@ include_not_ball_holder := true, include_teammates := false, include_enemies := 
 		var intersections := space_state.intersect_shape(query)
 		if not intersections.is_empty():
 			for t in space_state.intersect_shape(query):
-				var other := (t.collider as Node).get_parent() as Player
+				var other := (t.collider as Node3D).get_parent() as Player
 				if _is_valid_target(other, parent, include_ball_holder,
 						include_not_ball_holder, include_teammates, include_enemies):
 					target_hit = other

@@ -2,7 +2,9 @@ extends CharacterBody3D
 class_name Player
 
 @export_enum("player", "dummy") var mode := "player"
+@export var team := ""
 @export var speed := 20.0
+@export var speed_on_ball := 13.5
 @export var accel := 10.0
 @export var frict := 10.0
 @export var jump_speed := 35.0
@@ -17,7 +19,10 @@ var ball :Ball= null:
 		grab_ball_area.ball = value
 		ball = value
 		if value != null:
+			current_speed = speed_on_ball
 			ball.current_owner = self
+		else:
+			current_speed = speed
 var can_grab_ball := true:
 	set(value):
 		grab_ball_area.can_grab = value
