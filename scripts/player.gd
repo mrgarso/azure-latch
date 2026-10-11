@@ -2,6 +2,7 @@ extends CharacterBody3D
 class_name Player
 
 @export_enum("player", "dummy") var mode := "player"
+@export var dummy_behaviours :Array[DummyBehaviours]= []
 @export var team := ""
 @export var speed := 20.0
 @export var speed_on_ball := 13.5
