@@ -82,7 +82,10 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
+	SB.fov_change(self, 120, 90, 0.1)
 	if perpetrator: perpetrator.ball = ball
 	ball = null
-	if perpetrator: SB.velocity(self, true, global_position.direction_to(perpetrator.global_position) * ragdoll) 
-	else:SB.velocity(self, true, Vector3(0,0,ragdoll))
+	if perpetrator: SB.velocity(self, true, global_position.direction_to(perpetrator.global_position) * ragdoll, 0.5, 0.92, 40.0, true) 
+	else:SB.velocity(self, true, Vector3(0,0,ragdoll), 0.5, 0.92, 40.0, true)
+	SB.fov_change(self, 90, 70, 0.2)
+	await SB.wait(1)

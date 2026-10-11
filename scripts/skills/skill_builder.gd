@@ -81,14 +81,37 @@ func clear_afterimages(target) -> void:
 		return
 	multi.multimesh.instance_count = multi.multimesh.visible_instance_count
 
-func fov_change(target: Player, from := 70, to := 70, duration := 1.0) -> void:
-	for i in get_tree().get_processed_tweens():
-		if i.is_valid():
-			i.kill()
-	var tween := create_tween()
+enum Interp { CONST, LINEAR, SINE_IN, SINE_OUT, SINE_IN_OUT, EXPO_IN, EXPO_OUT, EXPO_IN_OUT }
+
+func apply_interp(kind: Interp, t: float) -> float:
+	match kind:
+		Interp.CONST:       return 1.0 if t >= 1.0 else 0.0
+		Interp.LINEAR:      return t
+		Interp.SINE_IN:     return 1.0 - cos(t * PI / 2.0)
+		Interp.SINE_OUT:    return sin(t * PI / 2.0)
+		Interp.SINE_IN_OUT: return -(cos(PI * t) - 1.0) / 2.0
+		Interp.EXPO_IN:     return 0.0 if t <= 0.0 else pow(2.0, 10.0 * t - 10.0)
+		Interp.EXPO_OUT:    return 1.0 if t >= 1.0 else 1.0 - pow(2.0, -10.0 * t)
+		Interp.EXPO_IN_OUT:
+			if t <= 0.0: return 0.0
+			if t >= 1.0: return 1.0
+			if t < 0.5:  return pow(2.0, 20.0 * t - 10.0) / 2.0
+			return (2.0 - pow(2.0, -20.0 * t + 10.0)) / 2.0
+	return t
+
+func fov_change(target: Player, from := 70.0, to := 70.0, duration := 1.0, kind := Interp.LINEAR) -> void:
 	var camera: Camera3D = target.get_node("shoulder/SpringArm3D/Camera3D")
+	if camera.has_meta("fov_tween"):
+		var old: Tween = camera.get_meta("fov_tween")
+		if old and old.is_valid():
+			old.kill()
 	camera.fov = from
-	tween.tween_property(camera, "fov", to, duration)
+	var tween := create_tween()
+	camera.set_meta("fov_tween", tween)
+	tween.tween_method(
+		func(t: float): camera.fov = lerpf(from, to, apply_interp(kind, t)),
+		0.0, 1.0, duration
+	)
 
 func screen_flash(target: Player, color := Color(1,1,1,1), duration := 1.0) -> void:
 	var screen: CanvasLayer = target.get_node("screen_effects")
