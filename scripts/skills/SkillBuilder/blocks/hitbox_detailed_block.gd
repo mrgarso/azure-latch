@@ -1,0 +1,2 @@
+class_name HitboxDetailedBlock
+extends SkillBuilderBlock

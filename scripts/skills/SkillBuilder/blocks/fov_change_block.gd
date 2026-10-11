@@ -1,0 +1,2 @@
+class_name FovChangeBlock
+extends SkillBuilderBlock
