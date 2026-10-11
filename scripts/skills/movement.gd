@@ -1,15 +1,25 @@
 extends Node
+class_name Movement
 
 @onready var player :Player= $".."
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if !player.using_move and player.mode == "player":
 		if Input.is_action_just_pressed("e"):
-			tackle_and_dash()
+			tackle_and_dash(false, false)
 
-func tackle_and_dash(reset_position := false) -> void:
+func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none") -> void:
 	var init_pos := player.global_position
 	var dir := Input.get_axis("a","d")
+	if tackle: dir = 0
+	else:
+		match pre_dir:
+			"right":
+				dir = 1
+			"left":
+				dir = -1
+			"none":
+				pass
 	if dir == 0:
 		player.using_move = true
 		var tackle_duration := 0.9

@@ -14,7 +14,9 @@ class_name Player
 @export var spring_arm_3d: SpringArm3D
 @export var grab_ball_area: Area3D
 @export var fps_label: Label
+@export var moves: Movement
 
+var dummy_behaving := false
 var ball :Ball= null:
 	set(value):
 		grab_ball_area.ball = value
@@ -48,6 +50,10 @@ func _ready() -> void:
 	current_speed = speed
 
 func _physics_process(delta: float) -> void:
+	if !dummy_behaving and mode == "dummy":
+		dummy_behaving = true
+		for i in dummy_behaviours:
+			i.run(self)
 	fps_label.text = "fps = " + str(Engine.get_frames_per_second())
 	forw = transform.basis.z
 	sides = transform.basis.x
@@ -81,6 +87,9 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y -= current_gravity * delta * 4
 	move_and_slide()
+
+func tackle(reset_pos := false, tack := false, side := "none") -> void:
+	await moves.tackle_and_dash(reset_pos, tack, side)
 
 func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
 	SB.fov_change(self, 120, 90, 0.1)

@@ -12,6 +12,8 @@ class_name Ball
 @export var detection: Area3D
 @export var trajectory_mesh: MeshInstance3D
 @export var curve_friction := 1.0
+@export var grab_cooldown := 0.2
+var can_grab := true
 var curve_velocity := Vector3.ZERO
 var current_owner : Player = null
 var last_owner : Player = null

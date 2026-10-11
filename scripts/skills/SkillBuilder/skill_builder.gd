@@ -17,12 +17,12 @@ duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override 
 			imp.vec.y -= custom_gravity * (Engine.time_scale/Engine.physics_ticks_per_second) * 0.5
 			if imp.cleared:
 				break
-			await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second).timeout
+			await wait(1)
 	else:
 		for i in (Engine.physics_ticks_per_second * duration):
 			if imp.cleared:
 				break
-			await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second).timeout
+			await wait(1)
 	target.impulses.erase(imp)
 	target.current_gravity = target.gravity
 
@@ -30,6 +30,9 @@ func clear_velocities(target : Player) -> void:
 	var impulses := target.impulses
 	for i in impulses:
 		i.cleared = true
+
+func tackle(target : Player, tack := true, reset_pos := false, side := "none") -> void:
+	if target.ball == null: await target.tackle(reset_pos, tack, side)
 
 func wait(frames := 60, speed := 1.0) -> void:
 	for i in frames:
