@@ -12,8 +12,9 @@ func _unhandled_key_input(event: InputEvent) -> void:
 				SB.velocity(get_parent(), true, Vector3(0,1,-6), tackle_duration, 0.923)
 				var enemy_tackled := SB.hitbox_detailed_list
 				for i in int(Engine.physics_ticks_per_second * tackle_duration):
-					if player.ball != null or enemy_tackled["collided"].ball != null:
-						break
+					#if player.ball != null: 
+						#if enemy_tackled["collided"].ball != null:
+							#break
 					enemy_tackled = await SB.hitbox_detailed(player, Vector3.ONE * 5, Vector3.ZERO, (Engine.time_scale / Engine.physics_ticks_per_second) * 1, SB.HitboxTargets.PLAYERS)
 					
 					#print(enemy_tackled)

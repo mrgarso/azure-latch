@@ -160,7 +160,9 @@ enum HitboxTargets {
 	BALL = 3
 }
 
-func hitbox(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, duration := 1.0, target := HitboxTargets.BALL) -> void:
+func hitbox(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, \
+duration := 1.0, target := HitboxTargets.BALL, include_ball_holder := false, \
+include_not_ball_holder := true, include_teammates := false, include_enemies := true) -> void:
 	var area := Area3D.new()
 	var collision := CollisionShape3D.new()
 	@warning_ignore("unused_variable")
@@ -194,7 +196,9 @@ var hitbox_detailed_list := {
 		"class": &""
 		}
 
-func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, duration := 1.0, target := HitboxTargets.BALL) -> Dictionary:
+func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, \
+duration := 1.0, target := HitboxTargets.BALL, include_ball_holder := false, \
+include_not_ball_holder := true, include_teammates := false, include_enemies := true) -> Dictionary:
 	var area := Area3D.new()
 	var collision := CollisionShape3D.new()
 	@warning_ignore("unused_variable")
@@ -221,14 +225,14 @@ func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := 
 		var space_state: PhysicsDirectSpaceState3D = parent.get_world_3d().direct_space_state
 		var intersections := space_state.intersect_shape(query)
 		if not intersections.is_empty():
-			for t in intersections:
-				var detected_area = t.collider as Area3D
-				if detected_area and detected_area.get_parent() != parent:
-					collided = true
-					target_hit = detected_area.get_parent()
+			for t in space_state.intersect_shape(query):
+				var other := (t.collider as Node).get_parent() as Player
+				if _is_valid_target(other, parent, include_ball_holder,
+						include_not_ball_holder, include_teammates, include_enemies):
+					target_hit = other
 					break
-		if collided:break
-		await wait(1)
+			if target_hit: break
+			await wait(1)
 	delete(area, 0.0)
 	if target_hit is Ball:
 		parent.ball = target_hit
@@ -240,6 +244,21 @@ func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := 
 		"position":target_hit.global_position,
 		"class":target_hit.get_script().get_global_name()
 		}
+
+func _is_valid_target(target: Player, parent: Player, include_ball_holder: bool,
+		include_not_ball_holder: bool, include_teammates: bool, include_enemies: bool) -> bool:
+	if target == null or target == parent:
+		return false
+	
+	var has_ball := target.ball != null
+	if has_ball and not include_ball_holder: return false
+	if not has_ball and not include_not_ball_holder: return false
+	
+	var is_teammate :bool= target.team == parent.team
+	if is_teammate and not include_teammates: return false
+	if not is_teammate and not include_enemies: return false
+
+	return true
 
 func player_state(target : Player = null, grab_ball := true, iframes := false, duration := 1.0) -> void:
 	var before := {
