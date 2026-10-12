@@ -1,6 +1,8 @@
 extends Node
 class_name SkillBuilder
 
+var players_positions : Dictionary[Player, Vector3]
+
 func velocity(target: Player,fade_out := false, direction := Vector3.ZERO, \
 duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override := false, reset_y := false) -> void:
 	var imp := Impulse.new()
@@ -116,6 +118,9 @@ func fov_change(target: Player, from := 70.0, to := 70.0, duration := 1.0, kind 
 		0.0, 1.0, duration
 	)
 
+func save_position(target : Player = null, pos := Vector3(), id := "") -> void:
+	players_positions
+
 func screen_flash(target: Player, color := Color(1,1,1,1), duration := 1.0) -> void:
 	var screen: CanvasLayer = target.get_node("screen_effects")
 	for i in screen.get_child_count():
@@ -144,7 +149,7 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 	ball_traj_range / Engine.physics_ticks_per_second, ball_traj_delta, speed, \
 	curvature_dir, time_for_curve, curvature_force)
 	if show_traj:
-		var traj_shortened := 2.5
+		var traj_shortened := 1.0
 		var step_size := int(pow(2, traj_shortened))
 		var traj_ball_traj := PackedVector3Array()
 		for i in range(0, ball_traj.size(), step_size):

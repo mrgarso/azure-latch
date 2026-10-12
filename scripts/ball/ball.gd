@@ -13,6 +13,7 @@ class_name Ball
 @export var trajectory_mesh: MeshInstance3D
 @export var curve_friction := 1.0
 @export var grab_cooldown := 0.2
+@export var physics_steps := 4
 var can_grab := true
 var curve_velocity := Vector3.ZERO
 var current_owner : Player = null
@@ -32,6 +33,17 @@ func _ready() -> void:
 	trajectory_mesh.visible = false
 	trajectory_mesh.top_level = true
 	trajectory_mesh.global_transform = Transform3D.IDENTITY
+	_warm_up_trajectory()
+
+func _warm_up_trajectory() -> void:
+	var saved_speed := speed_scale
+	var pts := predict_trajectory(global_position, Vector3(5, 5, 0), 0.5, 1.0 / 60.0, 1.0)
+	speed_scale = saved_speed  # predict_trajectory overwrites this
+	trajectory_mesh.mesh = build_traj_mesh(pts, 0.1, 3)
+	trajectory_mesh.visible = true
+	await get_tree().process_frame
+	await get_tree().process_frame
+	trajectory_mesh.visible = false
 
 @warning_ignore("shadowed_variable")
 func simulate_step(pos:= Vector3(0,0,0), vel:= Vector3(0,0,0), delta:= 0.0, \
@@ -42,11 +54,11 @@ curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO) -> Dic
 	vel.x *= decay 
 	vel.z *= decay 
 	
-	var steps := 4
-	var step_delta = delta / steps
+	
+	var step_delta = delta / physics_steps
 	if current_owner == null or predicting:
 		vel += gravity_force * delta
-		for i in steps:
+		for i in physics_steps:
 			if curvature != Vector3.ZERO and curve_ref_dir != Vector3.ZERO:
 				var magnus_dir = curvature.cross(curve_ref_dir).normalized()
 				var t = clamp(curve_time / time_for_curvature, 0.0, 1.0)
@@ -103,9 +115,11 @@ curvature := Vector3.ZERO, time_for_curvature := 1.0, curvature_force := 1.0) ->
 	@warning_ignore("shadowed_variable")
 	var curve_ref_dir := start_vel.normalized()   # frozen for the whole preview, just like the real kick
 	points.append(pos)
-	var iterations = int(seconds / dt)
+	@warning_ignore("integer_division")
+	var iterations = int(seconds / dt) / (physics_steps/1)
 	for i in iterations:
-		var result = simulate_step(pos, vel, dt * speed, true, \
+		@warning_ignore("integer_division")
+		var result = simulate_step(pos, vel, (dt * (physics_steps/1)) * speed, true, \
 			current_curvature, time_for_curvature, curvature_force, curve_time, curve_ref_dir)
 		pos = result.position
 		vel = result.velocity
@@ -115,10 +129,23 @@ curvature := Vector3.ZERO, time_for_curvature := 1.0, curvature_force := 1.0) ->
 	
 	return points
 
+func check_predict_points(points: PackedVector3Array) -> void:
+	for n in get_tree().get_nodes_in_group("p_point"):
+		n.queue_free()
+	
+	for i in points.size():
+		var label := Label3D.new()
+		label.name = "p_point %d" % i
+		label.text = str(i)
+		label.add_to_group("p_point")
+		get_tree().current_scene.add_child(label)
+		label.global_position = points[i] + Vector3.UP * 2
+
 func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 3, color := Color(1,0,1)) -> ArrayMesh:
 	if points.size() < 2:
 		return ArrayMesh.new()
 	
+	check_predict_points(points)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	
