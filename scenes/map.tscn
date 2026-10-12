@@ -39,11 +39,17 @@ metadata/_custom_type_script = "uid://c5gd1u2ydpyj3"
 
 [sub_resource type="Resource" id="Resource_oprun"]
 script = ExtResource("7_blm8a")
-time_in_frames = 30
 metadata/_custom_type_script = "uid://beuc1esv0016a"
 
-[sub_resource type="Resource" id="Resource_mlgqr"]
+[sub_resource type="Resource" id="Resource_nakos"]
 script = ExtResource("4_nakos")
+preset_name = "tackle_dummy"
+elements = Array[ExtResource("5_jh32y")]([SubResource("Resource_jej6c"), SubResource("Resource_oprun")])
+metadata/_custom_type_script = "uid://g20fb3vbnbn"
+
+[sub_resource type="Resource" id="Resource_jh32y"]
+script = ExtResource("4_nakos")
+preset_name = "tackle_dummy"
 elements = Array[ExtResource("5_jh32y")]([SubResource("Resource_jej6c"), SubResource("Resource_oprun")])
 metadata/_custom_type_script = "uid://g20fb3vbnbn"
 
@@ -110,8 +116,14 @@ shape = SubResource("BoxShape3D_paxxb")
 [node name="ball" parent="." unique_id=1393979680 instance=ExtResource("2_paxxb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5898635, 1.8970218, 5.237695)
 
-[node name="player" parent="." unique_id=1029011470 instance=ExtResource("3_gldc4")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.626486, 3.0537367, 0)
+[node name="tackle_dummy" parent="." unique_id=1029011470 instance=ExtResource("3_gldc4")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.626486, 1.0290349, 0)
 mode = "dummy"
-dummy_behaviours = Array[ExtResource("4_nakos")]([SubResource("Resource_mlgqr")])
+dummy_behaviours = Array[ExtResource("4_nakos")]([SubResource("Resource_nakos")])
+team = "b"
+
+[node name="tackle_dummy2" parent="." unique_id=1173286919 instance=ExtResource("3_gldc4")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 28.376717, 1.0290349, 0)
+mode = "dummy"
+dummy_behaviours = Array[ExtResource("4_nakos")]([SubResource("Resource_jh32y")])
 team = "b"

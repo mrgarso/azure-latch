@@ -112,6 +112,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46835515, -1.4177291)
 [node name="screen_effects" type="CanvasLayer" parent="." unique_id=943087902]
 
 [node name="mambo_flash" type="TextureRect" parent="screen_effects" unique_id=1057693532]
+visible = false
 self_modulate = Color(1, 1, 1, 0)
 anchors_preset = 8
 anchor_left = 0.5

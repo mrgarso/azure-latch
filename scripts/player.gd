@@ -38,6 +38,11 @@ var current_gravity := 0.0
 var current_speed := 0.0
 var using_move := false
 var iframes := false
+var true_iframes := false
+var dribbling := false:
+	set(value):
+		print(value)
+		dribbling = value
 var direction := Vector2.ZERO
 var forw := Vector3.ZERO
 var sides := Vector3.ZERO
@@ -92,6 +97,10 @@ func tackle(reset_pos := false, tack := false, side := "none") -> void:
 	await moves.tackle_and_dash(reset_pos, tack, side)
 
 func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
+	if dribbling:
+		if perpetrator: SB.velocity(self, true, global_position.direction_to(perpetrator.global_position) * 0.1, 0.5, 0.92, 40.0, true) 
+		SB.screen_flash(self)
+		return
 	SB.fov_change(self, 120, 90, 0.1)
 	if perpetrator: perpetrator.ball = ball
 	ball = null

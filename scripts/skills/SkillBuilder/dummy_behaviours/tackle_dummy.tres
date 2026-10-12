@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="DummyBehaviours" format=3 uid="uid://ctnrneq1ts3wh"]
+
+[ext_resource type="Script" uid="uid://dq3hffvf6dfoe" path="res://scripts/skills/SkillBuilder/blocks/skill_builder_block.gd" id="1_fpgxo"]
+[ext_resource type="Script" uid="uid://c5gd1u2ydpyj3" path="res://scripts/skills/SkillBuilder/blocks/tackle_block.gd" id="2_ofi1k"]
+[ext_resource type="Script" uid="uid://beuc1esv0016a" path="res://scripts/skills/SkillBuilder/blocks/wait_block.gd" id="3_5o1ux"]
+[ext_resource type="Script" uid="uid://g20fb3vbnbn" path="res://scripts/dummy_behaviours.gd" id="4_ht2ga"]
+
+[sub_resource type="Resource" id="Resource_jej6c"]
+script = ExtResource("2_ofi1k")
+reset_pos = true
+side_dir = "right"
+metadata/_custom_type_script = "uid://c5gd1u2ydpyj3"
+
+[sub_resource type="Resource" id="Resource_oprun"]
+script = ExtResource("3_5o1ux")
+metadata/_custom_type_script = "uid://beuc1esv0016a"
+
+[resource]
+script = ExtResource("4_ht2ga")
+preset_name = "tackle_dummy"
+elements = Array[ExtResource("1_fpgxo")]([SubResource("Resource_jej6c"), SubResource("Resource_oprun")])
+metadata/_custom_type_script = "uid://g20fb3vbnbn"

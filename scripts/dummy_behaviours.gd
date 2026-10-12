@@ -1,6 +1,7 @@
 extends Resource
 class_name DummyBehaviours
 
+@export var preset_name := ""
 @export var elements :Array[SkillBuilderBlock]= []
 var own_parent : Player = null
 
