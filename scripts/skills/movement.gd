@@ -29,13 +29,20 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 		SB.velocity(get_parent(), true, Vector3(0,1,-6), tackle_duration, 0.923)
 		var enemy_tackled := SB.hitbox_detailed_list
 		for i in int(Engine.physics_ticks_per_second * tackle_duration):
-			if player.ball == null and enemy_tackled["collided"] != null: 
-				if enemy_tackled["collided"].ball != null:
+			var enemy = enemy_tackled["collided"]
+			if player.ball == null and enemy != null: 
+				if enemy.ball != null:
 					#TACKLEADA PASA AQUI <--------------------------------
-					SB.fov_change(player, 80, 70, 0.6, SB.Interp.EXPO_IN)
-					var target = enemy_tackled["collided"] as Player
-					SB.velocity(player, true, Vector3(0,0,-1), 0.4, 0.9, 40.0, true)
-					target.tackled(player, 2)
+					var target = enemy as Player
+					if target.dribbling:
+						SB.clear_velocities(player)
+						SB.velocity(player, true, \
+						player.global_position.direction_to(target.global_position) * 0.5, \
+						0.5, 0.8, 40.0, true, true)
+					else:
+						SB.fov_change(player, 80, 70, 0.6, SB.Interp.EXPO_IN)
+						SB.velocity(player, true, Vector3(0,0,-1), 0.4, 0.9, 40.0, true)
+						target.tackled(player, 2)
 			enemy_tackled = await SB.hitbox_detailed(player, Vector3.ONE * 2.5, Vector3.ZERO, \
 			(Engine.time_scale / Engine.physics_ticks_per_second) * 1, SB.HitboxTargets.PLAYERS, \
 			true, false, false, true)

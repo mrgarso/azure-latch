@@ -98,7 +98,9 @@ func tackle(reset_pos := false, tack := false, side := "none") -> void:
 
 func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
 	if dribbling:
-		if perpetrator: SB.velocity(self, true, global_position.direction_to(perpetrator.global_position) * 0.1, 0.5, 0.92, 40.0, true) 
+		if perpetrator: 
+			SB.velocity(self, true, global_position.direction_to(perpetrator.global_position) * 0.1, 0.5, 0.92, 40.0, true) 
+			
 		SB.screen_flash(self)
 		return
 	SB.fov_change(self, 120, 90, 0.1)
