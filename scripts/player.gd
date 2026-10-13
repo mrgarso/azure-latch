@@ -39,10 +39,8 @@ var current_speed := 0.0
 var using_move := false
 var iframes := false
 var true_iframes := false
-var dribbling := false:
-	set(value):
-		print(value)
-		dribbling = value
+var dribbling := false
+var dribbled := false
 var direction := Vector2.ZERO
 var forw := Vector3.ZERO
 var sides := Vector3.ZERO

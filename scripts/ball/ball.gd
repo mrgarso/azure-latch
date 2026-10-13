@@ -108,23 +108,36 @@ seconds:= 1.0, dt:= (1.0/60.0), speed := 1.0, \
 curvature := Vector3.ZERO, time_for_curvature := 1.0, curvature_force := 1.0) -> PackedVector3Array:
 	speed_scale = speed
 	var points := PackedVector3Array()
+	var value := 0.1
+	var min_dist_sq := value * value 
 	var pos := start_pos
-	var vel := start_vel
+	var vel := start_vel * (1 + (physics_steps * 0.008))
 	var curve_time := 0.0
 	var current_curvature := curvature
 	@warning_ignore("shadowed_variable")
-	var curve_ref_dir := start_vel.normalized()   # frozen for the whole preview, just like the real kick
+	var curve_ref_dir := start_vel.normalized()
+	
 	points.append(pos)
+	var last_kept := pos
+	
 	@warning_ignore("integer_division")
 	var iterations = int(seconds / dt) / (physics_steps/1)
 	for i in iterations:
 		@warning_ignore("integer_division")
-		var result = simulate_step(pos, vel, (dt * (physics_steps/1)) * speed, true, \
+		var result = simulate_step(pos, vel, (dt * (physics_steps/1)) * speed, true,
 			current_curvature, time_for_curvature, curvature_force, curve_time, curve_ref_dir)
 		pos = result.position
 		vel = result.velocity
 		curve_time = result.curve_time
 		current_curvature = result.curvature
+		
+		# only keep the point if it's far enough from the last KEPT point
+		if pos.distance_squared_to(last_kept) >= min_dist_sq:
+			points.append(pos)
+			last_kept = pos
+	
+	# always keep the final point so the line reaches the true end
+	if pos != last_kept:
 		points.append(pos)
 	
 	return points
@@ -135,17 +148,17 @@ func check_predict_points(points: PackedVector3Array) -> void:
 	
 	for i in points.size():
 		var label := Label3D.new()
+		get_tree().current_scene.add_child(label)
 		label.name = "p_point %d" % i
 		label.text = str(i)
 		label.add_to_group("p_point")
-		get_tree().current_scene.add_child(label)
 		label.global_position = points[i] + Vector3.UP * 2
 
 func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 3, color := Color(1,0,1)) -> ArrayMesh:
 	if points.size() < 2:
 		return ArrayMesh.new()
 	
-	check_predict_points(points)
+	#check_predict_points(points)
 	var st := SurfaceTool.new()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	
