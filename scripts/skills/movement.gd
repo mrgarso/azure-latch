@@ -23,7 +23,7 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 				dir = -1
 			"none":
 				pass
-	if dir == 0:
+	if dir == 0 and player.ball == null:
 		player.using_move = true
 		var tackle_duration := 0.9
 		SB.velocity(get_parent(), true, Vector3(0,1,-6), tackle_duration, 0.923)
@@ -63,3 +63,6 @@ func dribble(dribble_time := 1.0) -> void:
 	if (dribble_time - dash_duration >= 0): 
 		await SB.wait(int((dribble_time - dash_duration) * 60))
 	player.dribbling = false
+
+func jump() -> void:
+	pass

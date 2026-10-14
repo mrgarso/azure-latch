@@ -26,6 +26,10 @@ Online="*uid://cfjbrwvqdd1x6"
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godotsteam/plugin.cfg")
+
 [input]
 
 a={
