@@ -67,7 +67,7 @@ curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO) -> Dic
 				curve_time += step_delta
 				
 				var lateral_component = vel.dot(magnus_dir)
-				var lateral_decay = pow(curve_friction, delta)
+				var lateral_decay = pow(curve_friction, step_delta)
 				vel -= magnus_dir * lateral_component * (1.0 - lateral_decay)
 			
 			var motion = vel * step_delta
@@ -91,7 +91,8 @@ curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO) -> Dic
 			else:
 				pos += motion
 		
-	return {"position": pos, "velocity": vel, "curve_time": curve_time, "curve_velocity": curve_velocity, "curvature": curvature}
+	return {"position": pos, "velocity": vel, "curve_time": curve_time, 
+		"curve_velocity": curve_velocity, "curvature": curvature}
 
 func _physics_process(delta: float) -> void:
 	if !current_owner:
