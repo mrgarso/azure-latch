@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://scripts/skills/Isagi_moves/nagi_control.gd" id="4_dqkch"]
 [ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/grab_ball_area.gd" id="4_tuyoq"]
 [ext_resource type="Script" uid="uid://1qwidfcq8p8m" path="res://scripts/skills/SkillBuilder/blocks/velocity_block.gd" id="5_jej6c"]
+[ext_resource type="PackedScene" uid="uid://8h2yfbfl2to5" path="res://assets/3d_assets/scenes/azure_latch_body_4.tscn" id="6_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://b824ncaeuxk6r" path="res://assets/WhatsApp Image 2026-07-30 at 9.23.18 PM.jpeg" id="7_smehm"]
 [ext_resource type="Texture2D" uid="uid://u5a0wpx5ek68" path="res://assets/white-stucco-wall_1194-6992.jpg" id="8_smehm"]
 [ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console/console.gd" id="9_ur7pv"]
@@ -33,11 +34,6 @@ script = ExtResource("2_d2wvv")
 elements = Array[ExtResource("3_3v2ag")]([SubResource("Resource_jej6c"), SubResource("Resource_oprun")])
 metadata/_custom_type_script = "uid://g20fb3vbnbn"
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m5xwp"]
-
-[sub_resource type="CapsuleMesh" id="CapsuleMesh_g4v7s"]
-material = SubResource("StandardMaterial3D_m5xwp")
-
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yf5fn"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_tuyoq"]
@@ -59,8 +55,8 @@ grab_ball_area = NodePath("grab_ball_area")
 fps_label = NodePath("screen_effects/fps_label")
 moves = NodePath("movement")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=510798569]
-mesh = SubResource("CapsuleMesh_g4v7s")
+[node name="body" parent="." unique_id=1888983923 instance=ExtResource("6_f1ej7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=17540328]
 shape = SubResource("CapsuleShape3D_yf5fn")

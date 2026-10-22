@@ -40,51 +40,46 @@ func wait(frames := 60, speed := 1.0) -> void:
 	for i in frames:
 		await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second * speed).timeout
 
-func afterimage(target: Player, quantity := 5, in_between := 0.1, duration := 1.0, custom_color := Color(1,1,1,1), offset := Vector3(0,0,0)) -> void:
-	var source: MeshInstance3D = target.get_node("MeshInstance3D")
-	var multi := MultiMeshInstance3D.new()
-	multi.name = str("afterimages of ", target.name)
-	multi.multimesh = MultiMesh.new()
-	multi.multimesh.mesh = source.mesh.duplicate()
-	multi.multimesh.mesh.surface_set_material(0, StandardMaterial3D.new())
-	multi.multimesh.use_colors = true
-	var mat := StandardMaterial3D.new()
-	mat.albedo_color = custom_color
+func afterimage(target: Player, quantity := 5, in_between := 0.1,
+		duration := 1.0, custom_color := Color(1, 1, 1, 1), offset := Vector3.ZERO) -> void:
+	var skel := target.get_node("body").get_child(0).get_child(0) as Skeleton3D
+	var body_mesh := skel.get_child(0) as MeshInstance3D
 	
-	mat.vertex_color_use_as_albedo = true
-	multi.multimesh.transform_format = MultiMesh.TRANSFORM_3D
-	multi.multimesh.instance_count = quantity
-	multi.multimesh.mesh.surface_set_material(0, mat)
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	get_tree().current_scene.add_child(multi)
+	var holder := Node3D.new()
+	holder.name = "afterimages of %s" % target.name
+	get_tree().current_scene.add_child(holder)
+	
+	var materials: Array[StandardMaterial3D] = []
 	for i in quantity:
-		if i >= multi.multimesh.instance_count:
+		if not is_instance_valid(body_mesh) or holder == null:
 			break
-		var desired_transform := target.global_transform
-		desired_transform.origin += offset
-		multi.multimesh.set_instance_transform(i, desired_transform)
-		multi.multimesh.visible_instance_count = i + 1
-		multi.multimesh.set_instance_color(i, custom_color)
-		await get_tree().create_timer(in_between).timeout
-	var tween := create_tween()
-	tween.set_parallel(true)
-	var fade_color := Color(custom_color.r, custom_color.g, custom_color.b, 0.0)
-	for i in quantity:
-		if i >= multi.multimesh.instance_count:
-			break
+		var mat := StandardMaterial3D.new()
+		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.albedo_color = custom_color
 		
-		tween.tween_method(
-			func(c: Color): multi.multimesh.set_instance_color(i, c),
-			custom_color, fade_color, duration
-		)
+		var img := MeshInstance3D.new()
+		img.mesh = body_mesh.bake_mesh_from_current_skeleton_pose()
+		img.material_override = mat
+		holder.add_child(img)
+		img.global_transform = body_mesh.global_transform
+		img.global_position += offset
+		materials.append(mat)
+		
+		await get_tree().create_timer(in_between).timeout
+	if holder == null: return
+	var tween := create_tween().set_parallel(true)
+	for mat in materials:
+		tween.tween_property(mat, "albedo_color:a", 0.0, duration)
 	await tween.finished
-	multi.queue_free()
+	if holder == null: return
+	holder.queue_free()
 
 func clear_afterimages(target) -> void:
-	var multi :MultiMeshInstance3D= get_tree().current_scene.get_node(str("afterimages of ", target.name))
+	var multi :Node3D= get_tree().current_scene.get_node(str("afterimages of ", target.name))
 	if multi == null:
 		return
-	multi.multimesh.instance_count = multi.multimesh.visible_instance_count
+	multi.queue_free()
 
 enum Interp { CONST, LINEAR, SINE_IN, SINE_OUT, SINE_IN_OUT, EXPO_IN, EXPO_OUT, EXPO_IN_OUT }
 

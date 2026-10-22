@@ -22,7 +22,7 @@ func use(target:Player=null, speed:=1.0, godmode:=false, vulnerable:=false):
 			target.using_move = false
 			return
 		
-		SB.afterimage(target, 5, 0.15, 0.3, Color(0,0.3,0.7,0.4))
+		SB.afterimage(target, 5, 0.15, 0.7, Color(0.3,0.1,0.8,0.2))
 		SB.velocity(target, true, Vector3(0, 2.4, -1.2), 0.6, .97, 0.0, false, true)
 		await SB.hitbox(target, Vector3.ONE * 5, Vector3.ZERO, 0.6, SB.HitboxTargets.BALL)
 		if target.ball:

@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://8h2yfbfl2to5"]
+
+[ext_resource type="PackedScene" uid="uid://bbdqfpugg0okx" path="res://assets/3d_assets/azure_latch_body4.glb" id="1_e3p8u"]
+
+[node name="body" unique_id=1888983923 instance=ExtResource("1_e3p8u")]
+
+[node name="AnimationPlayer" parent="." index="1" unique_id=464009577]
+autoplay = &"hi"
