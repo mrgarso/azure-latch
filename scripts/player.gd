@@ -11,6 +11,7 @@ class_name Player
 @export var jump_speed := 35.0
 @export var gravity := 40.0
 @export var ball_holder: Node3D
+@export var body: Node3D
 @export var spring_arm_3d: SpringArm3D
 @export var grab_ball_area: Area3D
 @export var fps_label: Label
@@ -78,9 +79,11 @@ func _physics_process(delta: float) -> void:
 	
 	movement = ((direction.x * sides) + (direction.y * forw)) * current_speed
 	if direction:
+		body.animation_player.play("Run")
 		velocity.x = lerp(velocity.x, movement.x, delta * accel)
 		velocity.z = lerp(velocity.z, movement.z, delta * accel)
 	else:
+		body.animation_player.play("reset", 0.6)
 		velocity.x = lerp(velocity.x, 0.0, delta * frict)
 		velocity.z = lerp(velocity.z, 0.0, delta * frict)
 	if impulse_sum.y or using_move:

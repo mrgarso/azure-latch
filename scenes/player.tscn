@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://bo4redc340gr2" path="res://scripts/skills/Isagi_moves/nagi_control.gd" id="4_dqkch"]
 [ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/grab_ball_area.gd" id="4_tuyoq"]
 [ext_resource type="Script" uid="uid://1qwidfcq8p8m" path="res://scripts/skills/SkillBuilder/blocks/velocity_block.gd" id="5_jej6c"]
-[ext_resource type="PackedScene" uid="uid://8h2yfbfl2to5" path="res://assets/3d_assets/scenes/azure_latch_body_4.tscn" id="6_f1ej7"]
+[ext_resource type="PackedScene" uid="uid://8h2yfbfl2to5" path="res://assets/3d_assets/scenes/body.tscn" id="6_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://b824ncaeuxk6r" path="res://assets/WhatsApp Image 2026-07-30 at 9.23.18 PM.jpeg" id="7_smehm"]
 [ext_resource type="Texture2D" uid="uid://u5a0wpx5ek68" path="res://assets/white-stucco-wall_1194-6992.jpg" id="8_smehm"]
 [ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console/console.gd" id="9_ur7pv"]
@@ -45,11 +45,12 @@ default_font_size = 24
 [sub_resource type="LabelSettings" id="LabelSettings_g4v7s"]
 font_size = 34
 
-[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "spring_arm_3d", "grab_ball_area", "fps_label", "moves")]
+[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "body", "spring_arm_3d", "grab_ball_area", "fps_label", "moves")]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
 dummy_behaviours = Array[ExtResource("2_d2wvv")]([SubResource("Resource_3v2ag")])
 ball_holder = NodePath("ball_holder")
+body = NodePath("body")
 spring_arm_3d = NodePath("shoulder/SpringArm3D")
 grab_ball_area = NodePath("grab_ball_area")
 fps_label = NodePath("screen_effects/fps_label")
