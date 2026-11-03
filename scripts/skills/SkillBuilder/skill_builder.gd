@@ -6,7 +6,8 @@ var players_positions : Dictionary[Player, Vector3]
 func velocity(target: Player,fade_out := false, direction := Vector3.ZERO, \
 duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override := false, reset_y := false) -> void:
 	var imp := Impulse.new()
-	if custom_gravity != target.gravity:
+	var changed_gravity := custom_gravity != target.gravity
+	if changed_gravity:
 		target.current_gravity = custom_gravity
 	if reset_y:
 		target.velocity.y = 0.0
@@ -16,7 +17,6 @@ duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override 
 	if fade_out:
 		for i in (Engine.physics_ticks_per_second * duration):
 			imp.vec *= decay
-			imp.vec.y -= custom_gravity * (Engine.time_scale/Engine.physics_ticks_per_second) * 0.5
 			if imp.cleared:
 				break
 			await wait(1)
@@ -26,7 +26,8 @@ duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override 
 				break
 			await wait(1)
 	target.impulses.erase(imp)
-	target.current_gravity = target.gravity
+	if changed_gravity and is_equal_approx(target.current_gravity, custom_gravity):
+		target.current_gravity = target.gravity
 
 func clear_velocities(target : Player) -> void:
 	var impulses := target.impulses

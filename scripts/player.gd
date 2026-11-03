@@ -62,8 +62,6 @@ func _physics_process(delta: float) -> void:
 		dummy_behaving = true
 		for i in dummy_behaviours:
 			i.run(self)
-	elif mode == "player":
-		print(is_on_floor(), " ", is_on_ground, " ", name)
 	fps_label.text = "fps = " + str(Engine.get_frames_per_second())
 	forw = transform.basis.z
 	sides = transform.basis.x
@@ -92,7 +90,7 @@ func _physics_process(delta: float) -> void:
 		model.animation_player.play("reset", 0.6)
 		velocity.x = lerp(velocity.x, 0.0, delta * frict)
 		velocity.z = lerp(velocity.z, 0.0, delta * frict)
-	if impulse_sum.y or using_move:
+	if impulse_sum.y:
 		velocity.y = lerp(velocity.y, impulse_sum.y * current_speed, delta * accel)
 	if override_impulse_sum.y:
 		velocity.y = lerp(velocity.y, override_impulse_sum.y * current_speed, delta * accel)
