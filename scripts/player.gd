@@ -3,6 +3,8 @@ class_name Player
 
 @export_enum("player", "dummy") var mode := "player"
 @export var dummy_behaviours :Array[DummyBehaviours]= []
+##this is the time the player has to take for it to change from grounded mode to air mode
+@export var air_time := 0.25
 @export var team := ""
 @export var speed := 20.0
 @export var speed_on_ball := 13.5
@@ -11,12 +13,14 @@ class_name Player
 @export var jump_speed := 35.0
 @export var gravity := 40.0
 @export var ball_holder: Node3D
-@export var body: Node3D
+@export var model: Node3D
 @export var spring_arm_3d: SpringArm3D
 @export var grab_ball_area: Area3D
 @export var fps_label: Label
 @export var moves: Movement
 
+var is_on_ground := true
+var current_air_time := 0.0
 var dummy_behaving := false
 var ball :Ball= null:
 	set(value):
@@ -58,6 +62,8 @@ func _physics_process(delta: float) -> void:
 		dummy_behaving = true
 		for i in dummy_behaviours:
 			i.run(self)
+	elif mode == "player":
+		print(is_on_floor(), " ", is_on_ground, " ", name)
 	fps_label.text = "fps = " + str(Engine.get_frames_per_second())
 	forw = transform.basis.z
 	sides = transform.basis.x
@@ -79,19 +85,26 @@ func _physics_process(delta: float) -> void:
 	
 	movement = ((direction.x * sides) + (direction.y * forw)) * current_speed
 	if direction:
-		body.animation_player.play("Run")
+		model.animation_player.play("Run")
 		velocity.x = lerp(velocity.x, movement.x, delta * accel)
 		velocity.z = lerp(velocity.z, movement.z, delta * accel)
 	else:
-		body.animation_player.play("reset", 0.6)
+		model.animation_player.play("reset", 0.6)
 		velocity.x = lerp(velocity.x, 0.0, delta * frict)
 		velocity.z = lerp(velocity.z, 0.0, delta * frict)
 	if impulse_sum.y or using_move:
 		velocity.y = lerp(velocity.y, impulse_sum.y * current_speed, delta * accel)
 	if override_impulse_sum.y:
 		velocity.y = lerp(velocity.y, override_impulse_sum.y * current_speed, delta * accel)
-	if not is_on_floor():
+	if !is_on_floor():
 		velocity.y -= current_gravity * delta * 4
+		if current_air_time < air_time:
+			current_air_time += delta
+		else:
+			is_on_ground = false
+			current_air_time = 0.0
+	else:
+		is_on_ground = true
 	move_and_slide()
 
 func tackle(reset_pos := false, tack := false, side := "none") -> void:

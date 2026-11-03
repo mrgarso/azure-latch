@@ -45,12 +45,12 @@ default_font_size = 24
 [sub_resource type="LabelSettings" id="LabelSettings_g4v7s"]
 font_size = 34
 
-[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "body", "spring_arm_3d", "grab_ball_area", "fps_label", "moves")]
+[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "model", "spring_arm_3d", "grab_ball_area", "fps_label", "moves")]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
 dummy_behaviours = Array[ExtResource("2_d2wvv")]([SubResource("Resource_3v2ag")])
 ball_holder = NodePath("ball_holder")
-body = NodePath("body")
+model = NodePath("body")
 spring_arm_3d = NodePath("shoulder/SpringArm3D")
 grab_ball_area = NodePath("grab_ball_area")
 fps_label = NodePath("screen_effects/fps_label")

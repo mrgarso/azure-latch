@@ -5,7 +5,7 @@ func use(target:Player=null, speed:=1.0, godmode:=false, vulnerable:=false):
 	if target.can_move or !target.can_move:
 		target.using_move = true
 		
-		if target.is_on_floor():
+		if target.is_on_ground:
 			SB.clear_velocities(target)
 			SB.fov_change(target, 60, 70, 0.8)
 			var first_dash_velocity := -5.6
