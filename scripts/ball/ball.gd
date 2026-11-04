@@ -14,6 +14,11 @@ class_name Ball
 @export var curve_friction := 1.0
 @export var grab_cooldown := 0.2
 @export var physics_steps := 4
+@export var resting_threshold := 7.0
+
+var resting := true
+var is_on_ground := true
+var current_ground_time := 0.0
 var can_grab := true
 var curve_velocity := Vector3.ZERO
 var current_owner : Player = null
@@ -51,11 +56,10 @@ predicting := false, curvature := Vector3.ZERO, time_for_curvature := 1.0, \
 curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO) -> Dictionary:
 	delta *= speed_scale
 	var decay = pow(air_friction, delta)
+	var step_delta = delta / physics_steps
 	vel.x *= decay 
 	vel.z *= decay 
 	
-	
-	var step_delta = delta / physics_steps
 	if current_owner == null or predicting:
 		vel += gravity_force * delta
 		for i in physics_steps:
@@ -90,18 +94,26 @@ curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO) -> Dic
 				vel = tangent_part + normal_part * restitution
 			else:
 				pos += motion
+			
 		
 	return {"position": pos, "velocity": vel, "curve_time": curve_time, 
-		"curve_velocity": curve_velocity, "curvature": curvature}
+		"curve_velocity": curve_velocity, "curvature": curvature,
+		}
 
 func _physics_process(delta: float) -> void:
 	if !current_owner:
 		var result = simulate_step(global_position, velocity, delta, false, \
 			curvature, time_for_curvature, curvature_force, curve_elapsed, curve_ref_dir)
+		resting = (velocity.length() * speed_scale) < (resting_threshold * speed_scale)
 		global_position = result.position
 		velocity = result.velocity
 		curve_elapsed = result.curve_time
 		curvature = result.curvature
+		if !resting:
+			is_on_ground = false
+		else:
+			print("resting")
+			is_on_ground = true
 
 @warning_ignore("shadowed_variable")
 func predict_trajectory(start_pos:= Vector3(0,0,0), start_vel:= Vector3(0,0,0), \
@@ -143,17 +155,23 @@ curvature := Vector3.ZERO, time_for_curvature := 1.0, curvature_force := 1.0) ->
 	
 	return points
 
-func check_predict_points(points: PackedVector3Array) -> void:
-	for n in get_tree().get_nodes_in_group("p_point"):
-		n.queue_free()
+func check_predict_points(points: PackedVector3Array, clear := true, custom_number := 0) -> void:
+	if clear: 
+		for n in get_tree().get_nodes_in_group("p_point"):
+			n.queue_free()
 	
 	for i in points.size():
 		var label := Label3D.new()
 		get_tree().current_scene.add_child(label)
 		label.name = "p_point %d" % i
-		label.text = str(i)
+		if custom_number != 0:
+			label.text = str(custom_number)
+		else:
+			label.text = str(i)
+		label.pixel_size = 0.10
+		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.add_to_group("p_point")
-		label.global_position = points[i] + Vector3.UP * 2
+		label.global_position = points[i] + Vector3.UP * (label.pixel_size * 10)
 
 func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 3, color := Color(1,0,1)) -> ArrayMesh:
 	if points.size() < 2:
