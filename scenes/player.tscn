@@ -57,7 +57,7 @@ fps_label = NodePath("screen_effects/fps_label")
 moves = NodePath("movement")
 
 [node name="body" parent="." unique_id=1888983923 instance=ExtResource("6_f1ej7")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -1, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=17540328]
 shape = SubResource("CapsuleShape3D_yf5fn")

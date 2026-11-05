@@ -52,6 +52,7 @@ var sides := Vector3.ZERO
 var up := Vector3.ZERO
 var movement := Vector3.ZERO
 var impulses: Array[Impulse] = []
+var anim_to_velocity_scaler := 0.05
 
 func _ready() -> void:
 	current_gravity = gravity
@@ -83,11 +84,11 @@ func _physics_process(delta: float) -> void:
 	
 	movement = ((direction.x * sides) + (direction.y * forw)) * current_speed
 	if direction:
-		model.animation_player.play("Run")
+		model.animation_player.play("Run", 0.1, velocity.length() * anim_to_velocity_scaler)
 		velocity.x = lerp(velocity.x, movement.x, delta * accel)
 		velocity.z = lerp(velocity.z, movement.z, delta * accel)
 	else:
-		model.animation_player.play("reset", 0.6)
+		model.animation_player.play("reset", 0.3, velocity.length() * anim_to_velocity_scaler)
 		velocity.x = lerp(velocity.x, 0.0, delta * frict)
 		velocity.z = lerp(velocity.z, 0.0, delta * frict)
 	if impulse_sum.y:
