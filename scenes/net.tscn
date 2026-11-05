@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://5uhpora435bo"]
+
+[ext_resource type="PackedScene" uid="uid://bqjgogvuqtdb1" path="res://assets/3d_assets/goal_net1.glb" id="1_es2g2"]
+[ext_resource type="Script" uid="uid://c2yttb2vg07gs" path="res://scripts/net.gd" id="2_i41qj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_57qmd"]
+size = Vector3(10.77832, 3.611212, 3.162445)
+
+[node name="net" unique_id=1124086004 instance=ExtResource("1_es2g2")]
+transform = Transform3D(1.7, 0, 0, 0, 1.7, 0, 0, 0, 1.7, 0, 0, 0)
+script = ExtResource("2_i41qj")
+
+[node name="Area3D" type="Area3D" parent="." index="1" unique_id=580197252]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" index="0" unique_id=1054255069]
+transform = Transform3D(1.0000002, 0, 0, 0, 1.0000002, 0, 0, 0, 1.0000002, 0, 1.8016889, -1.7069259)
+shape = SubResource("BoxShape3D_57qmd")

@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dq3hffvf6dfoe" path="res://scripts/skills/SkillBuilder/blocks/skill_builder_block.gd" id="5_jh32y"]
 [ext_resource type="Script" uid="uid://c5gd1u2ydpyj3" path="res://scripts/skills/SkillBuilder/blocks/tackle_block.gd" id="6_be0no"]
 [ext_resource type="Script" uid="uid://beuc1esv0016a" path="res://scripts/skills/SkillBuilder/blocks/wait_block.gd" id="7_blm8a"]
+[ext_resource type="PackedScene" uid="uid://5uhpora435bo" path="res://scenes/net.tscn" id="8_jh32y"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_4xfga"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -127,3 +128,6 @@ transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 28.3
 mode = "dummy"
 dummy_behaviours = Array[ExtResource("4_nakos")]([SubResource("Resource_jh32y")])
 team = "b"
+
+[node name="net" parent="." unique_id=1124086004 instance=ExtResource("8_jh32y")]
+transform = Transform3D(1.7, 0, 0, 0, 1.7, 0, 0, 0, 1.7, 48.586838, 0, -26.26786)
