@@ -142,7 +142,7 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 	show(subject.trajectory_mesh)
 	@warning_ignore("integer_division")
 	var ball_traj := subject.predict_trajectory(subject.global_position, final_direction, \
-	ball_traj_range / Engine.physics_ticks_per_second, ball_traj_delta, speed, \
+	ball_traj_range / float(Engine.physics_ticks_per_second), ball_traj_delta, speed, \
 	curvature_dir, time_for_curve, curvature_force)
 	if show_traj:
 		var traj_shortened := 1.0

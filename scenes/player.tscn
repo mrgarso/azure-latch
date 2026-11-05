@@ -79,11 +79,13 @@ collision_layer = 2
 collision_mask = 4
 script = ExtResource("4_tuyoq")
 kick_modes = Array[float]([0.1, 0.2])
-shot_speed = 1.6
+shot_speed = 1.7
 kick_strengths = Array[float]([20.0, 30.0, 50.0])
 ball_holder = NodePath("../ball_holder")
 player = NodePath("..")
 camera_3d = NodePath("../shoulder/SpringArm3D/Camera3D")
+time_for_curve = 2.5
+curvature_force = 0.5
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="grab_ball_area" unique_id=1180036576]
 shape = SubResource("SphereShape3D_tuyoq")

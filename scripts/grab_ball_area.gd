@@ -5,18 +5,20 @@ var can_grab := true
 var holding := false
 var hold_time := 0.0
 var kick_strength := 5.0
+var ball_curve_friction := 1.0
+@onready var actual_force := curvature_force * strength
 @export var kick_modes :Array[float] = [0.1, 0.5]
 @export var strength := 1.0
 @export var shot_speed := 1.0
 @export var kick_strengths :Array[float] = [10.0, 25.0, 75.0]
 @export var ball_holder: Node3D
 @export var player: Player
-@export var ball_aim: MeshInstance3D
 @export var camera_3d: Camera3D
 @export var sidespin_amount := 2.5
 @export var topspin_amount := 0.0
-@export var time_for_curve := 2.5
+@export var time_for_curve := 3.0
 @export var curvature_force := 0.2
+@export var curve_pitch_power := 0.1
 
 func _physics_process(delta: float) -> void:
 	match hold_time:
@@ -28,25 +30,39 @@ func _physics_process(delta: float) -> void:
 			kick_strength = kick_strengths[2] * strength
 	if ball:
 		ball.global_position = ball_holder.global_position
-	curvature_force *= strength
-	var lateral_speed := -player.velocity.dot(player.sides)
-	var curvature_dir :Vector3= (player.up * (sidespin_amount * -(lateral_speed * 2)) + player.sides * topspin_amount)
-	var lateral_dir_offset := (((lateral_speed/50) * Ball.new().curve_friction) * sidespin_amount) * (time_for_curve * curvature_force)
-	if Input.is_action_pressed("m1"):
-		if hold_time < 1:
-			hold_time += delta
-		if ball:
-			SB.kick(player, Vector3(0 + lateral_dir_offset, min(-player.spring_arm_3d.rotation.x * 1.2, 0), 1), \
-			kick_strength, false, shot_speed, true, curvature_dir, time_for_curve, curvature_force)
-	
-	elif Input.is_action_just_released("m1") and hold_time:
-		if ball:
-			SB.kick(player, Vector3(0 + lateral_dir_offset, min(-player.spring_arm_3d.rotation.x * 1.2, 0), 1), \
-			kick_strength, true, shot_speed, true, curvature_dir, time_for_curve, curvature_force)
-		hold_time = 0
+		ball_curve_friction = ball.curve_friction
+		var pitch_up := clampf(player.spring_arm_3d.rotation.x, 0.0, PI / 2.0)
+		var pitch_scale := pow(cos(pitch_up), curve_pitch_power)
+		
+		var lateral_speed := -player.velocity.dot(player.sides)
+		var curvature_dir: Vector3 = player.up * (sidespin_amount * -(lateral_speed * 2.0)) + player.sides * topspin_amount
+		var effective_curve_force := curvature_force * strength * pitch_scale
+		
+		var friction := ball.curve_friction if ball else 0.0
+		var lateral_dir_offset := (lateral_speed / 50.0) * friction * sidespin_amount * time_for_curve * effective_curve_force
+		
+		
+		#the purpose in all of this, is to make the player be able to curve the ball on the direction
+		#they're moving on, plus a vertical diffusor for the curve, meaning that the more
+		#up u point, the less curve youll have
+		
+		if Input.is_action_pressed("m1"):
+			if hold_time < 1:
+				hold_time += delta
+			if ball:
+				SB.kick(player, Vector3(0 + lateral_dir_offset, min(-pitch_up * 1.2, 0), 1), \
+				kick_strength, false, shot_speed, true, curvature_dir, \
+				time_for_curve, curvature_force)
+		
+		elif Input.is_action_just_released("m1") and hold_time:
+			if ball:
+				SB.kick(player, Vector3(0 + lateral_dir_offset, min(-pitch_up * 1.2, 0), 1), \
+				kick_strength, true, shot_speed, true, curvature_dir, \
+				time_for_curve, curvature_force)
+			hold_time = 0
 
 
-func _input(event: InputEvent) -> void:
+func _input(_event: InputEvent) -> void:
 	if !ball:
 		if Input.is_action_pressed("m1") and Input.is_action_pressed("m2"):
 			SB.fov_change(player, 70, 50, 0.45)

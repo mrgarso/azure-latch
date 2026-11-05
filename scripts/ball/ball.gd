@@ -63,11 +63,14 @@ curvature_force := 1.0, curve_time := 0.0, curve_ref_dir := Vector3.ZERO) -> Dic
 	if current_owner == null or predicting:
 		vel += gravity_force * delta
 		for i in physics_steps:
-			if curvature != Vector3.ZERO and curve_ref_dir != Vector3.ZERO:
+			if curvature != Vector3.ZERO and curve_ref_dir != Vector3.ZERO and time_for_curvature != 0:
 				var magnus_dir = curvature.cross(curve_ref_dir).normalized()
 				var t = clamp(curve_time / time_for_curvature, 0.0, 1.0)
 				var curve_strength = sin(t * PI)
+				
+				var speed_before := vel.length()
 				vel += magnus_dir * curvature.length() * curvature_force * curve_strength * step_delta
+				if vel.length() > 0.001: vel = vel.normalized() * speed_before
 				curve_time += step_delta
 				
 				var lateral_component = vel.dot(magnus_dir)
@@ -112,7 +115,6 @@ func _physics_process(delta: float) -> void:
 		if !resting:
 			is_on_ground = false
 		else:
-			print("resting")
 			is_on_ground = true
 
 @warning_ignore("shadowed_variable")
@@ -121,35 +123,24 @@ seconds:= 1.0, dt:= (1.0/60.0), speed := 1.0, \
 curvature := Vector3.ZERO, time_for_curvature := 1.0, curvature_force := 1.0) -> PackedVector3Array:
 	speed_scale = speed
 	var points := PackedVector3Array()
-	var value := 0.1
-	var min_dist_sq := value * value 
+	var min_dist_sq := 0.1 * 0.1
 	var pos := start_pos
-	var vel := start_vel * (1 + (physics_steps * 0.008))
+	var vel := start_vel                      
 	var curve_time := 0.0
-	var current_curvature := curvature
-	@warning_ignore("shadowed_variable")
 	var curve_ref_dir := start_vel.normalized()
-	
 	points.append(pos)
 	var last_kept := pos
-	
-	@warning_ignore("integer_division")
-	var iterations = int(seconds / dt) / (physics_steps/1)
-	for i in iterations:
-		@warning_ignore("integer_division")
-		var result = simulate_step(pos, vel, (dt * (physics_steps/1)) * speed, true,
-			current_curvature, time_for_curvature, curvature_force, curve_time, curve_ref_dir)
+	for i in int(seconds / dt):
+		var result = simulate_step(pos, vel, dt, true,
+		curvature, time_for_curvature, curvature_force, curve_time, curve_ref_dir)
 		pos = result.position
 		vel = result.velocity
 		curve_time = result.curve_time
-		current_curvature = result.curvature
 		
-		# only keep the point if it's far enough from the last KEPT point
 		if pos.distance_squared_to(last_kept) >= min_dist_sq:
 			points.append(pos)
 			last_kept = pos
 	
-	# always keep the final point so the line reaches the true end
 	if pos != last_kept:
 		points.append(pos)
 	
