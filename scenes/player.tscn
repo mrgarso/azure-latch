@@ -66,6 +66,7 @@ shape = SubResource("CapsuleShape3D_yf5fn")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6922631, 0.98996544, 0.44566786)
 
 [node name="SpringArm3D" type="SpringArm3D" parent="shoulder" unique_id=1034410229]
+collision_mask = 8
 spring_length = 7.0
 
 [node name="Camera3D" type="Camera3D" parent="shoulder/SpringArm3D" unique_id=486711523 node_paths=PackedStringArray("spring_arm_3d", "shoulder", "player")]
@@ -106,7 +107,7 @@ script = ExtResource("4_dqkch")
 [node name="MOVE_5" type="Node" parent="Isagi_moves" unique_id=117785351]
 
 [node name="ball_holder" type="Node3D" parent="." unique_id=1219057852]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.46835515, -1.4177291)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7350058, -0.9713367)
 
 [node name="screen_effects" type="CanvasLayer" parent="." unique_id=943087902]
 

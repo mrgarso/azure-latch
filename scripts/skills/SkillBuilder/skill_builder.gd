@@ -152,8 +152,9 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 			traj_ball_traj.append(ball_traj[i])
 		subject.trajectory_mesh.mesh = subject.build_traj_mesh(traj_ball_traj, ball_traj_width)
 		subject.trajectory_mesh.visible = true
-
+	
 	if unattach:
+		
 		subject.current_owner = null
 		subject.last_owner = target
 		subject.apply_impulse(final_direction, curvature_dir, time_for_curve, curvature_force)

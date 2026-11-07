@@ -11,8 +11,9 @@ height = 0.5
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_g4v7s"]
 
-[node name="ball" type="Node3D" unique_id=251572601 node_paths=PackedStringArray("mesh", "detection", "trajectory_mesh")]
+[node name="ball" type="Node3D" unique_id=251572601 node_paths=PackedStringArray("marker", "mesh", "detection", "trajectory_mesh")]
 script = ExtResource("1_7s4qf")
+marker = NodePath("marker")
 mesh = NodePath("mesh")
 detection = NodePath("detection")
 trajectory_mesh = NodePath("trajectory_mesh")
@@ -30,7 +31,7 @@ shape = SubResource("SphereShape3D_g4v7s")
 [node name="trajectory_mesh" type="MeshInstance3D" parent="." unique_id=592689705]
 mesh = SubResource("ArrayMesh_g4v7s")
 
-[node name="Sprite3D" type="Sprite3D" parent="." unique_id=905457605]
+[node name="marker" type="Sprite3D" parent="." unique_id=905457605]
 transform = Transform3D(0.24, 0, 0, 0, 0.24, 0, 0, 0, 0.24, 0, 0, 0)
 modulate = Color(2.8684251, 0, 0, 1)
 billboard = 1

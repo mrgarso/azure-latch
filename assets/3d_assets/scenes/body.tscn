@@ -3,10 +3,10 @@
 [ext_resource type="PackedScene" uid="uid://dqhjf18fwvbbo" path="res://assets/3d_assets/azure_latch_body8.glb" id="1_2j15m"]
 [ext_resource type="Script" uid="uid://bx817pjipfkgn" path="res://assets/3d_assets/scenes/body.gd" id="2_ju7tl"]
 
-[node name="azure_latch_body8" unique_id=1392713117 node_paths=PackedStringArray("skeleton_3d", "body", "animation_player") instance=ExtResource("1_2j15m")]
+[node name="azure_latch_body8" unique_id=1392713117 node_paths=PackedStringArray("skeleton_3d", "Body", "animation_player") instance=ExtResource("1_2j15m")]
 script = ExtResource("2_ju7tl")
 skeleton_3d = NodePath("rig/Skeleton3D")
-body = NodePath("rig/Skeleton3D/body")
+Body = NodePath("rig/Skeleton3D/body")
 animation_player = NodePath("AnimationPlayer")
 
 [node name="Skeleton3D" parent="rig" parent_id_path=PackedInt32Array(572558416) index="0" unique_id=2136035721]

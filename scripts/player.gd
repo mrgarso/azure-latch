@@ -8,6 +8,7 @@ class_name Player
 @export var team := ""
 @export var speed := 20.0
 @export var speed_on_ball := 13.5
+@export var speed_while_shooting := 2.5
 @export var accel := 10.0
 @export var frict := 10.0
 @export var jump_speed := 35.0
@@ -27,7 +28,8 @@ var ball :Ball= null:
 		grab_ball_area.ball = value
 		ball = value
 		if value != null:
-			current_speed = speed_on_ball
+			if !shooting:
+				current_speed = speed_on_ball
 			ball.current_owner = self
 		else:
 			current_speed = speed
@@ -42,6 +44,10 @@ var can_move := true:
 var current_gravity := 0.0
 var current_speed := 0.0
 var using_move := false
+var shooting := false:
+	set(value):
+		if value:
+			current_speed = speed_while_shooting
 var iframes := false
 var true_iframes := false
 var dribbling := false

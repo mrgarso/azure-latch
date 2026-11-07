@@ -5,6 +5,7 @@ class_name Ball
 @export var gravity_force := Vector3(0, -30, 0)
 ##if radius is equals to 0.0, it will use its mesh radius instead
 @export var radius := 0.0
+@export var marker: Sprite3D
 @export var speed_scale := 1.0
 @export var restitution = 0.5
 @export var air_friction := 0.5
@@ -21,7 +22,12 @@ var is_on_ground := true
 var current_ground_time := 0.0
 var can_grab := true
 var curve_velocity := Vector3.ZERO
-var current_owner : Player = null
+var current_owner : Player = null:
+	set(value):
+		if value != null:
+			marker.modulate = Color(1,1,1,0.25)
+		else:
+			marker.modulate = Color(1,1,1,1)
 var last_owner : Player = null
 
 func _ready() -> void:
@@ -38,6 +44,8 @@ func _ready() -> void:
 	trajectory_mesh.visible = false
 	trajectory_mesh.top_level = true
 	trajectory_mesh.global_transform = Transform3D.IDENTITY
+	trajectory_mesh.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	trajectory_mesh.extra_cull_margin = 16384.0
 	_warm_up_trajectory()
 
 func _warm_up_trajectory() -> void:
@@ -46,8 +54,8 @@ func _warm_up_trajectory() -> void:
 	speed_scale = saved_speed  # predict_trajectory overwrites this
 	trajectory_mesh.mesh = build_traj_mesh(pts, 0.1, 3)
 	trajectory_mesh.visible = true
-	await get_tree().process_frame
-	await get_tree().process_frame
+	for i in 8:
+		await get_tree().process_frame
 	trajectory_mesh.visible = false
 
 @warning_ignore("shadowed_variable")
