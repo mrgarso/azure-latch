@@ -28,9 +28,9 @@ var ball :Ball= null:
 		grab_ball_area.ball = value
 		ball = value
 		if value != null:
+			ball.current_owner = self
 			if !shooting:
 				current_speed = speed_on_ball
-			ball.current_owner = self
 		else:
 			current_speed = speed
 var can_grab_ball := true:

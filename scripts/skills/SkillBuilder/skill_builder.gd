@@ -129,6 +129,12 @@ func screen_flash(target: Player, color := Color(1,1,1,1), duration := 1.0) -> v
 func counter() -> void:
 	pass
 
+var stored_final_direction := Vector3.INF
+var stored_curvature_dir := Vector3.INF
+var stored_time_for_curve := -1.0
+var stored_curvature_force := -1.0
+var stored_ball_pos := Vector3.INF
+var last_pred_msec := 0 
 func kick(target: Player = null, direction := Vector3(), force := 70.0, \
 unattach := true, speed := 1.0, show_traj := false, \
 curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -> void:
@@ -136,25 +142,47 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 	var aim_dir := (target.transform.basis * direction).normalized()
 	var final_direction := -aim_dir * force
 	subject.velocity = Vector3.ZERO
-	var ball_traj_range := 240
-	var ball_traj_delta := 1.0 / Engine.physics_ticks_per_second
-	var ball_traj_width := 0.05
-	show(subject.trajectory_mesh)
-	@warning_ignore("integer_division")
-	var ball_traj := subject.predict_trajectory(subject.global_position, final_direction, \
-	ball_traj_range / float(Engine.physics_ticks_per_second), ball_traj_delta, speed, \
-	curvature_dir, time_for_curve, curvature_force)
 	if show_traj:
-		var traj_shortened := 1.0
-		var step_size := int(pow(2, traj_shortened))
-		var traj_ball_traj := PackedVector3Array()
-		for i in range(0, ball_traj.size(), step_size):
-			traj_ball_traj.append(ball_traj[i])
-		subject.trajectory_mesh.mesh = subject.build_traj_mesh(traj_ball_traj, ball_traj_width)
-		subject.trajectory_mesh.visible = true
+		var changed := final_direction.distance_to(stored_final_direction) > 0.005 \
+			or curvature_dir.distance_to(stored_curvature_dir) > 0.005 \
+			or subject.global_position.distance_to(stored_ball_pos) > 0.25 \
+			or time_for_curve != stored_time_for_curve \
+			or curvature_force != stored_curvature_force
+		
+		var now := Time.get_ticks_msec()
+		var due := unattach or (now - last_pred_msec) >= 16
+		
+		#print("dir %s, curv_dir %s, time_curv %s, curv_force %s, changed %s" % [
+		#final_direction != stored_final_direction,
+		#curvature_dir != stored_curvature_dir,
+		#time_for_curve != stored_time_for_curve,
+		#curvature_force != stored_curvature_force,
+		#changed
+		#])
+		
+		if changed and due:
+			last_pred_msec = now
+			stored_ball_pos = subject.global_position
+			
+			stored_final_direction = final_direction
+			stored_curvature_dir = curvature_dir
+			stored_time_for_curve = time_for_curve
+			stored_curvature_force = curvature_force
+			var ball_traj := subject.predict_trajectory(final_direction, \
+				240 / float(Engine.physics_ticks_per_second), \
+				1.0 / Engine.physics_ticks_per_second, speed, \
+				curvature_dir, time_for_curve, curvature_force)
+			
+			var traj_ball_traj := PackedVector3Array()
+			for i in range(0, ball_traj.size(), 2):
+				traj_ball_traj.append(ball_traj[i])
+			subject.trajectory_mesh.mesh = subject.build_traj_mesh(traj_ball_traj, \
+				0.15, 3, Color(0, 0.25, 0, 1), 1)
+		show(subject.trajectory_mesh)
+	else:
+		subject.trajectory_mesh.visible = false
 	
 	if unattach:
-		
 		subject.current_owner = null
 		subject.last_owner = target
 		subject.apply_impulse(final_direction, curvature_dir, time_for_curve, curvature_force)
@@ -188,6 +216,13 @@ enum HitboxTargets {
 	BALL = 3
 }
 
+var hitbox_detailed_list := {
+		"collided":null,
+		"velocity":Vector3.ZERO,
+		"position":Vector3.ZERO,
+		"class": &""
+		}
+
 func hitbox(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, \
 duration := 1.0, target := HitboxTargets.BALL, include_ball_holder := false, \
 include_not_ball_holder := true, include_teammates := false, include_enemies := true) -> void:
@@ -206,6 +241,7 @@ include_not_ball_holder := true, include_teammates := false, include_enemies := 
 	area.add_child(collision)
 	parent.add_child(area)
 	for i in Engine.physics_ticks_per_second * duration:
+		if target == HitboxTargets.BALL and parent.ball != null: break
 		area.global_position = parent.global_position
 		collision.disabled = !parent.can_grab_ball
 		if area.get_overlapping_areas() and area.get_overlapping_areas()[0].get_parent() != parent:
@@ -216,13 +252,6 @@ include_not_ball_holder := true, include_teammates := false, include_enemies := 
 	delete(area, 0.0)
 	if target_hit is Ball:
 		parent.ball = target_hit
-
-var hitbox_detailed_list := {
-		"collided":null,
-		"velocity":Vector3.ZERO,
-		"position":Vector3.ZERO,
-		"class": &""
-		}
 
 func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, \
 duration := 1.0, target := HitboxTargets.BALL, include_ball_holder := false, \
@@ -247,6 +276,7 @@ include_not_ball_holder := true, include_teammates := false, include_enemies := 
 	query.collide_with_bodies = false
 	query.collision_mask = area.collision_mask
 	for i in Engine.physics_ticks_per_second * duration:
+		if target == HitboxTargets.BALL and parent.ball != null: break
 		area.global_position = parent.global_position
 		collision.disabled = !parent.can_grab_ball
 		query.transform = area.global_transform

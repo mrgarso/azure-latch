@@ -21,13 +21,12 @@ var ball_curve_friction := 1.0
 @export var curve_pitch_power := 0.025
 
 func _physics_process(delta: float) -> void:
-	match hold_time:
-		var x when x < kick_modes[0]:
-			kick_strength = kick_strengths[0] * strength
-		var x when x >= kick_modes[0] and x < kick_modes[1]:
-			kick_strength = kick_strengths[1] * strength
-		var x when x >= kick_modes[1]:
-			kick_strength = kick_strengths[2] * strength
+	if hold_time < kick_modes[0]:
+		kick_strength = kick_strengths[0] * strength
+	elif hold_time < kick_modes[1]:
+		kick_strength = kick_strengths[1] * strength
+	else:
+		kick_strength = kick_strengths[2] * strength
 	if ball:
 		ball.global_position = ball_holder.global_position
 		ball_curve_friction = ball.curve_friction
@@ -76,6 +75,7 @@ func _input(_event: InputEvent) -> void:
 func _on_area_entered(area: Node3D) -> void:
 	var target :Node3D= area.get_parent()
 	if target is Ball and can_grab and ball == null and target.current_owner == null:
+		target = target as Ball
 		player.ball = target
 		target.current_owner = player
 

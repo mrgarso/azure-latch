@@ -13,7 +13,7 @@ config_version=5
 config/name="azure_latch"
 run/main_scene="uid://cv76pbmumcd78"
 config/features=PackedStringArray("4.7", "GL Compatibility")
-run/max_fps=120
+run/max_fps=60
 config/icon="res://icon.svg"
 
 [autoload]
@@ -25,6 +25,7 @@ Online="*uid://cfjbrwvqdd1x6"
 
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+window/vsync/vsync_mode=0
 
 [editor_plugins]
 
