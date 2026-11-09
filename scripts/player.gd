@@ -14,7 +14,7 @@ class_name Player
 @export var jump_speed := 35.0
 @export var gravity := 40.0
 @export var ball_holder: Node3D
-@export var model: Node3D
+@export var model: Model
 @export var spring_arm_3d: SpringArm3D
 @export var grab_ball_area: Area3D
 @export var fps_label: Label

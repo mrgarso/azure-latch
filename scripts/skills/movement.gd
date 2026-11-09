@@ -2,6 +2,7 @@ extends Node
 class_name Movement
 
 @onready var player :Player= $".."
+var headed_ball := false
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	
@@ -14,6 +15,7 @@ func _unhandled_key_input(event: InputEvent) -> void:
 func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none") -> void:
 	var init_pos := player.global_position
 	var dir := Input.get_axis("a","d")
+	if headed_ball: headed_ball = false
 	if tackle: dir = 0
 	else:
 		match pre_dir:
@@ -47,7 +49,9 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 			enemy_tackled = await SB.hitbox_detailed(player, Vector3.ONE * 2.5, Vector3.ZERO, \
 			(Engine.time_scale / Engine.physics_ticks_per_second) * 1, SB.HitboxTargets.PLAYERS, \
 			true, false, false, true)
-			if player.ball != null: break
+			if player.ball != null or headed_ball:
+				headed_ball = false
+				break
 			#print(enemy_tackled)
 		if reset_position: player.global_position = init_pos
 		SB.clear_velocities(player)

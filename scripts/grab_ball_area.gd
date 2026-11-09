@@ -1,17 +1,14 @@
 extends Area3D
 
-var ball : Ball = null
-var can_grab := true
-var holding := false
-var hold_time := 0.0
-var kick_strength := 5.0
-var ball_curve_friction := 1.0
+signal ball_headed
+
 @onready var actual_force := curvature_force * strength
 @export var kick_modes :Array[float] = [0.1, 0.5]
 @export var strength := 1.0
 @export var shot_speed := 1.0
 @export var kick_strengths :Array[float] = [10.0, 25.0, 75.0]
 @export var ball_holder: Node3D
+@export var ball_header_holder: Node3D
 @export var player: Player
 @export var camera_3d: Camera3D
 @export var sidespin_amount := 2.5
@@ -20,6 +17,16 @@ var ball_curve_friction := 1.0
 @export var curvature_force := 0.2
 @export var curve_pitch_power := 0.025
 
+var ball : Ball = null:
+	set(value):
+		if value != null: value.global_position = ball_holder.global_position
+		ball = value
+var can_grab := true
+var holding := false
+var hold_time := 0.0
+var kick_strength := 5.0
+var ball_curve_friction := 1.0
+
 func _physics_process(delta: float) -> void:
 	if hold_time < kick_modes[0]:
 		kick_strength = kick_strengths[0] * strength
@@ -27,7 +34,8 @@ func _physics_process(delta: float) -> void:
 		kick_strength = kick_strengths[1] * strength
 	else:
 		kick_strength = kick_strengths[2] * strength
-	if ball:
+	if ball and !player.using_move:
+		ball_holder.global_position = player.model.ball_holder.global_position
 		ball.global_position = ball_holder.global_position
 		ball_curve_friction = ball.curve_friction
 		var pitch_up := clampf(player.spring_arm_3d.rotation.x, 0.0, PI / 2.0)
@@ -78,6 +86,12 @@ func _on_area_entered(area: Node3D) -> void:
 		target = target as Ball
 		player.ball = target
 		target.current_owner = player
+		if !player.is_on_floor() and !player.using_move: 
+			target.global_position = ball_header_holder.global_position
+			player.moves.headed_ball = true
+			SB.kick(player, Vector3(0,-0.5,1), 30.0, true, shot_speed * 2, \
+			false, Vector3(), 0.0, 0.0)
+			ball_headed.emit()
 
 
 func _on_area_exited(area: Node3D) -> void:

@@ -43,8 +43,8 @@ func wait(frames := 60, speed := 1.0) -> void:
 
 func afterimage(target: Player, quantity := 5, in_between := 0.1,
 		duration := 1.0, custom_color := Color(1, 1, 1, 1), offset := Vector3.ZERO) -> void:
-	var skel := target.get_node("body").get_child(0).get_child(0) as Skeleton3D
-	var body_mesh := skel.get_child(0) as MeshInstance3D
+	#var skel := target.model.skeleton_3d as Skeleton3D
+	var body_mesh := target.model.body as MeshInstance3D
 	
 	var holder := Node3D.new()
 	holder.name = "afterimages of %s" % target.name
@@ -53,6 +53,7 @@ func afterimage(target: Player, quantity := 5, in_between := 0.1,
 	var materials: Array[StandardMaterial3D] = []
 	for i in quantity:
 		if not is_instance_valid(body_mesh) or holder == null:
+			print(is_instance_valid(body_mesh), " ", holder == null)
 			break
 		var mat := StandardMaterial3D.new()
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA

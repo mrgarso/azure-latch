@@ -21,7 +21,11 @@ transform = Transform3D(1.0000001, 0, 0, 0, 1.0000001, 0, 0, 0, 1.0000001, 0, 0,
 shape = SubResource("ConcavePolygonShape3D_i41qj")
 
 [node name="goal_area" type="Area3D" parent="." index="2" unique_id=580197252]
+collision_layer = 0
+collision_mask = 4
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="goal_area" index="0" unique_id=1054255069]
 transform = Transform3D(1.0000002, 0, 0, 0, 1.0000002, 0, 0, 0, 1.0000002, 0, 1.8016895, -1.9126493)
 shape = SubResource("BoxShape3D_57qmd")
+
+[connection signal="area_entered" from="goal_area" to="." method="_on_goal_area_area_entered"]
