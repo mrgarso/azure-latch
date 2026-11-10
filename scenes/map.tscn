@@ -66,6 +66,7 @@ metadata/_custom_type_script = "uid://g20fb3vbnbn"
 
 [node name="map" type="Node3D" unique_id=1095926456]
 script = ExtResource("1_paxxb")
+match_seconds = 120.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2097212809]
 environment = SubResource("Environment_gldc4")

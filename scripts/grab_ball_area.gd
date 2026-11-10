@@ -28,6 +28,7 @@ var kick_strength := 5.0
 var ball_curve_friction := 1.0
 
 func _physics_process(delta: float) -> void:
+	if player.mode != "player": return
 	if hold_time < kick_modes[0]:
 		kick_strength = kick_strengths[0] * strength
 	elif hold_time < kick_modes[1]:
@@ -74,10 +75,16 @@ func _physics_process(delta: float) -> void:
 
 
 func _input(_event: InputEvent) -> void:
+	if player.mode != "player": return
 	if !ball:
 		if Input.is_action_pressed("m1") and Input.is_action_pressed("m2"):
-			SB.fov_change(player, 70, 50, 0.45)
+			SB.fov_change(player, 70, 50, 0.45, SB.Interp.EXPO_IN)
 			await SB.wait(30, 1.0)
+			await SB.hitbox(player, Vector3.ONE * 15, Vector3.ZERO, 0.05, SB.HitboxTargets.BALL, \
+			)
+			if ball != null:
+				SB.screen_flash(player, Color(0.8,0.8,0.8,0.5), 0.5)
+				SB.kick(player, Vector3(0, -0.25, 1), 70, true, 2.1, true)
 			SB.fov_change(player, 90, 70, 0.5)
 
 func _on_area_entered(area: Node3D) -> void:

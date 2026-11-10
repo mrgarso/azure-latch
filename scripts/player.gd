@@ -19,6 +19,9 @@ class_name Player
 @export var grab_ball_area: Area3D
 @export var fps_label: Label
 @export var moves: Movement
+@export var ui: Ui
+@export var console_manager: CanvasLayer
+@export var screen_effects: CanvasLayer
 
 var is_on_ground := true
 var current_air_time := 0.0
@@ -69,6 +72,9 @@ func _physics_process(delta: float) -> void:
 		dummy_behaving = true
 		for i in dummy_behaviours:
 			i.run(self)
+	elif mode == "player":
+		setup_visibility(true)
+	
 	fps_label.text = "fps = " + str(Engine.get_frames_per_second())
 	forw = transform.basis.z
 	sides = transform.basis.x
@@ -84,17 +90,20 @@ func _physics_process(delta: float) -> void:
 	if using_move:
 		direction = Vector2(impulse_sum.x, impulse_sum.z)
 	elif can_move:
-		direction = (Input.get_vector("a", "d", "w", "s") * int(mode == "player")) + (Vector2(override_impulse_sum.x, override_impulse_sum.z))
+		direction = (Input.get_vector("a", "d", "w", "s") * int(mode == "player")) + \
+		(Vector2(override_impulse_sum.x, override_impulse_sum.z))
 		if is_on_floor() and Input.is_action_pressed("space"):
 			velocity.y = (jump_speed) * int(mode == "player")
 	
 	movement = ((direction.x * sides) + (direction.y * forw)) * current_speed
 	if direction:
-		model.animation_player.play("Run", 0.1, velocity.length() * anim_to_velocity_scaler)
+		model.animation_player.play("Run", 0.1, velocity.length() * \
+		anim_to_velocity_scaler)
 		velocity.x = lerp(velocity.x, movement.x, delta * accel)
 		velocity.z = lerp(velocity.z, movement.z, delta * accel)
 	else:
-		model.animation_player.play("reset", 0.3, velocity.length() * anim_to_velocity_scaler)
+		model.animation_player.play("reset", 0.3, velocity.length() * \
+		anim_to_velocity_scaler)
 		velocity.x = lerp(velocity.x, 0.0, delta * frict)
 		velocity.z = lerp(velocity.z, 0.0, delta * frict)
 	if impulse_sum.y:
@@ -129,3 +138,12 @@ func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
 	else:SB.velocity(self, true, Vector3(0,0,ragdoll), 0.5, 0.92, 40.0, true)
 	SB.fov_change(self, 90, 70, 0.2)
 	await SB.wait(1)
+
+func setup_visibility(_visible : bool) -> void:
+	ui.visible = _visible
+	console_manager.visible = _visible
+	screen_effects.visible = _visible
+
+func goal_behaviour():
+	SB.screen_flash(self)
+	print("goal in ", name)

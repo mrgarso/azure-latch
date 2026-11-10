@@ -151,7 +151,7 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 			or curvature_force != stored_curvature_force
 		
 		var now := Time.get_ticks_msec()
-		var due := unattach or (now - last_pred_msec) >= 16
+		var due := unattach or (now - last_pred_msec) >= 50
 		
 		#print("dir %s, curv_dir %s, time_curv %s, curv_force %s, changed %s" % [
 		#final_direction != stored_final_direction,
