@@ -140,6 +140,9 @@ func kick(target: Player = null, direction := Vector3(), force := 70.0, \
 unattach := true, speed := 1.0, show_traj := false, \
 curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -> void:
 	var subject: Ball = target.ball
+	if subject == null:
+		print("no has pateao nada macho")
+		return
 	var aim_dir := (target.transform.basis * direction).normalized()
 	var final_direction := -aim_dir * force
 	subject.velocity = Vector3.ZERO
@@ -253,6 +256,7 @@ include_not_ball_holder := true, include_teammates := false, include_enemies := 
 	delete(area, 0.0)
 	if target_hit is Ball:
 		parent.ball = target_hit
+		parent.ball.global_position = parent.grab_ball_area.ball_holder.global_position
 
 func hitbox_detailed(parent: Player = null, size := Vector3.ONE * 10, offset := Vector3.ZERO, \
 duration := 1.0, target := HitboxTargets.BALL, include_ball_holder := false, \
@@ -295,6 +299,7 @@ include_not_ball_holder := true, include_teammates := false, include_enemies := 
 	delete(area, 0.0)
 	if target_hit is Ball:
 		parent.ball = target_hit
+		parent.ball.global_position = parent.grab_ball_area.ball_holder.global_position
 	if target_hit == null:
 		return hitbox_detailed_list
 	return {

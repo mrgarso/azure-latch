@@ -13,6 +13,7 @@ extends SkillBuilderBlock
 ## If off, the next block runs right away while the velocity keeps going.
 @export var wait_until_done := false
 
+@warning_ignore("unused_parameter")
 func run(parent : Player = null, target : Player = null) -> void:
 	var gravity : float = custom_gravity if use_custom_gravity else parent.gravity
 	if wait_until_done:

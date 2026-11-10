@@ -95,6 +95,13 @@ func _physics_process(delta: float) -> void:
 		if is_on_floor() and Input.is_action_pressed("space"):
 			velocity.y = (jump_speed) * int(mode == "player")
 	
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+		var flat_vel := Vector3(velocity.x, 0.0, velocity.z)
+		if flat_vel.length() > 0.1:
+			var target_angle := atan2(flat_vel.x, flat_vel.z)
+			model.rotation.y = lerp_angle(model.rotation.y, target_angle, 10.0 * delta)
+	else:
+		model.rotation.y = -PI
 	movement = ((direction.x * sides) + (direction.y * forw)) * current_speed
 	if direction:
 		model.animation_player.play("Run", 0.1, velocity.length() * \

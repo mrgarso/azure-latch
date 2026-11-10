@@ -53,6 +53,7 @@ font_size = 27
 collision_layer = 2
 script = ExtResource("1_3vyb7")
 dummy_behaviours = Array[ExtResource("2_d2wvv")]([SubResource("Resource_3v2ag")])
+team = "a"
 ball_holder = NodePath("ball_holder")
 model = NodePath("body")
 spring_arm_3d = NodePath("shoulder/SpringArm3D")

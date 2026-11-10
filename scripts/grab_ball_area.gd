@@ -19,10 +19,17 @@ signal ball_headed
 
 var ball : Ball = null:
 	set(value):
-		if value != null: value.global_position = ball_holder.global_position
 		ball = value
+		hold_time = 0.0
+		if value != null:
+			value.global_position = ball_holder.global_position
+			if volleying:
+				volleying = false
+				while player.ball == null: await get_tree().physics_frame
+				SB.screen_flash(player, Color(0.8,0.8,0.8,0.5), 0.5)
+				while player.ball != null: SB.kick(player, Vector3(0, -0.12, 1), 70, true, 1.7)
 var can_grab := true
-var holding := false
+var volleying := false
 var hold_time := 0.0
 var kick_strength := 5.0
 var ball_curve_friction := 1.0
@@ -76,16 +83,16 @@ func _physics_process(delta: float) -> void:
 
 func _input(_event: InputEvent) -> void:
 	if player.mode != "player": return
-	if !ball:
-		if Input.is_action_pressed("m1") and Input.is_action_pressed("m2"):
-			SB.fov_change(player, 70, 50, 0.45, SB.Interp.EXPO_IN)
-			await SB.wait(30, 1.0)
-			await SB.hitbox(player, Vector3.ONE * 15, Vector3.ZERO, 0.05, SB.HitboxTargets.BALL, \
-			)
-			if ball != null:
-				SB.screen_flash(player, Color(0.8,0.8,0.8,0.5), 0.5)
-				SB.kick(player, Vector3(0, -0.25, 1), 70, true, 2.1, true)
+	if !ball and !player.using_move:
+		if Input.is_action_pressed("m1") and Input.is_action_pressed("m2") and !volleying:
+			volleying = true
+			SB.fov_change(player, 70, 60, 0.35, SB.Interp.EXPO_IN)
+			await SB.wait(20, 1.0)
+			await SB.hitbox(player, Vector3.ONE * 15, Vector3.ZERO, 0.05, \
+			SB.HitboxTargets.BALL)
 			SB.fov_change(player, 90, 70, 0.5)
+			await SB.wait(30, 1.0)
+			volleying = false
 
 func _on_area_entered(area: Node3D) -> void:
 	var target :Node3D= area.get_parent()

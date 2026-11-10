@@ -36,6 +36,7 @@ var current_owner : Player = null:
 var last_owner : Player = null
 
 func _ready() -> void:
+	
 	var area : CollisionShape3D = detection.get_child(0)
 	area.shape.radius = mesh.mesh.radius
 	if radius == 0.0:

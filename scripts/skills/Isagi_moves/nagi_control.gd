@@ -1,6 +1,7 @@
 extends Node
 class_name move
 
+@warning_ignore("unused_parameter")
 func use(target:Player=null, speed:=1.0, godmode:=false, vulnerable:=false):
 	if target.can_move or !target.can_move:
 		target.using_move = true

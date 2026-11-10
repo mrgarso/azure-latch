@@ -26,6 +26,7 @@ func get_all_children() -> void:
 		if current_child.get_script() == null: continue
 		children.append(current_child)
 
+@warning_ignore("unused_parameter")
 func goal(goaler : Player, amount : int, reset := false, \
 reset_time := 1.0) -> void:
 	#print(goaler, " MADE %s GOALLLLL, " %[amount])
