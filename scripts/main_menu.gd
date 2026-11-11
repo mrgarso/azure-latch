@@ -25,7 +25,7 @@ func _on_play_pressed() -> void:
 		Online.host(port)
 	else:
 		Online.join(Ip.text, port)
-	get_tree().change_scene_to_file("res://scenes/map.tscn")
+	get_tree().change_scene_to_file("res://scenes/selectable_maps/gol_gana.tscn")
 
 
 func _on_options_pressed() -> void:

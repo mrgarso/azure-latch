@@ -146,6 +146,7 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 	var aim_dir := (target.transform.basis * direction).normalized()
 	var final_direction := -aim_dir * force
 	subject.velocity = Vector3.ZERO
+	var traj_ball_traj := PackedVector3Array()
 	if show_traj:
 		var changed := final_direction.distance_to(stored_final_direction) > 0.005 \
 			or curvature_dir.distance_to(stored_curvature_dir) > 0.005 \
@@ -177,7 +178,6 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 				1.0 / Engine.physics_ticks_per_second, speed, \
 				curvature_dir, time_for_curve, curvature_force)
 			
-			var traj_ball_traj := PackedVector3Array()
 			for i in range(0, ball_traj.size(), 2):
 				traj_ball_traj.append(ball_traj[i])
 			subject.trajectory_mesh.mesh = subject.build_traj_mesh(traj_ball_traj, \
@@ -187,6 +187,8 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 		subject.trajectory_mesh.visible = false
 	
 	if unattach:
+		var field := get_tree().current_scene as Field
+		field.emit_signal("ball_kicked", traj_ball_traj)
 		subject.current_owner = null
 		subject.last_owner = target
 		subject.apply_impulse(final_direction, curvature_dir, time_for_curve, curvature_force)

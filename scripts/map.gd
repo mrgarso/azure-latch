@@ -1,9 +1,11 @@
 extends Node3D
 class_name Field
 
+signal ball_kicked(traj : PackedVector3Array)
 const PLAYER_REF :Resource= preload("res://scenes/player.tscn")
-@export var match_seconds := 360.0
 @onready var current_match_seconds := match_seconds
+@export var match_seconds := 360.0
+@export var match_ball : Ball = null
 var goal_scored := false
 var children := []
 var positions := []

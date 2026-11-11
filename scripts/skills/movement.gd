@@ -2,6 +2,7 @@ extends Node
 class_name Movement
 
 @onready var player :Player= $".."
+@onready var field : Field = get_tree().current_scene
 var headed_ball := false
 
 func _unhandled_key_input(event: InputEvent) -> void:
@@ -12,9 +13,35 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if Input.is_action_just_pressed("e"):
 			tackle_and_dash(false, false)
 
+func gk_tackles(dir := 0.0, custom_velocity := false, velocity := 0.0) -> void:
+	player.using_move = true
+	player.velocity = Vector3.ZERO
+	var tackle_velocity := 27.5 if !custom_velocity else velocity
+	var tackle_time := 1.25
+	var tackle_radius := 7.0
+	var front := float(dir == 0.0)
+	var final_dir := Vector3(dir,0,-front) * tackle_velocity
+	SB.velocity(player, true, final_dir, tackle_time, \
+	0.6, 10.0, false, true)
+	for i in int(tackle_time * 10) / 3:
+		
+		await SB.hitbox(player, Vector3.ONE * tackle_radius, final_dir / tackle_velocity, \
+		0.1, SB.HitboxTargets.BALL if (field.match_ball != null and \
+		field.match_ball.current_owner == null) else SB.HitboxTargets.PLAYERS)
+	for i in int(tackle_time * 10) & 3:
+		
+		await SB.hitbox(player, Vector3.ONE * tackle_radius / 3, Vector3.ZERO, \
+		0.1, SB.HitboxTargets.BALL if (field.match_ball != null and \
+		field.match_ball.current_owner == null) else SB.HitboxTargets.PLAYERS)
+	player.current_gravity = player.gravity
+	player.using_move = false
+
 func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none") -> void:
 	var init_pos := player.global_position
 	var dir := Input.get_axis("a","d")
+	if player.role == "gk":
+		await gk_tackles(dir)
+		return
 	if headed_ball: headed_ball = false
 	if tackle: dir = 0
 	else:
@@ -23,7 +50,7 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 				dir = 1
 			"left":
 				dir = -1
-			"none":
+			_:
 				pass
 	if dir == 0 and player.ball == null:
 		player.using_move = true
@@ -46,7 +73,7 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 						SB.fov_change(player, 80, 70, 0.6, SB.Interp.EXPO_IN)
 						SB.velocity(player, true, Vector3(0,0,-1), 0.4, 0.9, 40.0, true)
 						target.tackled(player, 2)
-			enemy_tackled = await SB.hitbox_detailed(player, Vector3.ONE * 2.5, Vector3.ZERO, \
+			enemy_tackled = await SB.hitbox_detailed(player, Vector3(2.5, 5.0, 2.5), Vector3(0, -2.5, 0), \
 			(Engine.time_scale / Engine.physics_ticks_per_second) * 1, SB.HitboxTargets.PLAYERS, \
 			true, false, false, true)
 			if player.ball != null or headed_ball:

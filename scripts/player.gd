@@ -2,6 +2,7 @@ extends CharacterBody3D
 class_name Player
 
 @export_enum("player", "dummy") var mode := "player"
+@export_enum("cf","gk") var role := "cf"
 @export var dummy_behaviours :Array[DummyBehaviours]= []
 ##this is the time the player has to take for it to change from grounded mode to air mode
 @export var air_time := 0.25
@@ -26,6 +27,7 @@ class_name Player
 var is_on_ground := true
 var current_air_time := 0.0
 var dummy_behaving := false
+var ball_to_follow :Ball= null
 var ball :Ball= null:
 	set(value):
 		grab_ball_area.ball = value
@@ -95,7 +97,7 @@ func _physics_process(delta: float) -> void:
 		if is_on_floor() and Input.is_action_pressed("space"):
 			velocity.y = (jump_speed) * int(mode == "player")
 	
-	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED:
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED or mode != "player":
 		var flat_vel := Vector3(velocity.x, 0.0, velocity.z)
 		if flat_vel.length() > 0.1:
 			var target_angle := atan2(flat_vel.x, flat_vel.z)
