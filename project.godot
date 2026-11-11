@@ -156,6 +156,7 @@ enter={
 3d_physics/layer_2="players"
 3d_physics/layer_3="ball"
 3d_physics/layer_4="camera_collided_objects"
+3d_physics/layer_5="true_ball"
 
 [physics]
 

@@ -55,8 +55,7 @@ func _ready() -> void:
 	_warm_up_trajectory()
 
 func set_grab(value : bool) -> void:
-	detection.monitorable = value
-	detection.monitoring = value
+	detection.set_collision_layer_value(3, value)
 	
 
 func _warm_up_trajectory() -> void:

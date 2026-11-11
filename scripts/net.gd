@@ -6,11 +6,11 @@ class_name Net
 @export var ball_reset_position := Vector3.ZERO
 @export var default_goal_value := 1
 @export var gk_bot: Player
-@export var gk_dive_area := 8.0
+@export var gk_dive_area := 4.0
 @export var gk_threshold := Vector3(gk_dive_area,100,gk_dive_area)
 @export var gk_ideal_pos: Marker3D
 @export var react_time := 0.25
-@export var distance_react_scale := 0.00025
+@export var distance_react_scale := 0.0003
 var ball_to_follow : Ball = null
 var gk_in_area := true
 var point_selected := 0
@@ -30,6 +30,7 @@ func predict_shot(traj:PackedVector3Array) -> void:
 	for point in traj:
 		if point.distance_squared_to(gk_pos) <= radius_sq:
 			saved_points.append(point)
+			break
 	if !saved_points.is_empty():
 		var time := gk_pos.distance_squared_to(ball_pos) * distance_react_scale
 		print(time)

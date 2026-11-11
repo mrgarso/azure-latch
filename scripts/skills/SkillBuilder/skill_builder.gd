@@ -219,7 +219,7 @@ func delete(target: Node3D, seconds := 0.5) -> void:
 enum HitboxTargets {
 	MAP = 1,
 	PLAYERS = 2,
-	BALL = 3
+	BALL = 5
 }
 
 var hitbox_detailed_list := {
