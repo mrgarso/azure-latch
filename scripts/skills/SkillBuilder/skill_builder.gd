@@ -145,8 +145,8 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 		return
 	var aim_dir := (target.transform.basis * direction).normalized()
 	var final_direction := -aim_dir * force
-	subject.velocity = Vector3.ZERO
 	var traj_ball_traj := PackedVector3Array()
+	subject.velocity = Vector3.ZERO
 	if show_traj:
 		var changed := final_direction.distance_to(stored_final_direction) > 0.005 \
 			or curvature_dir.distance_to(stored_curvature_dir) > 0.005 \

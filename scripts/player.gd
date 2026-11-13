@@ -23,6 +23,7 @@ class_name Player
 @export var ui: Ui
 @export var console_manager: CanvasLayer
 @export var screen_effects: CanvasLayer
+@export var skill_test : Skill
 
 var is_on_ground := true
 var current_air_time := 0.0

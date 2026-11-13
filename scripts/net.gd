@@ -47,9 +47,6 @@ func gk_dive_from_traj(traj:PackedVector3Array) -> void:
 	var gk_pos := gk_bot.global_position
 	average_coords /= traj.size()
 	gk_bot.look_at(Vector3(average_coords.x, gk_bot.global_position.y, average_coords.z))
-	while ball_pos.distance_squared_to(gk_pos) <= 1.0: 
-		print("not now")
-		await get_tree().physics_frame
 	await gk_bot.moves.gk_tackles(0.0, true, gk_pos.distance_squared_to(ball_pos) * distance_react_scale * 750)
 	gk_bot.rotation = Vector3.ZERO
 	saving = false
@@ -63,7 +60,7 @@ func gk_dive(dir:Vector3) -> void:
 	gk_bot.rotation = Vector3.ZERO
 	saving = false
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if !field.match_ball or saving:
 		return
 	
@@ -77,21 +74,28 @@ func _process(delta: float) -> void:
 		await gk_dive(ball_pos)
 		return
 	
-	gk_bot.look_at(Vector3(ball_pos.x, gk_pos.y, ball_pos.z))
+	var look_dir := Vector3(ball_pos.x, gk_pos.y, ball_pos.z)
+	if gk_bot.global_position.distance_squared_to(look_dir) > 0.0001:
+		gk_bot.look_at(look_dir)
 	
 	var target := Vector3(
-		clampf(ball_pos.x, global_position.x - gk_dive_area, global_position.x + gk_dive_area),
+		clampf(ball_pos.x, global_position.x - gk_dive_area * 1.7, global_position.x + gk_dive_area * 1.7),
 		gk_pos.y,
-		gk_pos.z
+		clampf(ball_pos.z, global_position.z - gk_dive_area, global_position.z + gk_dive_area)
 	)
 	
-	gk_bot.global_position.x = clampf(gk_pos.x, global_position.x - gk_dive_area, global_position.x + gk_dive_area)
+	
+	gk_bot.global_position.x = clampf(gk_pos.x, global_position.x - gk_dive_area * 1.7, global_position.x + gk_dive_area * 1.7)
 	gk_bot.global_position.z = clampf(gk_pos.z, global_position.z - gk_dive_area, global_position.z + gk_dive_area)
-	var local_offset := gk_bot.global_basis.inverse() * ((target - gk_pos) / 5.0)
-	SB.velocity(gk_bot, false, local_offset, delta, 1, 40.0, true)
+	var local_offset := gk_bot.global_basis.inverse() * ((target - gk_pos) / 5.0) * 0.5
+	SB.velocity(gk_bot, false, local_offset, delta, 0.9, 40.0, true)
 
 func _on_goal_area_area_entered(area: Area3D) -> void:
 	var target := area.get_parent()
 	if target is not Ball: return
 	target = target as Ball
-	field.goal(target.last_owner, goal_value, true, 0.0)
+	var last_owner : Player = target.last_owner
+	var dir_to_owner := global_position.direction_to(last_owner.global_position)
+	target.velocity = Vector3.ZERO
+	target.apply_impulse((dir_to_owner + Vector3(0,0.12,0)) * 50.0)
+	field.goal(last_owner, goal_value, true, 0.0)

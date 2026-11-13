@@ -18,7 +18,7 @@ func gk_tackles(dir := 0.0, custom_velocity := false, velocity := 0.0) -> void:
 	player.velocity = Vector3.ZERO
 	var tackle_velocity := 27.5 if !custom_velocity else velocity
 	var tackle_time := 1.25
-	var tackle_radius := 7.0
+	var tackle_radius := 5.0
 	var front := float(dir == 0.0)
 	var final_dir := Vector3(dir,0,-front) * tackle_velocity
 	SB.velocity(player, true, final_dir, tackle_time, \
@@ -87,9 +87,9 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 	SB.velocity(get_parent(), true, Vector3(dir * 5,0,0), 0.1, 0.8, 40.0, true)
 
 func dribble(dribble_time := 1.0) -> void:
+	if player.ball != null: return
 	player.dribbling = true
 	var dir := Vector3(Input.get_axis("a","d"), 0 , Input.get_axis("w", "s"))
-	print(dir)
 	var dash_duration := 0.1
 	await SB.velocity(player, true, dir * 30, dash_duration, 0.4, 40.0, true)
 	if (dribble_time - dash_duration >= 0): 

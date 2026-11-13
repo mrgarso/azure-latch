@@ -23,6 +23,7 @@ Online="*uid://cfjbrwvqdd1x6"
 
 [display]
 
+window/size/mode=3
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/vsync/vsync_mode=0
