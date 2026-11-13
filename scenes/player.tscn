@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cud45m48x82jv" path="res://scripts/player.gd" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://b4unfxy572sqc" path="res://scripts/camera_3d.gd" id="2_g2els"]
-[ext_resource type="Script" uid="uid://dnuq7v7hmquav" path="res://scripts/skills/skill_data/SkillTemplate.gd" id="2_y4r1p"]
+[ext_resource type="Script" uid="uid://dnuq7v7hmquav" path="res://scripts/skills/skill_data/skill.gd" id="2_y4r1p"]
 [ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/grab_ball_area.gd" id="4_tuyoq"]
 [ext_resource type="PackedScene" uid="uid://8h2yfbfl2to5" path="res://assets/3d_assets/scenes/body.tscn" id="6_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://b824ncaeuxk6r" path="res://assets/WhatsApp Image 2026-07-30 at 9.23.18 PM.jpeg" id="7_smehm"]
@@ -33,26 +33,34 @@ font_size = 27
 [sub_resource type="Resource" id="Resource_88vyk"]
 script = ExtResource("2_y4r1p")
 skill_name = "Direct"
+key_bind = "1"
+top_text = "shot"
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_jxbb6"]
 script = ExtResource("2_y4r1p")
 skill_name = "naru"
+key_bind = "2"
+top_text = "dash"
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_as2as"]
 script = ExtResource("2_y4r1p")
 skill_name = "my own"
+key_bind = "3"
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_ooadf"]
 script = ExtResource("2_y4r1p")
 skill_name = "reflex"
+key_bind = "4"
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_g42wn"]
 script = ExtResource("2_y4r1p")
 skill_name = "MOVE"
+key_bind = "5"
+top_text = "steal"
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "model", "spring_arm_3d", "grab_ball_area", "fps_label", "moves", "ui", "console_manager", "screen_effects")]

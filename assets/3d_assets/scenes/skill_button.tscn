@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://edhrkcrlqcnh"]
 
-[ext_resource type="Script" uid="uid://d2jhkmicwcqmb" path="res://skill.gd" id="1_uk5ws"]
+[ext_resource type="Script" uid="uid://d2jhkmicwcqmb" path="res://scripts/skills/skill_data/skill_button.gd" id="1_uk5ws"]
 [ext_resource type="LabelSettings" uid="uid://dike7y5w1pq2y" path="res://assets/labels settings/skill_font_res.tres" id="2_t7leu"]
 
-[node name="skill_button" type="Control" unique_id=1628500193 node_paths=PackedStringArray("skill_text", "top_text", "bottom_text", "color_rect")]
+[node name="skill_button" type="Control" unique_id=1628500193 node_paths=PackedStringArray("skill_text", "top_text", "bind_text", "bottom_text", "color_rect")]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 3
 anchors_preset = 0
@@ -12,6 +12,7 @@ offset_bottom = 40.0
 script = ExtResource("1_uk5ws")
 skill_text = NodePath("skill_container/skill_text")
 top_text = NodePath("top_text")
+bind_text = NodePath("bind_text")
 bottom_text = NodePath("bottom_text")
 color_rect = NodePath("skill_container/ColorRect")
 
@@ -24,7 +25,7 @@ offset_transform_enabled = true
 [node name="skill_text" type="Label" parent="skill_container" unique_id=1533197138]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 2
-text = "SDAWD"
+text = "-"
 label_settings = ExtResource("2_t7leu")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -36,20 +37,31 @@ color = Color(1, 1, 1, 0)
 
 [node name="top_text" type="Label" parent="." unique_id=1773995315]
 layout_mode = 0
-offset_left = -30.0
+offset_left = -10.0
 offset_top = -15.0
-offset_right = 70.0
+offset_right = 90.0
 offset_bottom = 8.0
+text = "steal"
 label_settings = ExtResource("2_t7leu")
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="bind_text" type="Label" parent="." unique_id=21007913]
+layout_mode = 0
+offset_left = 1.0
+offset_right = 101.0
+offset_bottom = 23.0
+text = "1"
+label_settings = ExtResource("2_t7leu")
+vertical_alignment = 1
+
 [node name="bottom_text" type="Label" parent="." unique_id=1235431358]
 layout_mode = 0
-offset_left = -30.0
-offset_top = 31.0
-offset_right = 70.0
-offset_bottom = 54.0
+offset_left = -10.0
+offset_top = 59.0
+offset_right = 90.0
+offset_bottom = 82.0
+text = "variants"
 label_settings = ExtResource("2_t7leu")
 horizontal_alignment = 1
 vertical_alignment = 1

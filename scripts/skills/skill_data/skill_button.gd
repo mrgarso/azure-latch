@@ -2,27 +2,33 @@
 extends Control
 class_name SkillButton
 
-signal modified()
-
 @export var skill_text: Label
 @export var top_text: Label
+@export var bind_text: Label
 @export var bottom_text: Label
 @export var color_rect: ColorRect
 
 var skill_name_default_value := "Control"
 @export var skill_name: String:
 	set(value):
-		modified.emit()
 		skill_name = value
 		if value != "":
 			skill_text.text = value
 		else:
 			skill_text.text = skill_name_default_value
 
-var top_text_default_value := "off-ball"
+var bind_text_default_value := "1"
+@export var key_bind: String:
+	set(value):
+		key_bind = value
+		if value != "":
+			bind_text.text = value
+		else:
+			bind_text.text = skill_name_default_value
+
+var top_text_default_value := ""
 @export var top_text_string: String:
 	set(value):
-		modified.emit()
 		top_text_string = value
 		if cooldown_progress > 0.0:
 			return
@@ -31,10 +37,9 @@ var top_text_default_value := "off-ball"
 		else:
 			top_text.text = top_text_default_value
 
-var bottom_text_default_value := "trap"
+var bottom_text_default_value := ""
 @export var bottom_text_string: String:
 	set(value):
-		modified.emit()
 		bottom_text_string = value
 		if value != "":
 			bottom_text.text = value

@@ -4,13 +4,33 @@
 extends Resource
 class_name Skill
 
+signal modified
 
 ##the skill name
-@export var skill_name := ""
+@export var skill_name := "":
+	set(value):
+		skill_name = value
+		modified.emit()
 ##how much one gotta wait for it to be used again in seconds
-@export var cooldown_in_seconds := 1.0
+@export var cooldown_in_seconds := 1.0:
+	set(value):
+		cooldown_in_seconds = value
+		modified.emit()
 ##the key that will activate this skill
-@export var key_bind := ""
+@export var key_bind := "":
+	set(value):
+		key_bind = value
+		modified.emit()
+##this text is meant to give information to the player, mainly what the move does
+@export var top_text := "":
+	set(value):
+		top_text = value
+		modified.emit()
+##this text is meant to give information to the player, mainly how the move is usable
+@export var bottom_text := "":
+	set(value):
+		bottom_text = value
+		modified.emit()
 
 ##this group is the one that determind when a move can be used using conditions of the player
 @export_group("conditions")
@@ -38,9 +58,6 @@ class_name Skill
 ##this move can be used when the player is using an skill or doing an action, cancelling it in the process
 @export var mid_skill := false
 #endregion
-
-func add_button() -> void:
-	pass
 
 func check_for_execution() -> void:
 	pass
