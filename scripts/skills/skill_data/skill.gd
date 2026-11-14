@@ -59,8 +59,27 @@ signal modified
 @export var mid_skill := false
 #endregion
 
-func check_for_execution() -> void:
-	pass
+func check_for_execution(player : Player) -> void:
+	if can_execute(player):
+		execute()
+
+func can_execute(player : Player) -> bool:
+	var blocked: Array[String] = []
+	
+	if !on_ball: blocked.append("on_ball")
+	if !off_ball: blocked.append("off_ball")
+	if !ally_possesion: blocked.append("ally_possesion")
+	if !enemy_possesion: blocked.append("enemy_possesion")
+	if !last_owner_of_ball: blocked.append("last_owner_of_ball")
+	if !on_ground: blocked.append("on_ground")
+	if !on_air: blocked.append("on_air")
+	if !mid_skill: blocked.append("mid_skill")
+	
+	for situation in blocked:
+		if player.check_conditions(situation):
+			print("no papito, nada q ver")
+			return false
+	return true
 
 func execute() -> void:
-	pass
+	print("executed")

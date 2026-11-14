@@ -154,6 +154,18 @@ func setup_visibility(_visible : bool) -> void:
 	console_manager.visible = _visible
 	screen_effects.visible = _visible
 
+func check_conditions(cond : String) -> bool:
+	match cond:
+		"on_ball": return (ball != null)
+		"off_ball": return not (ball != null)
+		"ally_possesion": return false
+		"enemy_possesion": return false
+		"last_owner_of_ball": return false
+		"on_ground": return is_on_floor()
+		"on_air": return not is_on_floor()
+		"mid_skill": return using_move
+		_: return false
+
 func goal_behaviour():
 	SB.screen_flash(self)
 	print("goal in ", name)

@@ -133,7 +133,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5898635, 1.8970218, 5.23769
 [node name="tackle_dummy" parent="." unique_id=1029011470 instance=ExtResource("3_l0wd8")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.626486, 1.0290349, 0)
 mode = "dummy"
-role = "cf"
 dummy_behaviours = Array[ExtResource("4_sqn4h")]([SubResource("Resource_nakos")])
 team = "b"
 

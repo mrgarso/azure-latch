@@ -24,7 +24,7 @@ var bind_text_default_value := "1"
 		if value != "":
 			bind_text.text = value
 		else:
-			bind_text.text = skill_name_default_value
+			bind_text.text = bind_text_default_value
 
 var top_text_default_value := ""
 @export var top_text_string: String:

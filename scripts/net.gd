@@ -28,11 +28,11 @@ func predict_shot(traj:PackedVector3Array) -> void:
 	var radius_sq := gk_dive_area * gk_dive_area
 	
 	for point in traj:
-		if point.distance_squared_to(gk_pos) <= radius_sq:
+		if point.distance_squared_to(global_position) <= radius_sq * 1.6:
 			saved_points.append(point)
 			break
 	if !saved_points.is_empty():
-		var time := gk_pos.distance_squared_to(ball_pos) * distance_react_scale
+		var time := (gk_pos.distance_squared_to(ball_pos) * distance_react_scale) * 1.125
 		print(time)
 		await get_tree().create_timer(time).timeout
 		gk_dive_from_traj(saved_points)
@@ -47,7 +47,7 @@ func gk_dive_from_traj(traj:PackedVector3Array) -> void:
 	var gk_pos := gk_bot.global_position
 	average_coords /= traj.size()
 	gk_bot.look_at(Vector3(average_coords.x, gk_bot.global_position.y, average_coords.z))
-	await gk_bot.moves.gk_tackles(0.0, true, gk_pos.distance_squared_to(ball_pos) * distance_react_scale * 750)
+	await gk_bot.moves.gk_tackles(0.0, true, gk_pos.distance_squared_to(ball_pos) * distance_react_scale * 300)
 	gk_bot.rotation = Vector3.ZERO
 	saving = false
 
@@ -56,7 +56,7 @@ func gk_dive(dir:Vector3) -> void:
 	gk_bot.look_at(Vector3(dir.x, gk_bot.global_position.y, dir.z))
 	var ball_pos := field.match_ball.global_position
 	var gk_pos := gk_bot.global_position
-	await gk_bot.moves.gk_tackles(0.0, true, gk_pos.distance_squared_to(ball_pos) * distance_react_scale * 750)
+	await gk_bot.moves.gk_tackles(0.0, true, gk_pos.distance_squared_to(ball_pos) * distance_react_scale * 300)
 	gk_bot.rotation = Vector3.ZERO
 	saving = false
 
@@ -87,7 +87,7 @@ func _physics_process(delta: float) -> void:
 	
 	gk_bot.global_position.x = clampf(gk_pos.x, global_position.x - gk_dive_area * 1.7, global_position.x + gk_dive_area * 1.7)
 	gk_bot.global_position.z = clampf(gk_pos.z, global_position.z - gk_dive_area, global_position.z + gk_dive_area)
-	var local_offset := gk_bot.global_basis.inverse() * ((target - gk_pos) / 5.0) * 0.5
+	var local_offset := gk_bot.global_basis.inverse() * ((target - gk_pos) / 5.0) * 0.25
 	SB.velocity(gk_bot, false, local_offset, delta, 0.9, 40.0, true)
 
 func _on_goal_area_area_entered(area: Area3D) -> void:

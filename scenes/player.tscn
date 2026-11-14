@@ -61,6 +61,8 @@ script = ExtResource("2_y4r1p")
 skill_name = "MOVE"
 key_bind = "5"
 top_text = "steal"
+on_ball = false
+enemy_possesion = false
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "model", "spring_arm_3d", "grab_ball_area", "fps_label", "moves", "ui", "console_manager", "screen_effects")]
@@ -250,7 +252,8 @@ layout_mode = 2
 text = "B:0"
 label_settings = SubResource("LabelSettings_yf5fn")
 
-[node name="skill_hub" parent="UI" unique_id=1130569324 instance=ExtResource("11_d2wvv")]
+[node name="skill_hub" parent="UI" unique_id=1130569324 node_paths=PackedStringArray("player") instance=ExtResource("11_d2wvv")]
+player = NodePath("../..")
 skills = Array[ExtResource("2_y4r1p")]([SubResource("Resource_88vyk"), SubResource("Resource_jxbb6"), SubResource("Resource_as2as"), SubResource("Resource_ooadf"), SubResource("Resource_g42wn")])
 
 [node name="movement" type="Node" parent="." unique_id=1782003577]

@@ -3,6 +3,7 @@ extends Control
 class_name SkillHub
 
 @export var h_box_container: HBoxContainer
+@export var player: Player
 @export var skills : Array[Skill] = []:
 	set(value):
 		for i in skills:
@@ -46,10 +47,10 @@ func _ready() -> void:
 	reload(true)
 
 func _process(delta: float) -> void:
-	if !Engine.is_editor_hint():
+	if !Engine.is_editor_hint() and player.mode == "player":
 		check_input()
 
 func check_input() -> void:
 	for i in skills:
 		if Input.is_action_just_pressed(i.key_bind):
-			print("SE PRINTIO EN ", i.key_bind, " POR ", i.skill_name)
+			i.check_for_execution(player)
