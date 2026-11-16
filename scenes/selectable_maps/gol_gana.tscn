@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cgd0v5ayj83j8"]
 
-[ext_resource type="Script" uid="uid://cr86hlsp8a4i7" path="res://scripts/gol_gana.gd" id="1_hc7tj"]
+[ext_resource type="Script" uid="uid://cr86hlsp8a4i7" path="res://scripts/maps/gol_gana.gd" id="1_hc7tj"]
 [ext_resource type="PackedScene" uid="uid://5uhpora435bo" path="res://scenes/net.tscn" id="2_1yold"]
 [ext_resource type="PackedScene" uid="uid://digb62ssmrr0e" path="res://scenes/ball.tscn" id="3_abivb"]
 

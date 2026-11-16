@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://5uhpora435bo"]
 
 [ext_resource type="PackedScene" uid="uid://bqjgogvuqtdb1" path="res://assets/3d_assets/goal_net1.glb" id="1_es2g2"]
-[ext_resource type="Script" uid="uid://c2yttb2vg07gs" path="res://scripts/net.gd" id="2_i41qj"]
+[ext_resource type="Script" uid="uid://c2yttb2vg07gs" path="res://scripts/game/net.gd" id="2_i41qj"]
 [ext_resource type="PackedScene" uid="uid://cqi7fxayfxs8i" path="res://scenes/player.tscn" id="3_vmyo6"]
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_i41qj"]

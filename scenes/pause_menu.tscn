@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://dq88e81rau26s"]
+
+[ext_resource type="Script" uid="uid://45jj8uktt3hl" path="res://button.gd" id="1_n87rw"]
+
+[node name="pause_menu" type="PanelContainer" unique_id=77986993]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=451166601]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="Button" type="Button" parent="VBoxContainer" unique_id=312530360]
+layout_mode = 2
+script = ExtResource("1_n87rw")

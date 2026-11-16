@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://8h2yfbfl2to5"]
 
 [ext_resource type="PackedScene" uid="uid://yt3sgld3lhvt" path="res://assets/3d_assets/azure_latch_body9.glb" id="1_2j15m"]
-[ext_resource type="Script" uid="uid://bx817pjipfkgn" path="res://assets/3d_assets/scenes/body.gd" id="2_ju7tl"]
+[ext_resource type="Script" uid="uid://bx817pjipfkgn" path="res://scripts/player_components/body.gd" id="2_ju7tl"]
 
 [node name="body" unique_id=2126430192 node_paths=PackedStringArray("skeleton_3d", "body", "animation_player", "ball_holder") instance=ExtResource("1_2j15m")]
 script = ExtResource("2_ju7tl")
@@ -10,10 +10,10 @@ body = NodePath("rig/Skeleton3D/body")
 animation_player = NodePath("AnimationPlayer")
 ball_holder = NodePath("rig/Empty")
 
-[node name="rig" parent="." index="0" unique_id=891954524]
+[node name="rig" parent="." index="0" unique_id=520360620]
 script = null
 
-[node name="Skeleton3D" parent="rig" index="1" unique_id=118125272]
+[node name="Skeleton3D" parent="rig" index="1" unique_id=185753895]
 bones/0/position = Vector3(-6.661338e-16, 1.2918813, 0.037048418)
 bones/0/rotation = Quaternion(-0.04206985, 1.1910376e-07, -5.0151154e-09, 0.99911475)
 bones/1/rotation = Quaternion(0.03781508, 3.2307487e-14, 9.01582e-09, 0.9992848)

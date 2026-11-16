@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://c0qcyshtnuf6v"]
 
-[ext_resource type="Script" uid="uid://ccpf84d3amc5" path="res://scripts/map.gd" id="1_yrobx"]
+[ext_resource type="Script" uid="uid://ccpf84d3amc5" path="res://scripts/maps/map.gd" id="1_yrobx"]
 [ext_resource type="PackedScene" uid="uid://digb62ssmrr0e" path="res://scenes/ball.tscn" id="2_l10d0"]
 [ext_resource type="PackedScene" uid="uid://cqi7fxayfxs8i" path="res://scenes/player.tscn" id="3_l0wd8"]
-[ext_resource type="Script" uid="uid://g20fb3vbnbn" path="res://scripts/dummy_behaviours.gd" id="4_sqn4h"]
+[ext_resource type="Script" uid="uid://g20fb3vbnbn" path="res://scripts/player_components/dummy_behaviours.gd" id="4_sqn4h"]
 [ext_resource type="Script" uid="uid://dq3hffvf6dfoe" path="res://scripts/skills/SkillBuilder/blocks/skill_builder_block.gd" id="5_0lk7n"]
 [ext_resource type="Script" uid="uid://c5gd1u2ydpyj3" path="res://scripts/skills/SkillBuilder/blocks/tackle_block.gd" id="6_fddjj"]
 [ext_resource type="Script" uid="uid://beuc1esv0016a" path="res://scripts/skills/SkillBuilder/blocks/wait_block.gd" id="7_i0i5j"]

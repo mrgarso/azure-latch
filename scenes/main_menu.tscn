@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cv76pbmumcd78"]
 
-[ext_resource type="Script" uid="uid://cyafica8116me" path="res://scripts/main_menu.gd" id="1_l6cm7"]
+[ext_resource type="Script" uid="uid://cyafica8116me" path="res://scripts/game/main_menu.gd" id="1_l6cm7"]
 [ext_resource type="Texture2D" uid="uid://c6s8msi6halch" path="res://icon.svg" id="2_ekxnf"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_g4v7s"]
