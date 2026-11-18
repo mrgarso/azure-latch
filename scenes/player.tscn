@@ -9,7 +9,9 @@
 [ext_resource type="Texture2D" uid="uid://u5a0wpx5ek68" path="res://assets/white-stucco-wall_1194-6992.jpg" id="8_smehm"]
 [ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console/console.gd" id="9_ur7pv"]
 [ext_resource type="Script" uid="uid://lhld7nck63jh" path="res://scripts/skills/movement.gd" id="9_y4r1p"]
+[ext_resource type="Script" uid="uid://cai55kvj706aj" path="res://scripts/skills/isagi/direct_shot.gd" id="11_3v2ag"]
 [ext_resource type="PackedScene" uid="uid://cjcdk8lb2gb6f" path="res://assets/3d_assets/scenes/skill_hub.tscn" id="11_d2wvv"]
+[ext_resource type="Script" uid="uid://cv8uixno6rkwu" path="res://scripts/skills/isagi/naruhaya_forward.gd" id="12_jej6c"]
 [ext_resource type="Script" uid="uid://v6ox4nt63ok2" path="res://scripts/ui_stuff/ui.gd" id="12_oprun"]
 
 [sub_resource type="Resource" id="Resource_ur7pv"]
@@ -32,16 +34,18 @@ font_size = 27
 
 [sub_resource type="Resource" id="Resource_88vyk"]
 script = ExtResource("2_y4r1p")
-skill_name = "Direct"
+skill_name = "direct shot"
 key_bind = "1"
 top_text = "shot"
+script_to_trigger = ExtResource("11_3v2ag")
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_jxbb6"]
 script = ExtResource("2_y4r1p")
-skill_name = "naru"
+skill_name = "naruhaya forward"
 key_bind = "2"
 top_text = "dash"
+script_to_trigger = ExtResource("12_jej6c")
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_as2as"]

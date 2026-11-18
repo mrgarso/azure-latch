@@ -55,8 +55,7 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 	if dir == 0 and player.ball == null:
 		player.using_move = true
 		var tackle_duration := 0.9
-		player.velocity.y = 20.0
-		SB.velocity(get_parent(), true, Vector3(0,0,-6), tackle_duration, 0.923)
+		SB.velocity(get_parent(), true, Vector3(0,0,-7), tackle_duration, 0.915, 40.0)
 		var enemy_tackled := SB.hitbox_detailed_list
 		for i in int(Engine.physics_ticks_per_second * tackle_duration):
 			var enemy = enemy_tackled["collided"]
@@ -70,7 +69,7 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 						player.global_position.direction_to(target.global_position) * 0.5, \
 						0.5, 0.8, 40.0, true, true)
 					else:
-						SB.fov_change(player, 80, 70, 0.6, SB.Interp.EXPO_IN)
+						SB.fov_change(player, 80, 75, 0.6, SB.Interp.EXPO_IN)
 						SB.velocity(player, true, Vector3(0,0,-1), 0.4, 0.9, 40.0, true)
 						target.tackled(player, 2)
 			enemy_tackled = await SB.hitbox_detailed(player, Vector3(2.5, 5.0, 2.5), Vector3(0, -2.5, 0), \

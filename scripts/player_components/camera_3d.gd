@@ -35,5 +35,6 @@ func invert_shift_lock():
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		mouse_motion = event.relative
-		spring_arm_3d.rotation.x -= (event.relative.y * sens) * (int(player.mode == "player"))
+		spring_arm_3d.rotation.x = clamp(spring_arm_3d.rotation.x - (event.relative.y * sens) * \
+		(int(player.mode == "player")), -PI/2, PI/2)
 		player.rotation.y -= (event.relative.x * sens) * (int(player.mode == "player"))

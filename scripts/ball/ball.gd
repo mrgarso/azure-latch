@@ -78,6 +78,7 @@ fast_rays := false) -> Dictionary:
 	var step_delta = delta / physics_steps
 	vel.x *= decay
 	vel.z *= decay
+	var collided := false
 	
 	if current_owner == null or predicting:
 		vel += gravity_force * delta
@@ -122,6 +123,7 @@ fast_rays := false) -> Dictionary:
 					var normal_part :Vector3 = bounced.dot(result.normal) * result.normal
 					var tangent_part := bounced - normal_part
 					vel = tangent_part + normal_part * restitution
+					collided = true
 				else:
 					pos += motion
 			
@@ -133,7 +135,7 @@ fast_rays := false) -> Dictionary:
 						snap_pos, pos + (total / dist) * radius)
 					fast_query.set_collision_mask(1)
 					if space_state.intersect_ray(fast_query):
-						
+						collided = true
 						pos = snap_pos
 						vel = snap_vel
 						curve_time = snap_curve_time
@@ -142,7 +144,7 @@ fast_rays := false) -> Dictionary:
 			break
 	
 	return {"position": pos, "velocity": vel, "curve_time": curve_time,
-		"curve_velocity": curve_velocity, "curvature": curvature}
+		"curve_velocity": curve_velocity, "curvature": curvature, "collided" : collided}
 
 func _physics_process(delta: float) -> void:
 	if current_grab_cooldown <= 0.0: set_grab(current_owner == null)
@@ -168,13 +170,14 @@ seconds:= 1.0, dt:= (1.0/60.0), speed := 1.0, \
 curvature := Vector3.ZERO, time_for_curvature := 1.0, curvature_force := 1.0) -> PackedVector3Array:
 	speed_scale = speed
 	var points := PackedVector3Array()
-	var min_dist_sq := 0.1 * 0.1
+	var min_dist_sq := 0.9 * 0.9
 	var pos := global_position
 	var vel := start_vel                      
 	var curve_time := 0.0
 	var func_curve_ref_dir := start_vel.normalized()
 	points.append(pos)
 	var last_kept := pos
+	var collisions_showable := 15
 	for i in int(seconds / dt):
 		var result = simulate_step(pos, vel, dt, true,
 		curvature, time_for_curvature, curvature_force, curve_time, func_curve_ref_dir, \
@@ -186,29 +189,54 @@ curvature := Vector3.ZERO, time_for_curvature := 1.0, curvature_force := 1.0) ->
 		if pos.distance_squared_to(last_kept) >= min_dist_sq:
 			points.append(pos)
 			last_kept = pos
+		if result.collided and collisions_showable > 0:
+			collisions_showable -= 1
+			points.append(pos)
+			last_kept = pos
 	
 	if pos != last_kept:
 		points.append(pos)
+	#check_predict_points(traj_ball_points.points, true, 0, traj_ball_points.collided_or_goal)
 	
 	return points
 
-func check_predict_points(points: PackedVector3Array, clear := true, custom_number := 0) -> void:
+func check_predict_points(points: PackedVector3Array, clear := true, custom_number := 0, collided:= PackedVector2Array()) -> void:
 	if clear: 
 		for n in get_tree().get_nodes_in_group("p_point"):
 			n.queue_free()
+	if clear: 
+		for n in get_tree().get_nodes_in_group("m_point"):
+			n.queue_free()
+	
+	var mat := StandardMaterial3D.new()
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.albedo_color = Color(1,0,1,0.5)
 	
 	for i in points.size():
+		if i >= collided.size() or collided.size() == 0:
+			continue
+			if collided[i].x != 0:
+				continue
 		var label := Label3D.new()
+		var test_mesh := MeshInstance3D.new() as MeshInstance3D
+		test_mesh.mesh = SphereMesh.new()
+		test_mesh.mesh.radius = .25
+		test_mesh.mesh.height = .5
+		test_mesh.material_override = mat
 		get_tree().current_scene.add_child(label)
+		get_tree().current_scene.add_child(test_mesh)
 		label.name = "p_point %d" % i
+		test_mesh.name = "m_point %d" % i
 		if custom_number != 0:
 			label.text = str(custom_number)
 		else:
-			label.text = str(i)
-		label.pixel_size = 0.10
+			label.text = str(collided[i].x)
+		label.pixel_size = 0.025
 		label.billboard = BaseMaterial3D.BILLBOARD_ENABLED
 		label.add_to_group("p_point")
-		label.global_position = points[i] + Vector3.UP * (label.pixel_size * 10)
+		test_mesh.add_to_group("m_point")
+		label.global_position = points[i] + Vector3.UP * (label.pixel_size * 25)
+		test_mesh.global_position = points[i]
 
 func build_traj_mesh(points: PackedVector3Array, traj_radius := 1.0, sides := 3, \
 color := Color(1,0,1), min_dist := 0.5) -> ArrayMesh:

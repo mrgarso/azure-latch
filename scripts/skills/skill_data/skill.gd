@@ -6,6 +6,7 @@ class_name Skill
 
 signal modified
 
+
 ##the skill name
 @export var skill_name := "":
 	set(value):
@@ -31,6 +32,8 @@ signal modified
 	set(value):
 		bottom_text = value
 		modified.emit()
+
+@export var script_to_trigger : Script
 
 ##this group is the one that determind when a move can be used using conditions of the player
 @export_group("conditions")
@@ -59,9 +62,11 @@ signal modified
 @export var mid_skill := false
 #endregion
 
+var current_cooldown := 0.0
+
 func check_for_execution(player : Player) -> void:
 	if can_execute(player):
-		execute()
+		execute(player)
 
 func can_execute(player : Player) -> bool:
 	var blocked: Array[String] = []
@@ -81,5 +86,7 @@ func can_execute(player : Player) -> bool:
 			return false
 	return true
 
-func execute() -> void:
-	print("executed")
+func execute(player : Player) -> void:
+	if script_to_trigger != null and current_cooldown > 0.0:
+		await script_to_trigger.use(player)
+		current_cooldown = cooldown_in_seconds

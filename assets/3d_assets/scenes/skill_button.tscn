@@ -3,7 +3,10 @@
 [ext_resource type="Script" uid="uid://d2jhkmicwcqmb" path="res://scripts/skills/skill_data/skill_button.gd" id="1_uk5ws"]
 [ext_resource type="LabelSettings" uid="uid://dike7y5w1pq2y" path="res://assets/labels settings/skill_font_res.tres" id="2_t7leu"]
 
-[node name="skill_button" type="Control" unique_id=1628500193 node_paths=PackedStringArray("skill_text", "top_text", "bind_text", "bottom_text", "color_rect")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a8ls1"]
+bg_color = Color(0.07, 0.07, 0.07, 0.57)
+
+[node name="skill_button" type="Control" unique_id=1628500193 node_paths=PackedStringArray("skill_text", "top_text", "bind_text", "bottom_text", "color_rect", "skill_container")]
 custom_minimum_size = Vector2(80, 80)
 layout_mode = 3
 anchors_preset = 0
@@ -15,12 +18,14 @@ top_text = NodePath("top_text")
 bind_text = NodePath("bind_text")
 bottom_text = NodePath("bottom_text")
 color_rect = NodePath("skill_container/ColorRect")
+skill_container = NodePath("skill_container")
 
 [node name="skill_container" type="PanelContainer" parent="." unique_id=187949117]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 offset_transform_enabled = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_a8ls1")
 
 [node name="skill_text" type="Label" parent="skill_container" unique_id=1533197138]
 custom_minimum_size = Vector2(80, 80)

@@ -45,11 +45,11 @@ func afterimage(target: Player, quantity := 5, in_between := 0.1,
 		duration := 1.0, custom_color := Color(1, 1, 1, 1), offset := Vector3.ZERO) -> void:
 	#var skel := target.model.skeleton_3d as Skeleton3D
 	var body_mesh := target.model.body as MeshInstance3D
-	
+
 	var holder := Node3D.new()
 	holder.name = "afterimages of %s" % target.name
 	get_tree().current_scene.add_child(holder)
-	
+
 	var materials: Array[StandardMaterial3D] = []
 	for i in quantity:
 		if not is_instance_valid(body_mesh) or holder == null:
@@ -59,7 +59,7 @@ func afterimage(target: Player, quantity := 5, in_between := 0.1,
 		mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
 		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 		mat.albedo_color = custom_color
-		
+
 		var img := MeshInstance3D.new()
 		img.mesh = body_mesh.bake_mesh_from_current_skeleton_pose()
 		img.material_override = mat
@@ -67,7 +67,7 @@ func afterimage(target: Player, quantity := 5, in_between := 0.1,
 		img.global_transform = body_mesh.global_transform
 		img.global_position += offset
 		materials.append(mat)
-		
+
 		await get_tree().create_timer(in_between).timeout
 	if holder == null: return
 	var tween := create_tween().set_parallel(true)
@@ -101,7 +101,7 @@ func apply_interp(kind: Interp, t: float) -> float:
 			return (2.0 - pow(2.0, -20.0 * t + 10.0)) / 2.0
 	return t
 
-func fov_change(target: Player, from := 70.0, to := 70.0, duration := 1.0, kind := Interp.LINEAR) -> void:
+func fov_change(target: Player, from := 75.0, to := 75.0, duration := 1.0, kind := Interp.LINEAR) -> void:
 	var camera: Camera3D = target.get_node("shoulder/SpringArm3D/Camera3D")
 	if camera.has_meta("fov_tween"):
 		var old: Tween = camera.get_meta("fov_tween")
@@ -135,15 +135,18 @@ var stored_curvature_dir := Vector3.INF
 var stored_time_for_curve := -1.0
 var stored_curvature_force := -1.0
 var stored_ball_pos := Vector3.INF
-var last_pred_msec := 0 
+var last_pred_msec := 0
 func kick(target: Player = null, direction := Vector3(), force := 70.0, \
 unattach := true, speed := 1.0, show_traj := false, \
-curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -> void:
+curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0, \
+y_aimable := false, y_min := 0.0, y_max := 0.0) -> void:
 	var subject: Ball = target.ball
 	if subject == null:
 		print("no has pateao nada macho")
 		return
+	var y_aim_dir :float= clamp(-target.spring_arm_3d.rotation.x, y_min, y_max)
 	var aim_dir := (target.transform.basis * direction).normalized()
+	if y_aimable: aim_dir.y += y_aim_dir
 	var final_direction := -aim_dir * force
 	var traj_ball_traj := PackedVector3Array()
 	subject.velocity = Vector3.ZERO
@@ -156,15 +159,6 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 		
 		var now := Time.get_ticks_msec()
 		var due := unattach or (now - last_pred_msec) >= 50
-		
-		#print("dir %s, curv_dir %s, time_curv %s, curv_force %s, changed %s" % [
-		#final_direction != stored_final_direction,
-		#curvature_dir != stored_curvature_dir,
-		#time_for_curve != stored_time_for_curve,
-		#curvature_force != stored_curvature_force,
-		#changed
-		#])
-		
 		if changed and due:
 			last_pred_msec = now
 			stored_ball_pos = subject.global_position
@@ -185,10 +179,15 @@ curvature_dir := Vector3.ZERO,  time_for_curve := 0.0, curvature_force := 0.0) -
 		show(subject.trajectory_mesh)
 	else:
 		subject.trajectory_mesh.visible = false
-	
+
 	if unattach:
+		target.model.set_modulate(Color(1,1,1,1), false)
 		var field := get_tree().current_scene as Field
-		field.emit_signal("ball_kicked", traj_ball_traj)
+		var ball_traj := subject.predict_trajectory(final_direction, \
+			240 / float(Engine.physics_ticks_per_second), \
+			1.0 / Engine.physics_ticks_per_second, speed, \
+			curvature_dir, time_for_curve, curvature_force)
+		field.emit_signal("ball_kicked", ball_traj)
 		subject.current_owner = null
 		subject.last_owner = target
 		subject.apply_impulse(final_direction, curvature_dir, time_for_curve, curvature_force)
@@ -315,11 +314,11 @@ func _is_valid_target(target: Player, parent: Player, include_ball_holder: bool,
 		include_not_ball_holder: bool, include_teammates: bool, include_enemies: bool) -> bool:
 	if target == null or target == parent:
 		return false
-	
+
 	var has_ball := target.ball != null
 	if has_ball and not include_ball_holder: return false
 	if not has_ball and not include_not_ball_holder: return false
-	
+
 	var is_teammate :bool= target.team == parent.team
 	if is_teammate and not include_teammates: return false
 	if not is_teammate and not include_enemies: return false

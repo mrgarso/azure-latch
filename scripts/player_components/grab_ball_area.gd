@@ -84,11 +84,11 @@ func _input(_event: InputEvent) -> void:
 	if !ball and !player.using_move:
 		if Input.is_action_pressed("m1") and Input.is_action_pressed("m2") and !volleying:
 			volleying = true
-			SB.fov_change(player, 70, 60, 0.35, SB.Interp.EXPO_IN)
+			SB.fov_change(player, 75, 60, 0.35, SB.Interp.EXPO_IN)
 			await SB.wait(20, 1.0)
 			await SB.hitbox(player, Vector3.ONE * 15, Vector3.ZERO, 0.05, \
 			SB.HitboxTargets.BALL)
-			SB.fov_change(player, 90, 70, 0.5)
+			SB.fov_change(player, 90, 75, 0.5)
 			await SB.wait(30, 1.0)
 			volleying = false
 

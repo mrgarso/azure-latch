@@ -146,7 +146,7 @@ func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
 	ball = null
 	if perpetrator: SB.velocity(self, true, global_position.direction_to(perpetrator.global_position) * ragdoll, 0.5, 0.92, 40.0, true) 
 	else:SB.velocity(self, true, Vector3(0,0,ragdoll), 0.5, 0.92, 40.0, true)
-	SB.fov_change(self, 90, 70, 0.2)
+	SB.fov_change(self, 90, 75, 0.2)
 	await SB.wait(1)
 
 func setup_visibility(_visible : bool) -> void:
