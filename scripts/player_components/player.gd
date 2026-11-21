@@ -23,7 +23,7 @@ class_name Player
 @export var ui: Ui
 @export var console_manager: CanvasLayer
 @export var screen_effects: CanvasLayer
-@export var skill_test : Skill
+@export var pause_menu: PauseMenu
 
 var is_on_ground := true
 var current_air_time := 0.0
@@ -65,6 +65,8 @@ var up := Vector3.ZERO
 var movement := Vector3.ZERO
 var impulses: Array[Impulse] = []
 var anim_to_velocity_scaler := 0.05
+var on_pause_menu := false
+var on_console := false
 
 func _ready() -> void:
 	current_gravity = gravity
@@ -131,6 +133,14 @@ func _physics_process(delta: float) -> void:
 		is_on_ground = true
 	move_and_slide()
 
+func _unhandled_key_input(event: InputEvent) -> void:
+	if mode == "player":
+		pause()
+	if true in [on_pause_menu, on_console]:
+		can_move = false
+	else:
+		can_move = true
+
 func tackle(reset_pos := false, tack := false, side := "none") -> void:
 	await moves.tackle_and_dash(reset_pos, tack, side)
 
@@ -166,6 +176,17 @@ func check_conditions(cond : String) -> bool:
 		"mid_skill": return using_move
 		_: return false
 
+func pause(force := false):
+	if (Input.is_action_just_pressed("esc") or force) and !on_console:
+		on_pause_menu = !on_pause_menu
+		can_move = !on_pause_menu
+		if on_pause_menu:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+			if pause_menu.main_menu_focused:
+				pause_menu.make_visible(pause_menu)
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+			pause_menu.make_visible(null, pause_menu)
+
 func goal_behaviour():
 	SB.screen_flash(self)
-	print("goal in ", name)

@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 SB="*uid://dux8txfmnso88"
 Online="*uid://cfjbrwvqdd1x6"
+UsP="*uid://ctm64wxyd4d72"
 
 [display]
 

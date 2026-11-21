@@ -1,6 +1,10 @@
 extends Camera3D
 
-@export var sens := 0.001
+@export var sens : float:
+	set(value):
+		UsP.sens = value
+	get:
+		return UsP.sens
 @export var initial_spring_distance := 10.0
 @export var spring_arm_3d: SpringArm3D
 @export var shoulder: Node3D
@@ -11,9 +15,7 @@ var mouse_mode := Input.mouse_mode
 var mouse_motion := Vector2()
 
 func _physics_process(delta: float) -> void:
-	if fov_changers:
-		pass
-	if Input.is_action_just_pressed("shift"):
+	if Input.is_action_just_pressed("shift") and player.can_move:
 		if player.mode != "player": return
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE

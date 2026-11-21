@@ -9,19 +9,30 @@ class_name SkillHub
 		for i in skills:
 			if i and i.modified.is_connected(skill_changed):
 				i.modified.disconnect(skill_changed)
+			if i and i.cooldown.is_connected(handle_cooldown):
+				i.cooldown.disconnect(handle_cooldown)
 		skills = value
 		for i in skills:
 			if i and not i.modified.is_connected(skill_changed):
 				i.modified.connect(skill_changed)
+			if i and not i.cooldown.is_connected(handle_cooldown):
+				i.cooldown.connect(handle_cooldown)
 		if is_node_ready():
 			reload()
 
-const SKILL_BUTTON := preload("res://assets/3d_assets/scenes/skill_button.tscn")
+var buttons := {}
+
+const SKILL_BUTTON := preload("res://scenes/skill_button.tscn")
 
 func skill_changed() -> void:
 	if not is_inside_tree():
 		return
 	reload.call_deferred()
+
+func handle_cooldown(value: float, skill_name: String) -> void:
+	var btn := buttons.get(skill_name) as SkillButton
+	if btn:
+		btn.cooldown_progress = value
 
 func reload(force := false) -> void:
 	if !Engine.is_editor_hint() and !force:
@@ -38,8 +49,10 @@ func reload(force := false) -> void:
 		inst.skill_name = i.skill_name if !i.skill_name.is_empty() else '-'
 		inst.key_bind = i.key_bind
 		inst.top_text_string = i.top_text
+		inst.cooldown = i.cooldown_in_seconds
 		inst.bottom_text_string = i.bottom_text
 		h_box_container.add_child(inst)
+		buttons[inst.skill_name] = inst
 		if Engine.is_editor_hint():
 			inst.owner = root
 
@@ -47,10 +60,11 @@ func _ready() -> void:
 	reload(true)
 
 func _process(delta: float) -> void:
-	if !Engine.is_editor_hint() and player.mode == "player":
+	if !Engine.is_editor_hint() and player.mode == "player" and player.can_move:
 		check_input()
 
 func check_input() -> void:
 	for i in skills:
-		if Input.is_action_just_pressed(i.key_bind):
-			i.check_for_execution(player)
+		if Input.is_action_just_pressed(i.key_bind) and i.current_cooldown <= 0.0:
+			await i.check_for_execution(player)
+			i.current_cooldown += i.cooldown_in_seconds

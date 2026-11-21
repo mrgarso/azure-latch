@@ -10,7 +10,10 @@ class_name SkillButton
 @export var skill_container: PanelContainer
 
 @export var background_color_available := Color(0.07,0.07,0.07, 0.57)
+@export var background_color_unavailable := Color(0.24,0.24,0.24, 0.8)
 @export var background_color_cooldown := Color(0.7, 0.1, 0.1, 0.57)
+
+var _shown_progress := 0.0
 
 var current_background_color : Color:
 	set(value):
@@ -59,18 +62,29 @@ var bottom_text_default_value := ""
 			bottom_text.text = bottom_text_default_value
 
 @export var cooldown := 1.0
-@export var cooldown_color := Color(0.70,0.35,0.35, 0.75)
 var cooldown_progress := 0.0:
 	set(value):
-		cooldown_progress = value
-		if value > 0.0:
-			current_background_color = background_color_cooldown
-			on_cooldown = true
-			top_text.text = str(cooldown_progress, 's')
-		else:
-			current_background_color = background_color_available
-			on_cooldown = false
-var on_cooldown := false
+		cooldown_progress = maxf(value, 0.0)
+		_update_fill()
+		var shown := snappedf(cooldown_progress, 0.1)
+		if is_equal_approx(shown, _shown_progress):
+			return
+		_shown_progress = shown
+		top_text.text = "%.1fs" % shown if shown > 0.0 else top_text_string
 
-func _physics_process(delta: float) -> void:
-	cooldown_progress -= delta * (int(on_cooldown) * int(cooldown_progress > 0.0))
+func _ready() -> void:
+	color_rect.color = background_color_cooldown
+	color_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	color_rect.resized.connect(_update_pivot)
+	_update_pivot()
+	_update_fill()
+	var sb := skill_container.get_theme_stylebox("panel").duplicate()
+	skill_container.add_theme_stylebox_override("panel", sb)
+
+func _update_pivot() -> void:
+	color_rect.pivot_offset = Vector2(0.0, color_rect.size.y)
+
+func _update_fill() -> void:
+	var ratio := clampf(cooldown_progress / maxf(cooldown, 0.001), 0.0, 1.0)
+	color_rect.visible = ratio > 0.0
+	color_rect.scale.y = maxf(ratio, 0.001)

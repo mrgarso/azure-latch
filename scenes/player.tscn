@@ -1,8 +1,9 @@
 [gd_scene format=3 uid="uid://cqi7fxayfxs8i"]
 
 [ext_resource type="Script" uid="uid://cud45m48x82jv" path="res://scripts/player_components/player.gd" id="1_3vyb7"]
+[ext_resource type="PackedScene" uid="uid://dq88e81rau26s" path="res://scenes/ui_stuff/pause_menu.tscn" id="2_f1ej7"]
 [ext_resource type="Script" uid="uid://b4unfxy572sqc" path="res://scripts/player_components/camera_3d.gd" id="2_g2els"]
-[ext_resource type="Script" uid="uid://dnuq7v7hmquav" path="res://scripts/skills/skill_data/skill.gd" id="2_y4r1p"]
+[ext_resource type="Script" uid="uid://dnuq7v7hmquav" path="res://scripts/skills/SkillBuilder/skill_data/skill.gd" id="2_y4r1p"]
 [ext_resource type="Script" uid="uid://b43wu3yraw8dv" path="res://scripts/player_components/grab_ball_area.gd" id="4_tuyoq"]
 [ext_resource type="PackedScene" uid="uid://8h2yfbfl2to5" path="res://assets/3d_assets/scenes/body.tscn" id="6_f1ej7"]
 [ext_resource type="Texture2D" uid="uid://b824ncaeuxk6r" path="res://assets/WhatsApp Image 2026-07-30 at 9.23.18 PM.jpeg" id="7_smehm"]
@@ -10,13 +11,9 @@
 [ext_resource type="Script" uid="uid://iv6dq0eynq63" path="res://scripts/console/console.gd" id="9_ur7pv"]
 [ext_resource type="Script" uid="uid://lhld7nck63jh" path="res://scripts/skills/movement.gd" id="9_y4r1p"]
 [ext_resource type="Script" uid="uid://cai55kvj706aj" path="res://scripts/skills/isagi/direct_shot.gd" id="11_3v2ag"]
-[ext_resource type="PackedScene" uid="uid://cjcdk8lb2gb6f" path="res://assets/3d_assets/scenes/skill_hub.tscn" id="11_d2wvv"]
+[ext_resource type="PackedScene" uid="uid://cjcdk8lb2gb6f" path="res://scenes/skill_hub.tscn" id="11_d2wvv"]
 [ext_resource type="Script" uid="uid://cv8uixno6rkwu" path="res://scripts/skills/isagi/naruhaya_forward.gd" id="12_jej6c"]
 [ext_resource type="Script" uid="uid://v6ox4nt63ok2" path="res://scripts/ui_stuff/ui.gd" id="12_oprun"]
-
-[sub_resource type="Resource" id="Resource_ur7pv"]
-script = ExtResource("2_y4r1p")
-metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_yf5fn"]
 
@@ -34,7 +31,8 @@ font_size = 27
 
 [sub_resource type="Resource" id="Resource_88vyk"]
 script = ExtResource("2_y4r1p")
-skill_name = "direct shot"
+skill_name = "Direct"
+cooldown_in_seconds = 3.0
 key_bind = "1"
 top_text = "shot"
 script_to_trigger = ExtResource("11_3v2ag")
@@ -46,18 +44,21 @@ skill_name = "naruhaya forward"
 key_bind = "2"
 top_text = "dash"
 script_to_trigger = ExtResource("12_jej6c")
+no_cooldown = true
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_as2as"]
 script = ExtResource("2_y4r1p")
 skill_name = "my own"
 key_bind = "3"
+no_cooldown = null
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_ooadf"]
 script = ExtResource("2_y4r1p")
 skill_name = "reflex"
 key_bind = "4"
+no_cooldown = null
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_g42wn"]
@@ -67,9 +68,10 @@ key_bind = "5"
 top_text = "steal"
 on_ball = false
 enemy_possesion = false
+no_cooldown = null
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
-[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "model", "spring_arm_3d", "grab_ball_area", "fps_label", "moves", "ui", "console_manager", "screen_effects")]
+[node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "model", "spring_arm_3d", "grab_ball_area", "fps_label", "moves", "ui", "console_manager", "screen_effects", "pause_menu")]
 collision_layer = 2
 script = ExtResource("1_3vyb7")
 team = "a"
@@ -82,7 +84,7 @@ moves = NodePath("movement")
 ui = NodePath("UI")
 console_manager = NodePath("console_manager")
 screen_effects = NodePath("screen_effects")
-skill_test = SubResource("Resource_ur7pv")
+pause_menu = NodePath("UI/pause_menu")
 
 [node name="body" parent="." unique_id=1888983923 instance=ExtResource("6_f1ej7")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -1, 0)
@@ -214,6 +216,7 @@ text = "this is a test"
 label_settings = SubResource("LabelSettings_g4v7s")
 
 [node name="UI" type="CanvasLayer" parent="." unique_id=1235689310 node_paths=PackedStringArray("score_local_team", "time", "score_other_team")]
+visible = false
 script = ExtResource("12_oprun")
 score_local_team = NodePath("Control/match_info/Hbox/score_local_team")
 time = NodePath("Control/match_info/Hbox/time")
@@ -258,6 +261,10 @@ label_settings = SubResource("LabelSettings_yf5fn")
 [node name="skill_hub" parent="UI" unique_id=1130569324 node_paths=PackedStringArray("player") instance=ExtResource("11_d2wvv")]
 player = NodePath("../..")
 skills = Array[ExtResource("2_y4r1p")]([SubResource("Resource_88vyk"), SubResource("Resource_jxbb6"), SubResource("Resource_as2as"), SubResource("Resource_ooadf"), SubResource("Resource_g42wn")])
+
+[node name="pause_menu" parent="UI" unique_id=77986993 node_paths=PackedStringArray("player") instance=ExtResource("2_f1ej7")]
+visible = false
+player = NodePath("../..")
 
 [node name="movement" type="Node" parent="." unique_id=1782003577]
 script = ExtResource("9_y4r1p")

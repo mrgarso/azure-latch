@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://edhrkcrlqcnh"]
 
-[ext_resource type="Script" uid="uid://d2jhkmicwcqmb" path="res://scripts/skills/skill_data/skill_button.gd" id="1_uk5ws"]
+[ext_resource type="Script" uid="uid://d2jhkmicwcqmb" path="res://scripts/skills/SkillBuilder/skill_data/skill_button.gd" id="1_uk5ws"]
 [ext_resource type="LabelSettings" uid="uid://dike7y5w1pq2y" path="res://assets/labels settings/skill_font_res.tres" id="2_t7leu"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a8ls1"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xafvn"]
 bg_color = Color(0.07, 0.07, 0.07, 0.57)
 
 [node name="skill_button" type="Control" unique_id=1628500193 node_paths=PackedStringArray("skill_text", "top_text", "bind_text", "bottom_text", "color_rect", "skill_container")]
@@ -19,13 +19,14 @@ bind_text = NodePath("bind_text")
 bottom_text = NodePath("bottom_text")
 color_rect = NodePath("skill_container/ColorRect")
 skill_container = NodePath("skill_container")
+background_color_cooldown = Color(1, 0.37449613, 0.3078583, 0.5686275)
 
 [node name="skill_container" type="PanelContainer" parent="." unique_id=187949117]
 layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 offset_transform_enabled = true
-theme_override_styles/panel = SubResource("StyleBoxFlat_a8ls1")
+theme_override_styles/panel = SubResource("StyleBoxFlat_xafvn")
 
 [node name="skill_text" type="Label" parent="skill_container" unique_id=1533197138]
 custom_minimum_size = Vector2(80, 80)
@@ -38,7 +39,6 @@ autowrap_mode = 2
 
 [node name="ColorRect" type="ColorRect" parent="skill_container" unique_id=1962152821]
 layout_mode = 2
-color = Color(1, 1, 1, 0)
 
 [node name="top_text" type="Label" parent="." unique_id=1773995315]
 layout_mode = 0
@@ -46,7 +46,6 @@ offset_left = -10.0
 offset_top = -15.0
 offset_right = 90.0
 offset_bottom = 8.0
-text = "steal"
 label_settings = ExtResource("2_t7leu")
 horizontal_alignment = 1
 vertical_alignment = 1

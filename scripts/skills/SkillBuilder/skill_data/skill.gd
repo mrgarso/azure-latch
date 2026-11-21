@@ -5,6 +5,7 @@ extends Resource
 class_name Skill
 
 signal modified
+signal cooldown(value, name)
 
 
 ##the skill name
@@ -62,6 +63,10 @@ signal modified
 @export var mid_skill := false
 #endregion
 
+@export_group("funi stuff :p")
+##spam the heck outta the skill
+@export var no_cooldown := false
+
 var current_cooldown := 0.0
 
 func check_for_execution(player : Player) -> void:
@@ -82,11 +87,21 @@ func can_execute(player : Player) -> bool:
 	
 	for situation in blocked:
 		if player.check_conditions(situation):
-			print("no papito, nada q ver")
 			return false
 	return true
 
 func execute(player : Player) -> void:
-	if script_to_trigger != null and current_cooldown > 0.0:
+	if script_to_trigger != null:
+		if current_cooldown > 0.0:
+			print("NO SPAMEES")
+			return
 		await script_to_trigger.use(player)
+		var end_msec := Time.get_ticks_msec() + int(cooldown_in_seconds * 1000.0)
 		current_cooldown = cooldown_in_seconds
+		while current_cooldown > 0.0:
+			await (Engine.get_main_loop() as SceneTree).process_frame
+			if no_cooldown:
+				current_cooldown = 0.0
+			else:
+				current_cooldown = (end_msec - Time.get_ticks_msec()) / 1000.0
+			cooldown.emit(current_cooldown, skill_name)

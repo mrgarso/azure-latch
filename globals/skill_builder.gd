@@ -111,8 +111,9 @@ func fov_change(target: Player, from := 75.0, to := 75.0, duration := 1.0, kind 
 	var tween := create_tween()
 	camera.set_meta("fov_tween", tween)
 	tween.tween_method(
-		func(t: float): camera.fov = lerpf(from, to, apply_interp(kind, t)),
-		0.0, 1.0, duration
+		func(t: float):
+			camera.fov = lerpf(from, to, apply_interp(kind, t)),
+			0.0, 1.0, duration
 	)
 
 func save_position(target : Player = null, pos := Vector3(), id := "") -> void:
@@ -314,16 +315,19 @@ func _is_valid_target(target: Player, parent: Player, include_ball_holder: bool,
 		include_not_ball_holder: bool, include_teammates: bool, include_enemies: bool) -> bool:
 	if target == null or target == parent:
 		return false
-
+	
 	var has_ball := target.ball != null
 	if has_ball and not include_ball_holder: return false
 	if not has_ball and not include_not_ball_holder: return false
-
+	
 	var is_teammate :bool= target.team == parent.team
 	if is_teammate and not include_teammates: return false
 	if not is_teammate and not include_enemies: return false
-
+	
 	return true
+
+func time_scale(scale := 1.0) -> void:
+	Engine.time_scale = scale
 
 func player_state(target : Player = null, grab_ball := true, iframes := false, duration := 1.0) -> void:
 	var before := {
@@ -332,3 +336,6 @@ func player_state(target : Player = null, grab_ball := true, iframes := false, d
 	target.can_grab_ball = grab_ball
 	await wait(duration * 60)
 	target.can_grab_ball = before.grab
+
+func pop_up_camera(relative_to : Player, pos := Vector3(), rot := Vector3()) -> void:
+	pass

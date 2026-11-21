@@ -14,7 +14,7 @@ func _ready() -> void:
 	suggestion_text.grow_vertical = Control.GROW_DIRECTION_BEGIN
 
 func _input(_event: InputEvent) -> void:
-	if Input.is_action_just_pressed("console"):
+	if Input.is_action_just_pressed("console") and !player.on_pause_menu:
 		show_console()
 	
 
@@ -22,14 +22,14 @@ func show_console() -> void:
 	if !self.visible:
 		console_typer.clear()
 		self.visible = true
-		player.can_move = false
+		player.on_console = true
 		console_typer.grab_focus()
 		console_typer.edit()
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 	else:
 		console_typer.clear()
 		self.visible = false
-		player.can_move = true
+		player.on_console = false
 		console_typer.unedit()
 		#if mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			#Input.mouse_mode = mouse_mode

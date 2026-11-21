@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cjcdk8lb2gb6f"]
 
-[ext_resource type="Script" uid="uid://b0rj3js4xtfwq" path="res://scripts/skills/skill_data/skill_hub.gd" id="1_emsxd"]
+[ext_resource type="Script" uid="uid://b0rj3js4xtfwq" path="res://scripts/skills/SkillBuilder/skill_data/skill_hub.gd" id="1_emsxd"]
 
 [node name="skill_hub" type="Control" unique_id=1130569324 node_paths=PackedStringArray("h_box_container")]
 layout_mode = 3

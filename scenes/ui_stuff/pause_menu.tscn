@@ -1,0 +1,41 @@
+[gd_scene format=3 uid="uid://dq88e81rau26s"]
+
+[ext_resource type="Script" uid="uid://c15s7jui6bm5b" path="res://scripts/ui_stuff/pause_menu.gd" id="1_n87rw"]
+
+[node name="pause_menu" type="PanelContainer" unique_id=77986993]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_n87rw")
+
+[node name="pause_buttons" type="VBoxContainer" parent="." unique_id=451166601]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="CONTINUE" type="Button" parent="pause_buttons" unique_id=2082894134]
+layout_mode = 2
+text = "CONTINUE"
+
+[node name="OPTIONS" type="Button" parent="pause_buttons" unique_id=872012791]
+layout_mode = 2
+text = "OPTIONS"
+
+[node name="QUIT" type="Button" parent="pause_buttons" unique_id=598098689]
+layout_mode = 2
+text = "QUIT
+"
+
+[node name="options_buttons" type="VBoxContainer" parent="." unique_id=542286013]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[connection signal="pressed" from="pause_buttons/CONTINUE" to="." method="_on_continue_pressed"]
+[connection signal="pressed" from="pause_buttons/OPTIONS" to="." method="_on_options_pressed"]
+[connection signal="pressed" from="pause_buttons/QUIT" to="." method="_on_continue_3_pressed"]

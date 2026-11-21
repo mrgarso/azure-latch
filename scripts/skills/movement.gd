@@ -25,11 +25,15 @@ func gk_tackles(dir := 0.0, custom_velocity := false, velocity := 0.0) -> void:
 	0.6, 10.0, false, true)
 	for i in int(tackle_time * 10) / 3:
 		
+		SB.hitbox(player, Vector3.ONE * tackle_radius, final_dir / tackle_velocity, \
+		0.1, SB.HitboxTargets.PLAYERS)
 		await SB.hitbox(player, Vector3.ONE * tackle_radius, final_dir / tackle_velocity, \
 		0.1, SB.HitboxTargets.BALL if (field.match_ball != null and \
 		field.match_ball.current_owner == null) else SB.HitboxTargets.PLAYERS)
-	for i in int(tackle_time * 10) & 3:
+	for i in int(tackle_time * 10) / 3:
 		
+		SB.hitbox(player, Vector3.ONE * tackle_radius / 3, Vector3.ZERO, \
+		0.1, SB.HitboxTargets.PLAYERS)
 		await SB.hitbox(player, Vector3.ONE * tackle_radius / 3, Vector3.ZERO, \
 		0.1, SB.HitboxTargets.BALL if (field.match_ball != null and \
 		field.match_ball.current_owner == null) else SB.HitboxTargets.PLAYERS)
