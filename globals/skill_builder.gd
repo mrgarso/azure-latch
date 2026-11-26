@@ -2,6 +2,26 @@ extends Node
 class_name SkillBuilder
 
 var players_positions : Dictionary[Player, Vector3]
+var queantity_of_audios := 100
+var current_audio := 0
+var audio_holder := Node.new()
+
+func _ready() -> void:
+	
+	audio_holder.name = "audio_holder"
+	add_child(audio_holder)
+	for i in queantity_of_audios:
+		audio_holder.add_child(AudioStreamPlayer3D.new())
+
+func play_audio(path : String, volume := 100.0) -> void:
+	var selected :AudioStreamPlayer3D= audio_holder.get_child(current_audio)
+	current_audio = (current_audio + 1) % queantity_of_audios
+	if not ResourceLoader.exists(path):
+		print("no existe este audio manolo")
+	var audio := load(path) as AudioStream
+	selected.stream = audio
+	selected.volume_db = linear_to_db(volume / 100.0)
+	selected.play()
 
 func velocity(target: Player,fade_out := false, direction := Vector3.ZERO, \
 duration := 1.0, decay := 0.99, custom_gravity :float= target.gravity, override := false, reset_y := false) -> void:

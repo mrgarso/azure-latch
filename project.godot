@@ -23,6 +23,7 @@ UsP="*uid://ctm64wxyd4d72"
 
 [display]
 
+window/size/resizable=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/vsync/vsync_mode=0

@@ -9,7 +9,7 @@ class_name Model
 func set_modulate(mod : Color, transparent := true) -> void:
 	var mat := StandardMaterial3D.new()
 	mat.albedo_color = mod
-	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA if transparent \
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA_SCISSOR if transparent \
 	else BaseMaterial3D.TRANSPARENCY_DISABLED
 	body.set_surface_override_material(0, mat)
 	body.set_surface_override_material(1, mat)

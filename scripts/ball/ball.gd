@@ -125,6 +125,8 @@ fast_rays := false) -> Dictionary:
 					var tangent_part := bounced - normal_part
 					vel = tangent_part + normal_part * restitution
 					collided = true
+					if !resting and !predicting:
+						SB.play_audio("res://audio/ball_kick_single.wav")
 				else:
 					pos += motion
 			
