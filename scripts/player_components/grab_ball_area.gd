@@ -59,6 +59,7 @@ func _physics_process(delta: float) -> void:
 			var friction := ball.curve_friction if ball else 0.0
 			var lateral_dir_offset := ((lateral_speed / 50.0) * friction * sidespin_amount * \
 			time_for_curve * effective_curve_force ) * 0.5
+			if player.mode != "player": return
 			
 			if Input.is_action_pressed("m1"):
 				player.shooting = true
@@ -101,7 +102,7 @@ func _on_area_entered(area: Node3D) -> void:
 		if !player.is_on_floor() and !player.using_move and !target.resting and !volleying: 
 			target.global_position = ball_header_holder.global_position
 			player.moves.headed_ball = true
-			SB.kick(player, Vector3(0,-0.5,1), 30.0, true, shot_speed * 2, \
+			SB.kick(player, Vector3(0,-0.5,1), 30.0, true, shot_speed, \
 			false, Vector3(), 0.0, 0.0)
 			ball_headed.emit()
 

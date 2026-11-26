@@ -14,13 +14,42 @@ var ball_to_follow : Ball = null
 var gk_in_area := true
 var point_selected := 0
 var goal_value := 1
+var throwing := false
 var saving := false
+var players : Array[Player] 
+var nearest_player : Player = null
+
 
 func _ready() -> void:
+	find_nearest_player()
 	field.ball_kicked.connect(predict_shot)
 	ball_to_follow = field.match_ball
 
+func find_nearest_player(team_needed := "") -> void:
+	players = field.get_players()
+	nearest_player = null
+	if team_needed == "":
+		print("everyone gets it")
+		for i in players:
+			if nearest_player == null:
+				nearest_player = i
+			else:
+				if gk_bot.global_position.distance_squared_to(i.global_position) < \
+				gk_bot.global_position.distance_squared_to(nearest_player.global_position):
+					nearest_player = i
+	else:
+		print("checking for teammate")
+		for i in players:
+			if i.team != team_needed: continue
+			if nearest_player == null:
+				nearest_player = i
+			else:
+				if gk_bot.global_position.distance_squared_to(i.global_position) < \
+				gk_bot.global_position.distance_squared_to(nearest_player.global_position):
+					nearest_player = i
+
 func predict_shot(traj:PackedVector3Array) -> void:
+	if saving: return
 	var saved_points: PackedVector3Array
 	var ball_pos := field.match_ball.global_position
 	var gk_pos := gk_bot.global_position
@@ -33,10 +62,10 @@ func predict_shot(traj:PackedVector3Array) -> void:
 	if !saved_points.is_empty():
 		var time := (gk_pos.distance_squared_to(ball_pos) * distance_react_scale) * 1.125
 		await get_tree().create_timer(time).timeout
-		gk_dive_from_traj(saved_points)
+		await gk_dive_from_traj(saved_points)
 
 func gk_dive_from_traj(traj:PackedVector3Array) -> void:
-	print("predict!")
+	if saving or throwing: return
 	saving = true
 	var average_coords := Vector3()
 	for i in traj:
@@ -59,21 +88,29 @@ func gk_dive(dir:Vector3) -> void:
 	saving = false
 
 func _physics_process(delta: float) -> void:
-	if !field.match_ball or saving:
+	if throwing:
+		find_nearest_player()
+		gk_bot.look_at(nearest_player.global_position)
 		return
+	if !field.match_ball or saving or gk_bot.stun_time > 0.0 or gk_bot.using_move:
+		return
+	
 	
 	var ball := field.match_ball
 	var ball_pos := ball.global_position
 	var gk_pos := gk_bot.global_position
 	
-	if ball_pos.distance_squared_to(gk_pos) <= 65.0 and gk_bot.ball == null:
-		print("DIVEEE")
-		saving = true
+	if gk_bot.ball != null: 
+		gk_bot.ball.global_position = gk_bot.ball_holder.global_position
+	
+	if ball_pos.distance_squared_to(global_position) <= 215.0 and gk_bot.ball == null:
 		await gk_dive(ball_pos)
+		if gk_bot.ball != null:
+			await get_tree().create_timer(0.5).timeout
 		return
 	
 	var look_dir := Vector3(ball_pos.x, gk_pos.y, ball_pos.z)
-	if gk_bot.global_position.distance_squared_to(look_dir) > 0.0001:
+	if gk_bot.global_position.distance_squared_to(look_dir) > 0.0002:
 		gk_bot.look_at(look_dir)
 	
 	var target := Vector3(
@@ -82,21 +119,42 @@ func _physics_process(delta: float) -> void:
 		clampf(ball_pos.z, global_position.z - gk_dive_area, global_position.z + gk_dive_area)
 	)
 	
-	
-	gk_bot.global_position.x = clampf(gk_pos.x, global_position.x - gk_dive_area * 1.7, global_position.x + gk_dive_area * 1.7)
-	gk_bot.global_position.z = clampf(gk_pos.z, global_position.z - gk_dive_area, global_position.z + gk_dive_area)
 	var local_offset := gk_bot.global_basis.inverse() * ((target - gk_pos) / 5.0) * 0.25
-	SB.velocity(gk_bot, false, local_offset, delta, 0.9, 40.0, true)
+	if gk_bot.ball == null:
+		gk_bot.global_position.x = lerp(gk_bot.global_position.x ,clampf(gk_pos.x, global_position.x - gk_dive_area * 1.7, global_position.x + gk_dive_area * 1.7), delta * 2)
+		gk_bot.global_position.z = lerp(gk_bot.global_position.z ,clampf(gk_pos.z, global_position.z - gk_dive_area, global_position.z + gk_dive_area), delta * 2)
+		SB.velocity(gk_bot, false, local_offset, delta, 0.9, 40.0, true)
+	else:
+		gk_bot.global_position = lerp(gk_bot.global_position, global_position, delta * 5)
+		if gk_bot.global_position.distance_to(global_position) < 10:
+			gk_throw()
+	
 
-func gk_throw() -> void:
-	pass
+func gk_throw():
+	find_nearest_player()
+	throwing = true
+	var ball := gk_bot.ball
+	ball.can_goal = false
+	ball.can_grab = false
+	print(nearest_player)
+	for i in 3:
+		gk_bot.look_at(nearest_player.global_position)
+	await gk_bot.moves.gk_throw(gk_bot.global_position.distance_to(nearest_player.global_position) * 1.5)
+	await get_tree().create_timer(0.5).timeout
+	throwing = false
+	ball.can_goal = true
+	ball.can_grab = true
+	return
 
 func _on_goal_area_area_entered(area: Area3D) -> void:
 	var target := area.get_parent()
 	if target is not Ball: return
 	target = target as Ball
-	var last_owner : Player = target.last_owner
-	var dir_to_owner := global_position.direction_to(last_owner.global_position)
 	target.velocity = Vector3.ZERO
-	target.apply_impulse((dir_to_owner + Vector3(0,0.12,0)) * 50.0)
-	field.goal(last_owner, goal_value, true, 0.0)
+	throwing = false
+	saving = false
+	if target.current_owner != null: return
+	if !target.can_goal: return
+	gk_bot.ball = target
+	await gk_throw()
+	await SB.wait(40)

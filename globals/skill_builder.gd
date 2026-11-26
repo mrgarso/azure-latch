@@ -37,6 +37,11 @@ func clear_velocities(target : Player) -> void:
 func tackle(target : Player, tack := true, reset_pos := false, side := "none") -> void:
 	if target.ball == null: await target.tackle(reset_pos, tack, side)
 
+func is_looking_at(from: Node3D, target: Node3D, tolerance_deg := 5.0) -> bool:
+	var forward := -from.global_transform.basis.z
+	var to_target := target.global_position - from.global_position
+	return forward.angle_to(to_target) <= deg_to_rad(tolerance_deg)
+
 func wait(frames := 60, speed := 1.0) -> void:
 	for i in frames:
 		await get_tree().create_timer(Engine.time_scale / Engine.physics_ticks_per_second * speed).timeout
@@ -284,20 +289,18 @@ include_not_ball_holder := true, include_teammates := false, include_enemies := 
 	query.collision_mask = area.collision_mask
 	for i in Engine.physics_ticks_per_second * duration:
 		if target == HitboxTargets.BALL and parent.ball != null: break
-		area.global_position = parent.global_position
-		collision.disabled = !parent.can_grab_ball
-		query.transform = area.global_transform
-		var space_state: PhysicsDirectSpaceState3D = parent.get_world_3d().direct_space_state
-		var intersections := space_state.intersect_shape(query)
-		if not intersections.is_empty():
+		if parent.can_grab_ball:
+			area.global_position = parent.global_position
+			query.transform = collision.global_transform
+			var space_state := parent.get_world_3d().direct_space_state
 			for t in space_state.intersect_shape(query):
-				var other := (t.collider as Node3D).get_parent() as Player
-				if _is_valid_target(other, parent, include_ball_holder,
-						include_not_ball_holder, include_teammates, include_enemies):
+				var other := (t.collider as Node).get_parent()
+				if other is Ball or (other is Player and _is_valid_target(other, parent, include_ball_holder,
+						include_not_ball_holder, include_teammates, include_enemies)):
 					target_hit = other
 					break
 			if target_hit: break
-			await wait(1)
+	await wait(1)
 	delete(area, 0.0)
 	if target_hit is Ball:
 		parent.ball = target_hit

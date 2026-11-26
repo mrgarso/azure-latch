@@ -36,3 +36,7 @@ transform = Transform3D(0.24, 0, 0, 0, 0.24, 0, 0, 0, 0.24, 0, 0, 0)
 modulate = Color(2.8684251, 0, 0, 1)
 billboard = 1
 texture = ExtResource("2_cxlvu")
+
+[node name="RayCast3D" type="RayCast3D" parent="." unique_id=264800443]
+debug_shape_custom_color = Color(0.8575106, 2.8878452e-07, 0.49424183, 1)
+debug_shape_thickness = 5

@@ -6,6 +6,7 @@ class_name DummyBehaviours
 var own_parent : Player = null
 
 func run(parent : Player = null, target : Player = null) -> void:
+	while own_parent.stun_time > 0.0: await SB.wait(1)
 	own_parent = parent
 	for i in elements:
 		await i.run(parent)

@@ -5,6 +5,7 @@ class_name Movement
 @onready var field : Field = get_tree().current_scene
 var headed_ball := false
 
+@warning_ignore("unused_parameter")
 func _unhandled_key_input(event: InputEvent) -> void:
 	
 	if !player.using_move and player.mode == "player":
@@ -13,30 +14,56 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		if Input.is_action_just_pressed("e"):
 			tackle_and_dash(false, false)
 
+func gk_throw(power := 90.0, custom_dir := Vector3()) -> void:
+	var ball := player.ball
+	player.shooting = true
+	player.using_move = true
+	var dir := custom_dir if custom_dir != Vector3() else Vector3(0,1,1)
+	SB.fov_change(player, 75, 55, 1.0, SB.Interp.EXPO_IN)
+	await SB.wait(60)
+	SB.fov_change(player, 55, 85, 0.5, SB.Interp.EXPO_IN)
+	SB.kick(player, dir, power, true, 1.7, true)
+	ball.can_grab = false
+	await SB.wait(30)
+	SB.fov_change(player, 85, 75, 0.5, SB.Interp.EXPO_IN)
+	ball.can_grab = true
+	player.shooting = false
+	player.using_move = false
+
 func gk_tackles(dir := 0.0, custom_velocity := false, velocity := 0.0) -> void:
 	player.using_move = true
 	player.velocity = Vector3.ZERO
 	var tackle_velocity := 27.5 if !custom_velocity else velocity
-	var tackle_time := 1.25
-	var tackle_radius := 5.0
+	var tackle_time := 10.25
+	var tackle_radius := 3.0
 	var front := float(dir == 0.0)
 	var final_dir := Vector3(dir,0,-front) * tackle_velocity
 	SB.velocity(player, true, final_dir, tackle_time, \
 	0.6, 10.0, false, true)
-	for i in int(tackle_time * 10) / 3:
+	@warning_ignore("integer_division")
+	for i in int(tackle_time * 10) / 2:
 		
-		SB.hitbox(player, Vector3.ONE * tackle_radius, final_dir / tackle_velocity, \
-		0.1, SB.HitboxTargets.PLAYERS)
-		await SB.hitbox(player, Vector3.ONE * tackle_radius, final_dir / tackle_velocity, \
+		SB.hitbox(player, Vector3(1.5,1.0,1.5) * tackle_radius, final_dir / tackle_velocity, \
 		0.1, SB.HitboxTargets.BALL if (field.match_ball != null and \
 		field.match_ball.current_owner == null) else SB.HitboxTargets.PLAYERS)
-	for i in int(tackle_time * 10) / 3:
+		if player.ball != null: break
+		var x :Dictionary= await SB.hitbox_detailed(player, Vector3(1.5,1.0,1.5) * tackle_radius, final_dir / tackle_velocity, \
+		0.1, SB.HitboxTargets.PLAYERS, true, false)
+		if x.collided:
+			var target := x.collided as Player
+			target.tackled(player, 12.0)
+	@warning_ignore("integer_division")
+	for i in int(tackle_time * 10) / 2:
 		
-		SB.hitbox(player, Vector3.ONE * tackle_radius / 3, Vector3.ZERO, \
-		0.1, SB.HitboxTargets.PLAYERS)
-		await SB.hitbox(player, Vector3.ONE * tackle_radius / 3, Vector3.ZERO, \
+		SB.hitbox(player, Vector3(1.5,1.0,1.5) * tackle_radius / 3, Vector3.ZERO, \
 		0.1, SB.HitboxTargets.BALL if (field.match_ball != null and \
 		field.match_ball.current_owner == null) else SB.HitboxTargets.PLAYERS)
+		if player.ball != null: break
+		var x :Dictionary= await SB.hitbox_detailed(player, Vector3(1.5,1.0,1.5) * tackle_radius / 3, Vector3.ZERO, \
+		0.1, SB.HitboxTargets.PLAYERS, true, false)
+		if x.collided:
+			var target := x.collided as Player
+			target.tackled(player, 12.0)
 	player.current_gravity = player.gravity
 	player.using_move = false
 
@@ -81,8 +108,8 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 			true, false, false, true)
 			if player.ball != null or headed_ball:
 				headed_ball = false
+				SB.velocity(player, true, Vector3(0,0,-2), 0.1, 0.5, 40.0, true)
 				break
-			#print(enemy_tackled)
 		if reset_position: player.global_position = init_pos
 		SB.clear_velocities(player)
 		player.using_move = false

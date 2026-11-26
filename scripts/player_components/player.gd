@@ -26,6 +26,7 @@ class_name Player
 @export var pause_menu: PauseMenu
 
 var is_on_ground := true
+var stun_time := 0.0
 var current_air_time := 0.0
 var dummy_behaving := false
 var ball_to_follow :Ball= null
@@ -92,15 +93,9 @@ func _physics_process(delta: float) -> void:
 	for imp in impulses.filter(func(i): return i.override):
 		override_impulse_sum += imp.vec
 	
-	if using_move:
-		direction = Vector2(impulse_sum.x, impulse_sum.z)
-	elif can_move:
-		direction = (Input.get_vector("a", "d", "w", "s") * int(mode == "player")) + \
-		(Vector2(override_impulse_sum.x, override_impulse_sum.z))
-		if is_on_floor() and Input.is_action_pressed("space"):
-			velocity.y = (jump_speed) * int(mode == "player")
+	if stun_time <= 0.0: handle_input(impulse_sum, override_impulse_sum)
 	
-	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED or mode != "player":
+	if Input.mouse_mode != Input.MOUSE_MODE_CAPTURED or mode != "player" and stun_time <= 0.0:
 		var flat_vel := Vector3(velocity.x, 0.0, velocity.z)
 		if flat_vel.length() > 0.1:
 			var target_angle := atan2(flat_vel.x, flat_vel.z)
@@ -131,7 +126,17 @@ func _physics_process(delta: float) -> void:
 			current_air_time = 0.0
 	else:
 		is_on_ground = true
+	if stun_time > 0.0: stun_time -= delta
 	move_and_slide()
+
+func handle_input(impulse_sum: Vector3, override_impulse_sum: Vector3) -> void:
+	if using_move:
+		direction = Vector2(impulse_sum.x, impulse_sum.z)
+	elif can_move and stun_time <= 0.0:
+		direction = (Input.get_vector("a", "d", "w", "s") * int(mode == "player")) + \
+		(Vector2(override_impulse_sum.x, override_impulse_sum.z))
+		if is_on_floor() and Input.is_action_pressed("space"):
+			velocity.y = (jump_speed) * int(mode == "player")
 
 func _unhandled_key_input(event: InputEvent) -> void:
 	if mode == "player":
@@ -151,6 +156,7 @@ func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
 			
 		SB.screen_flash(self)
 		return
+	stun_time += 1.0
 	SB.fov_change(self, 120, 90, 0.1)
 	if perpetrator: perpetrator.ball = ball
 	ball = null

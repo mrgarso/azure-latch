@@ -51,14 +51,12 @@ metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 script = ExtResource("2_y4r1p")
 skill_name = "my own"
 key_bind = "3"
-no_cooldown = null
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_ooadf"]
 script = ExtResource("2_y4r1p")
 skill_name = "reflex"
 key_bind = "4"
-no_cooldown = null
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [sub_resource type="Resource" id="Resource_g42wn"]
@@ -68,7 +66,6 @@ key_bind = "5"
 top_text = "steal"
 on_ball = false
 enemy_possesion = false
-no_cooldown = null
 metadata/_custom_type_script = "uid://dnuq7v7hmquav"
 
 [node name="player" type="CharacterBody3D" unique_id=1029011470 node_paths=PackedStringArray("ball_holder", "model", "spring_arm_3d", "grab_ball_area", "fps_label", "moves", "ui", "console_manager", "screen_effects", "pause_menu")]

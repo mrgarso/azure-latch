@@ -34,6 +34,7 @@ var current_owner : Player = null:
 		else:
 			marker.modulate = Color(1,1,1,1)
 var last_owner : Player = null
+var can_goal := true
 
 func _ready() -> void:
 	
