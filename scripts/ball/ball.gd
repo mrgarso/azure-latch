@@ -17,6 +17,7 @@ class_name Ball
 @export var physics_steps := 4
 @export var resting_threshold := 7.0
 
+var last_bounce := 0.0
 var resting := true
 var is_on_ground := true
 var current_ground_time := 0.0
@@ -126,7 +127,9 @@ fast_rays := false) -> Dictionary:
 					vel = tangent_part + normal_part * restitution
 					collided = true
 					if !resting and !predicting:
-						SB.play_audio("res://audio/ball_kick_single.wav")
+						if last_bounce >= 0.025:
+							SB.play_audio("res://audio/ball_kick_single.wav", velocity.length() + 20, global_position)
+						last_bounce = 0.0
 				else:
 					pos += motion
 			
@@ -150,6 +153,7 @@ fast_rays := false) -> Dictionary:
 		"curve_velocity": curve_velocity, "curvature": curvature, "collided" : collided}
 
 func _physics_process(delta: float) -> void:
+	last_bounce += delta
 	if current_grab_cooldown <= 0.0: set_grab(current_owner == null)
 	if current_owner:
 		trajectory_mesh.global_position = global_position
@@ -347,6 +351,7 @@ func apply_impulse(direction := Vector3.ZERO,\
 	curvature_force = curve_force
 	velocity += direction
 	curve_ref_dir = velocity.normalized()
+	SB.play_audio("res://audio/ball_passing_by.wav", velocity.length(), global_position)
 
 func local_curvature_radius(p0 := Vector3(), p1 := Vector3(), p2 := Vector3()) -> float:
 	var a := p0.distance_to(p1)

@@ -13,7 +13,7 @@ func _ready() -> void:
 	for i in queantity_of_audios:
 		audio_holder.add_child(AudioStreamPlayer3D.new())
 
-func play_audio(path : String, volume := 100.0) -> void:
+func play_audio(path : String, volume := 100.0, relative_to := Vector3()) -> void:
 	var selected :AudioStreamPlayer3D= audio_holder.get_child(current_audio)
 	current_audio = (current_audio + 1) % queantity_of_audios
 	if not ResourceLoader.exists(path):
@@ -21,6 +21,7 @@ func play_audio(path : String, volume := 100.0) -> void:
 	var audio := load(path) as AudioStream
 	selected.stream = audio
 	selected.volume_db = linear_to_db(volume / 100.0)
+	selected.global_position = relative_to
 	selected.play()
 
 func velocity(target: Player,fade_out := false, direction := Vector3.ZERO, \

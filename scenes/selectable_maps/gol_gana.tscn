@@ -48,5 +48,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -20.642471)
 
 [node name="ball" parent="." unique_id=251572601 instance=ExtResource("3_abivb")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.9087372, -9.254783)
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="." unique_id=2134024891]

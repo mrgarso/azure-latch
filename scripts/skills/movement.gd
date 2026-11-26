@@ -117,7 +117,7 @@ func tackle_and_dash(reset_position := false, tackle := true, pre_dir := "none")
 	SB.velocity(get_parent(), true, Vector3(dir * 5,0,0), 0.1, 0.8, 40.0, true)
 
 func dribble(dribble_time := 1.0) -> void:
-	if player.ball != null: return
+	if player.ball == null: return
 	player.dribbling = true
 	var dir := Vector3(Input.get_axis("a","d"), 0 , Input.get_axis("w", "s"))
 	var dash_duration := 0.1

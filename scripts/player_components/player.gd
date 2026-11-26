@@ -154,6 +154,7 @@ func tackled(perpetrator : Player = null, ragdoll := 80.0) -> void:
 		if perpetrator: 
 			SB.velocity(self, true, global_position.direction_to(perpetrator.global_position) * 0.1, 0.5, 0.92, 40.0, true) 
 			
+		SB.play_audio("res://audio/sandevistan1.wav", 120.0, global_position)
 		SB.screen_flash(self)
 		return
 	stun_time += 1.0

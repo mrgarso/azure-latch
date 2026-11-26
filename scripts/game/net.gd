@@ -156,5 +156,6 @@ func _on_goal_area_area_entered(area: Area3D) -> void:
 	if target.current_owner != null: return
 	if !target.can_goal: return
 	gk_bot.ball = target
+	SB.play_audio("res://audio/goal1_first4s_fade.wav", 120, target.last_owner.global_position)
 	await gk_throw()
 	await SB.wait(40)
